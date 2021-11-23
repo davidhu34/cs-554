@@ -5,6 +5,7 @@ import Box from '@mui/system/Box';
 import NavBar from './NavBar';
 import SideBar from './SideBar';
 import { useMediaQuery, useTheme } from '@mui/material';
+import { ClothesList } from '../Clothes';
 
 export default function App() {
   const theme = useTheme();
@@ -16,7 +17,7 @@ export default function App() {
         <NavBar />
         <Routes>
           <Route path="/" element={'asdasd'} />
-          <Route path="/clothes" element={'gdfgf'} />
+          <Route path="/clothes" element={<ClothesList />} />
           <Route>Unknown</Route>
         </Routes>
       </Box>
