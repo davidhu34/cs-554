@@ -5,18 +5,26 @@ import { clothesActionTypes } from './actionTypes';
 
 export const getClothesList = (options) => async (dispatch, getState) => {
   try {
-    if (clothesPaginationSelector(getState()).loading) {
+    const currentPagination = clothesPaginationSelector(getState());
+    if (currentPagination.loading) {
       return;
+    }
+    const newPagination = { ...currentPagination };
+    if (options.page !== undefined) {
+      newPagination.page = options.page;
+    }
+    if (options.count !== undefined) {
+      newPagination.count = options.count;
     }
     dispatch({
       type: clothesActionTypes.fetchListStart,
-      page: options.page,
-      count: options.count || DEFAULT_PAGINATION_COUNT,
+      page: newPagination.page,
+      count: newPagination.count || DEFAULT_PAGINATION_COUNT,
     });
     const {
       data,
-      page = options.page,
-      count = options.count,
+      page = newPagination.page,
+      count = newPagination.count,
       total,
     } = await getPaginatedClothes(options);
     dispatch({
