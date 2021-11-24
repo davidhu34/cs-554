@@ -13,5 +13,5 @@ export const clothesPaginationSelector = createSelector(
 );
 export const getClothesDetailSelector = (id) => createSelector(
   clothesStateSelector,
-  ({ stateById }) => stateById[id],
+  ({ stateById }) => stateById[id] || {},
 );

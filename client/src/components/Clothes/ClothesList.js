@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router';
 import { getClothesList, deleteClothes } from '../../application/redux/actions';
 import {
   clothesPaginationSelector,
@@ -7,24 +8,24 @@ import {
 } from '../../application/redux/selectors';
 
 function ClothesItem({ id }) {
-  const clothesItemState = useSelector(getClothesDetailSelector(id));
+  const { data, error, loading } = useSelector(getClothesDetailSelector(id));
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   async function handleDeleteItem() {
     await dispatch(deleteClothes(id));
     dispatch(getClothesList({ page: 0 }));
   }
-
-  if (!clothesItemState) {
-    return null;
+  async function handleEdit() {
+    navigate(`/clothes/${id}`);
   }
 
-  const { data, error, loading } = clothesItemState;
-  return (
+  return data ? (
     <div key={id}>
       {data.name}
       <button onClick={handleDeleteItem}>delete</button>
+      <button onClick={handleEdit}>edit</button>
     </div>
-  );
+  ) : null;
 }
 
 export default function ClothesList() {
