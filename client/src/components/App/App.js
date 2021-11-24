@@ -1,11 +1,12 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
+import { useMediaQuery, useTheme } from '@mui/material';
 import Box from '@mui/system/Box';
+
+import ClothesPage from '../Clothes';
 
 import NavBar from './NavBar';
 import SideBar from './SideBar';
-import { useMediaQuery, useTheme } from '@mui/material';
-import { ClothesList } from '../Clothes';
 
 export default function App() {
   const theme = useTheme();
@@ -17,7 +18,7 @@ export default function App() {
         <NavBar />
         <Routes>
           <Route path="/" element={'asdasd'} />
-          <Route path="/clothes" element={<ClothesList />} />
+          <Route path="/clothes/*" element={<ClothesPage />} />
           <Route>Unknown</Route>
         </Routes>
       </Box>

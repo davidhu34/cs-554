@@ -1,9 +1,17 @@
+import { DEFAULT_PAGINATION_COUNT } from "../../constants";
+
 const paginationStateInit = {
   page: 0,
-  count: 10,
+  count: DEFAULT_PAGINATION_COUNT,
   total: null,
   loading: false,
   error: null,
+};
+
+const byIdInit = {
+  data: null,
+  error: null,
+  loading: false,
 };
 
 const stateInit = {
@@ -15,17 +23,32 @@ const stateInit = {
 export const getDataReducer = ({ actionTypes, key = 'id' }) => {
   const stateById = (state, action) => {
     switch (action.type) {
-      case actionTypes.createStart:
+      case actionTypes.createStart: {
+        return {
+          ...state,
+          _create: { ...(state._create || byIdInit), loading: true },
+        };
+      }
       case actionTypes.fetchStart:
       case actionTypes.updateStart:
       case actionTypes.deleteStart: {
         return {
           ...state,
-          [action.id]: { ...state[action.id], loading: true },
+          [action.id]: { ...(state[action.id] || byIdInit), loading: true },
         };
       }
 
-      case actionTypes.createSuccess:
+      case actionTypes.createSuccess: {
+        return {
+          ...state,
+          _create: { ...byIdInit },
+          [action.id]: {
+            loading: false,
+            data: action.data,
+            error: null,
+          },
+        };
+      }
       case actionTypes.fetchSuccess:
       case actionTypes.updateSuccess: {
         return {
@@ -55,7 +78,16 @@ export const getDataReducer = ({ actionTypes, key = 'id' }) => {
           { ...state }
         );
       }
-      case actionTypes.createError:
+      case actionTypes.createError: {
+        return {
+          ...state,
+          _create: {
+            loading: false,
+            data: null,
+            error: action.error,
+          },
+        };
+      }
       case actionTypes.fetchError:
       case actionTypes.updateError:
       case actionTypes.deleteError: {
@@ -99,7 +131,7 @@ export const getDataReducer = ({ actionTypes, key = 'id' }) => {
             ...state.pagination,
             loading: true,
             page: action.page || 0,
-            count: action.count || 0,
+            count: action.count || DEFAULT_PAGINATION_COUNT,
           },
         };
       }
@@ -111,6 +143,8 @@ export const getDataReducer = ({ actionTypes, key = 'id' }) => {
             ...state.pagination,
             loading: false,
             error: null,
+            page: action.page,
+            count: action.count,
             total: action.total,
           },
           idListByPage: {

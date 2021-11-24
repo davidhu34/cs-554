@@ -1,5 +1,3 @@
-import ClothesList from './ClothesList';
+import ClothesPage from './ClothesPage';
 
-export {
-  ClothesList,
-};
+export default ClothesPage;
