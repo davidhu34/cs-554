@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router';
+import { Route, Routes, useNavigate } from 'react-router';
 
 import { alpha } from '@mui/material/styles';
 import Table from '@mui/material/Table';
@@ -21,6 +21,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import AddIcon from '@mui/icons-material/Add';
 import FilterListIcon from '@mui/icons-material/FilterList';
 
 import { getClothesList, deleteClothes } from '../../application/redux/actions';
@@ -28,6 +29,10 @@ import {
   clothesPaginationSelector,
   getClothesDetailSelector,
 } from '../../application/redux/selectors';
+
+import ClothesCreate from './ClothesCreate';
+import ClothesEdit from './ClothesEdit';
+
 
 function TableToolbar({ selectedList }) {
   const navigate = useNavigate();
@@ -38,6 +43,10 @@ function TableToolbar({ selectedList }) {
   }
   async function handleEdit() {
     navigate(`/clothes/${selectedList[0]}`);
+  }
+
+  function handleAdd() {
+    navigate('/clothes/create');
   }
 
   const numSelected = selectedList.length;
@@ -57,10 +66,13 @@ function TableToolbar({ selectedList }) {
           {numSelected} selected
         </Typography>
       ) : (
-        <Typography sx={{ flex: '1 1 100%' }} variant="h6" id="tableTitle" component="div">
-          Clothes
-        </Typography>
+        <Tooltip title="Add">
+          <IconButton onClick={handleAdd}>
+            <AddIcon />
+          </IconButton>
+        </Tooltip>
       )}
+
       {numSelected === 1 && (
         <Tooltip title="Edit">
           <IconButton onClick={handleEdit}>
@@ -200,6 +212,11 @@ export default function ClothesList() {
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeCount}
       />
+
+      <Routes>
+        <Route path="/create" element={<ClothesCreate />} />
+        <Route path="/:id" element={<ClothesEdit />} />
+      </Routes>
     </>
   );
 }
