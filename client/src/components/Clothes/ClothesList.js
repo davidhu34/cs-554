@@ -1,14 +1,30 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getClothesList } from '../../application/redux/actions';
+import { getClothesList, deleteClothes } from '../../application/redux/actions';
 import {
   clothesPaginationSelector,
   getClothesDetailSelector,
 } from '../../application/redux/selectors';
 
 function ClothesItem({ id }) {
-  const { data, error, loading } = useSelector(getClothesDetailSelector(id));
-  return <div key={id}>{data.name}</div>;
+  const clothesItemState = useSelector(getClothesDetailSelector(id));
+  const dispatch = useDispatch();
+  async function handleDeleteItem() {
+    await dispatch(deleteClothes(id));
+    dispatch(getClothesList({ page: 0 }));
+  }
+
+  if (!clothesItemState) {
+    return null;
+  }
+
+  const { data, error, loading } = clothesItemState;
+  return (
+    <div key={id}>
+      {data.name}
+      <button onClick={handleDeleteItem}>delete</button>
+    </div>
+  );
 }
 
 export default function ClothesList() {

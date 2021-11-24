@@ -20,9 +20,9 @@ export default function ClothesCreate() {
       description: e.target.value,
     });
   }
-  function handleFormSubmit(e) {
+  async function handleFormSubmit(e) {
     e.preventDefault();
-    dispatch(createClothes(clothesData));
+    await dispatch(createClothes(clothesData));
     dispatch(getClothesList({ page: 0 }));
     navigate(-1);
   }
