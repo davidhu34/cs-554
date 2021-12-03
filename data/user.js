@@ -52,7 +52,7 @@ const createUser = async (data) => {
     name: displayName,
     email: email,
     createdAt: createdAt,
-    groupId: null,
+    groupId: '1234',
   };
 
   const collection = await getUserCollection();
