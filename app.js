@@ -1,9 +1,9 @@
-const express = require("express");
-const { configRoutes } = require("./routes");
+const express = require('express');
+const { configRoutes } = require('./routes');
+const { applyMiddleware } = require('./middleware');
 const app = express();
 
-app.use(express.json());
-
+applyMiddleware(app);
 configRoutes(app);
 
 module.exports = app;
