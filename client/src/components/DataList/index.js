@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from 'react';
+  import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Route, Routes, useNavigate } from 'react-router';
 
-import { alpha } from '@mui/material/styles';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -10,91 +9,15 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
-import TableSortLabel from '@mui/material/TableSortLabel';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import Checkbox from '@mui/material/Checkbox';
-import IconButton from '@mui/material/IconButton';
-import Tooltip from '@mui/material/Tooltip';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Switch from '@mui/material/Switch';
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
-import AddIcon from '@mui/icons-material/Add';
-import FilterListIcon from '@mui/icons-material/FilterList';
 
-import { getClothesList, deleteClothes } from '../../application/redux/actions';
-import {
-  clothesPaginationSelector,
-  getClothesDetailSelector,
-} from '../../application/redux/selectors';
+import TableToolbar from './TableToolbar';
+import DataCreate from './DataCreate';
+import DataEdit from './DataEdit';
 
-import ClothesCreate from './ClothesCreate';
-import ClothesEdit from './ClothesEdit';
-
-
-function TableToolbar({ selectedList }) {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-
-  async function handleDeleteItem() {
-    await Promise.all([...selectedList.map((id) => dispatch(deleteClothes(id)))]);
-    dispatch(getClothesList({ page: 0 }));
-  }
-
-  async function handleEdit() {
-    navigate(`/clothes/${selectedList[0]}`);
-  }
-
-  function handleAdd() {
-    navigate('/clothes/create');
-  }
-
-  const numSelected = selectedList.length;
-  return (
-    <Toolbar
-      sx={{
-        pl: { sm: 2 },
-        pr: { xs: 1, sm: 1 },
-        ...(numSelected > 0 && {
-          bgcolor: (theme) =>
-            alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
-        }),
-      }}
-    >
-      {numSelected > 0 ? (
-        <Typography sx={{ flex: '1 1 100%' }} color="inherit" variant="subtitle1" component="div">
-          {numSelected} selected
-        </Typography>
-      ) : (
-        <Tooltip title="Add">
-          <IconButton onClick={handleAdd}>
-            <AddIcon />
-          </IconButton>
-        </Tooltip>
-      )}
-
-      {numSelected === 1 && (
-        <Tooltip title="Edit">
-          <IconButton onClick={handleEdit}>
-            <EditIcon />
-          </IconButton>
-        </Tooltip>
-      )}
-      {numSelected > 0 && (
-        <Tooltip title="Delete">
-          <IconButton onClick={handleDeleteItem}>
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
-      )}
-    </Toolbar>
-  );
-}
-
-function ClothesRowItem({ id, selected = false, onClick }) {
-  const { data, error, loading } = useSelector(getClothesDetailSelector(id));
+function DataRowItem({ id, selected = false, onClick, getDataSelector }) {
+  const { data, error, loading } = useSelector(getDataSelector(id));
   return data ? (
     <TableRow
       key={id}
@@ -124,23 +47,32 @@ function ClothesRowItem({ id, selected = false, onClick }) {
   ) : null;
 }
 
-export default function ClothesList() {
-  const { idList, page, count, total = 0, error, loading } = useSelector(clothesPaginationSelector);
+export default function DataList({
+  path,
+  paginationSelector,
+  getDataSelector,
+  fetchPaginationAction,
+  deleteAction,
+  updateAction,
+  createAction,
+}) {
+  const { idList, page, count, total = 0, error, loading } = useSelector(paginationSelector);
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const [selectedState, setSelectedState] = useState({});
-  // const [numSelected, setNumSelected] = useState(0);
 
   useEffect(() => {
-    dispatch(getClothesList({ page: 0 }));
-  }, [dispatch]);
+    dispatch(fetchPaginationAction({ page: 0 }));
+  }, [dispatch, fetchPaginationAction]);
 
   function handleChangePage(_, newPage) {
-    dispatch(getClothesList({ page: newPage }));
+    dispatch(fetchPaginationAction({ page: newPage }));
+    setSelectedState({});
   }
 
   function handleChangeCount(e) {
     const newCount = parseInt(e.target.value, 10);
-    dispatch(getClothesList({ count: newCount }));
+    dispatch(fetchPaginationAction({ count: newCount }));
   }
 
   function handleSelectItem(id) {
@@ -148,7 +80,6 @@ export default function ClothesList() {
       ...selectedState,
       [id]: !selectedState[id],
     });
-    // setNumSelected(numSelected + (selectedState[id] ? -1 : 1));
   }
 
   function handleSelectAll(e) {
@@ -162,17 +93,37 @@ export default function ClothesList() {
           return result;
         }, {})
       );
-      // setNumSelected(count);
     }
   }
+
   const selectedList = Object.entries(selectedState).reduce((result, [id, selected]) => {
     if (selected) result.push(id);
     return result;
   }, []);
+
+  async function handleDelete() {
+    await Promise.all([...selectedList.map((id) => dispatch(deleteAction(id)))]);
+    setSelectedState({});
+    dispatch(fetchPaginationAction({ page: 0 }));
+  }
+
+  function handleEdit() {
+    navigate(`${path}/${selectedList[0]}/edit`);
+  }
+
+  function handleAdd() {
+    navigate(`${path}/create`);
+  }
+
   const numSelected = selectedList.length;
   return (
     <>
-      <TableToolbar selectedList={selectedList} />
+      <TableToolbar
+        selectedList={selectedList}
+        handleDelete={handleDelete}
+        handleEdit={handleEdit}
+        handleAdd={handleAdd}
+      />
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
@@ -195,10 +146,11 @@ export default function ClothesList() {
           </TableHead>
           <TableBody>
             {idList.map((id) => (
-              <ClothesRowItem
+              <DataRowItem
                 id={id}
                 selected={selectedState[id]}
                 onClick={() => handleSelectItem(id)}
+                getDataSelector={getDataSelector}
               />
             ))}
           </TableBody>
@@ -216,8 +168,16 @@ export default function ClothesList() {
       />
 
       <Routes>
-        <Route path="/create" element={<ClothesCreate />} />
-        <Route path="/:id" element={<ClothesEdit />} />
+        <Route
+          path="/create"
+          element={
+            <DataCreate createAction={createAction} fetchPaginationAction={fetchPaginationAction} />
+          }
+        />
+        <Route
+          path="/:id/edit"
+          element={<DataEdit getDataSelector={getDataSelector} updateAction={updateAction} />}
+        />
       </Routes>
     </>
   );
