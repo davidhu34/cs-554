@@ -12,6 +12,7 @@ const {
   assertIsValuedString,
   assertRequiredObject,
   assertEmailString,
+  assertRequiredString
 } = require("../utils/assertion");
 
 const getByObjectId = async (objectId) => {
@@ -71,9 +72,49 @@ const createUser = async (data) => {
     return await getByObjectId(insertedId);
 }
 
+const updateUser = async (id, updates) => {
+  assertObjectIdString(id);
+
+  let { name, groupId } = updates;
+
+  assertRequiredString(name, "Display name");
+  assertObjectIdString(groupId);
+
+  const user = await getUser(id);
+
+  if (!user) {
+    throw new QueryError(`User with ID\`${id}\` not found.`);
+  }
+
+  const options = { returnOriginal: false };
+  const collection = await getUserCollection();
+  
+  const newUpdate = {
+    name : name,
+    groupId: groupId,
+  };
+
+  const ops = {
+    $set: newUpdate      
+  };
+
+  const { value: updatedUser, ok } = await collection.findOneAndUpdate(
+    idQuery(id),
+    ops,
+    options
+  );
+
+  if (!ok) {
+    throw new QueryError(`Could not update user with ID \`${id}\``);
+  }
+
+  return parseMongoData(updatedUser);
+}
+
 module.exports = {
     createUser,
     getUser,
     getAllUsers,
     getUsersByGroup,
+    updateUser
 };
