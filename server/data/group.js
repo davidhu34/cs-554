@@ -42,6 +42,14 @@ const getGroup = async (id) => {
     return await getByObjectId(new ObjectId(id));
 };
 
+const getGroupByName = async (name) => {
+    assertIsValuedString(name, 'Group name');
+  
+    const collection = await getGroupCollection;
+    const group = await collection.findOne({ name: name });
+    return parseMongoData(group);
+};
+
 const createGroup = async (data) => {
     assertRequiredObject(data);
   
@@ -135,6 +143,7 @@ module.exports = {
     getGroup,
     getAllGroups,
     getGroup,
+    getGroupByName,
     updateGroup,
     deleteGroup
 };
