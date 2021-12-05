@@ -55,6 +55,7 @@ export default function DataList({
   deleteAction,
   updateAction,
   createAction,
+  formConfigs,
 }) {
   const { idList, page, count, total = 0, error, loading } = useSelector(paginationSelector);
   const navigate = useNavigate();
@@ -171,12 +172,12 @@ export default function DataList({
         <Route
           path="/create"
           element={
-            <DataCreate createAction={createAction} fetchPaginationAction={fetchPaginationAction} />
+            <DataCreate createAction={createAction} fetchPaginationAction={fetchPaginationAction} formConfigs={formConfigs}/>
           }
         />
         <Route
           path="/:id/edit"
-          element={<DataEdit getDataSelector={getDataSelector} updateAction={updateAction} />}
+          element={<DataEdit getDataSelector={getDataSelector} updateAction={updateAction}formConfigs={formConfigs} />}
         />
       </Routes>
     </>

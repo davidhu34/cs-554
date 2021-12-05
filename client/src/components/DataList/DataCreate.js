@@ -1,49 +1,22 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router';
 
-export default function DataCreate({ createAction, fetchPaginationAction }) {
-  const [formData, setFormData] = useState({ name: '', description: '' });
+import DataForm from './DataForm';
+
+export default function DataCreate({
+  formConfigs,
+  createAction,
+  fetchPaginationAction,
+}) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  function handleTextChange(e) {
-    setFormData({
-      ...formData,
-      name: e.target.value,
-    });
-  }
-  function handleDescriptionChange(e) {
-    setFormData({
-      ...formData,
-      description: e.target.value,
-    });
-  }
-  async function handleFormSubmit(e) {
-    e.preventDefault();
+  async function handleFormSubmit(formData) {
     await dispatch(createAction(formData));
     dispatch(fetchPaginationAction({ page: 0 }));
     navigate(-1);
   }
 
-  return (
-    <form onSubmit={handleFormSubmit}>
-      <div>
-        <label>Name</label>
-        <input name="name" type="text" value={formData.name} onChange={handleTextChange} />
-      </div>
-      <div>
-        <label>Description</label>
-        <input
-          name="description"
-          type="text"
-          value={formData.description}
-          onChange={handleDescriptionChange}
-        />
-      </div>
-      <div>
-        <input type="submit" value="Add" />
-      </div>
-    </form>
-  );
+  return <DataForm formConfigs={formConfigs} onSubmit={handleFormSubmit} submitText="Add" />;
 }
