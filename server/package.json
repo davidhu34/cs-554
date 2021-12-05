@@ -21,8 +21,13 @@
   "homepage": "https://github.com/davidhu34/cs-554#readme",
   "dependencies": {
     "axios": "^0.24.0",
+    "bluebird": "^3.7.2",
     "express": "^4.17.1",
-    "mongodb": "^3.6.3"
+    "express-session": "^1.17.2",
+    "lodash": "^4.17.21",
+    "mongodb": "^3.6.3",
+    "redis": "^4.0.0",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "jest": "^26.6.3"
