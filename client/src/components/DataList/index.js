@@ -1,4 +1,4 @@
-  import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Route, Routes, useNavigate } from 'react-router';
 
@@ -56,8 +56,19 @@ export default function DataList({
   updateAction,
   createAction,
   formConfigs,
+  createFormTitle,
+  editFormTitle,
+  createFormDescription,
+  editFormDescription,
 }) {
-  const { idList, page, count, total = 0, error, loading } = useSelector(paginationSelector);
+  const {
+    idList,
+    page,
+    count,
+    total = 0,
+    error,
+    loading,
+  } = useSelector(paginationSelector);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [selectedState, setSelectedState] = useState({});
@@ -97,13 +108,18 @@ export default function DataList({
     }
   }
 
-  const selectedList = Object.entries(selectedState).reduce((result, [id, selected]) => {
-    if (selected) result.push(id);
-    return result;
-  }, []);
+  const selectedList = Object.entries(selectedState).reduce(
+    (result, [id, selected]) => {
+      if (selected) result.push(id);
+      return result;
+    },
+    []
+  );
 
   async function handleDelete() {
-    await Promise.all([...selectedList.map((id) => dispatch(deleteAction(id)))]);
+    await Promise.all([
+      ...selectedList.map((id) => dispatch(deleteAction(id))),
+    ]);
     setSelectedState({});
     dispatch(fetchPaginationAction({ page: 0 }));
   }
@@ -172,12 +188,26 @@ export default function DataList({
         <Route
           path="/create"
           element={
-            <DataCreate createAction={createAction} fetchPaginationAction={fetchPaginationAction} formConfigs={formConfigs}/>
+            <DataCreate
+              createAction={createAction}
+              fetchPaginationAction={fetchPaginationAction}
+              formConfigs={formConfigs}
+              title={createFormTitle}
+              description={createFormDescription}
+            />
           }
         />
         <Route
           path="/:id/edit"
-          element={<DataEdit getDataSelector={getDataSelector} updateAction={updateAction}formConfigs={formConfigs} />}
+          element={
+            <DataEdit
+              getDataSelector={getDataSelector}
+              updateAction={updateAction}
+              formConfigs={formConfigs}
+              title={editFormTitle}
+              description={editFormDescription}
+            />
+          }
         />
       </Routes>
     </>

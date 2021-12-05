@@ -61,6 +61,8 @@ export default function ClothesPage() {
       deleteAction={deleteClothes}
       createAction={createClothes}
       formConfigs={clothesFormConfigs}
+      createTitle="Add New Clothes"
+      editTitle="Edit Clothes Info"
     />
   );
 }

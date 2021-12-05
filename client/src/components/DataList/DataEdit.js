@@ -7,6 +7,8 @@ export default function DataEdit({
   formConfigs,
   getDataSelector,
   updateAction,
+  title,
+  description,
 }) {
   const { id } = useParams();
   const { data, error, loading } = useSelector(getDataSelector(id));
@@ -24,6 +26,8 @@ export default function DataEdit({
       onSubmit={handleFormSubmit}
       defaultValues={data}
       submitText="Save"
+      title={title}
+      description={description}
     />
   );
 }

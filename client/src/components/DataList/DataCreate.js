@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router';
 import DataForm from './DataForm';
 
 export default function DataCreate({
+  title,
+  description,
   formConfigs,
   createAction,
   fetchPaginationAction,
@@ -18,5 +20,13 @@ export default function DataCreate({
     navigate(-1);
   }
 
-  return <DataForm formConfigs={formConfigs} onSubmit={handleFormSubmit} submitText="Add" />;
+  return (
+    <DataForm
+      formConfigs={formConfigs}
+      onSubmit={handleFormSubmit}
+      submitText="Add"
+      title={title}
+      description={description}
+    />
+  );
 }
