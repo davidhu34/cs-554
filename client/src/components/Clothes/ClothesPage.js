@@ -1,4 +1,7 @@
 import React from 'react';
+import ShoppingBasketIcon from '@mui/icons-material/ShoppingBasket';
+import { useNavigate, createSearchParams } from 'react-router-dom';
+
 import {
   createClothes,
   deleteClothes,
@@ -9,9 +12,8 @@ import {
   clothesPaginationSelector,
   getClothesDetailSelector,
 } from '../../application/redux/selectors';
-import DataList from '../DataList';
-
-import ClothesList from './ClothesList';
+import DataPage from '../DataPage';
+import AddClothesToBasket from './AddClothesToBasket';
 
 const clothesFormConfigs = [
   {
@@ -50,9 +52,17 @@ const clothesFormConfigs = [
 ];
 
 export default function ClothesPage() {
-  // return <ClothesList />;
+  const navigate = useNavigate();
+  function handleAddToBasket(selectedList) {
+    navigate({
+      pathname: '/clothes/add-to-basket',
+      search: `?${createSearchParams({
+        clothes: selectedList,
+      })}`,
+    });
+  }
   return (
-    <DataList
+    <DataPage
       path="/clothes"
       paginationSelector={clothesPaginationSelector}
       getDataSelector={getClothesDetailSelector}
@@ -63,6 +73,25 @@ export default function ClothesPage() {
       formConfigs={clothesFormConfigs}
       createTitle="Add New Clothes"
       editTitle="Edit Clothes Info"
+      customActions={[
+        {
+          icon: <ShoppingBasketIcon />,
+          title: 'Add To Basket',
+          hidden(selectedList) {
+            return selectedList.length < 1;
+          },
+          onClick(e, selectedList) {
+            e.preventDefault();
+            handleAddToBasket(selectedList);
+          },
+        },
+      ]}
+      customRoutes={[
+        {
+          path: '/add-to-basket',
+          element: <AddClothesToBasket />,
+        },
+      ]}
     />
   );
 }

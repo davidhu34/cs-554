@@ -9,8 +9,13 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
 
-export default function TableToolbar({ selectedList, handleDelete, handleEdit, handleAdd }) {
-
+export default function TableToolbar({
+  selectedList,
+  handleDelete,
+  handleEdit,
+  handleAdd,
+  customActions,
+}) {
   const numSelected = selectedList.length;
   return (
     <Toolbar
@@ -19,12 +24,20 @@ export default function TableToolbar({ selectedList, handleDelete, handleEdit, h
         pr: { xs: 1, sm: 1 },
         ...(numSelected > 0 && {
           bgcolor: (theme) =>
-            alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
+            alpha(
+              theme.palette.primary.main,
+              theme.palette.action.activatedOpacity
+            ),
         }),
       }}
     >
       {numSelected > 0 ? (
-        <Typography sx={{ flex: '1 1 100%' }} color="inherit" variant="subtitle1" component="div">
+        <Typography
+          sx={{ flex: '1 1 100%' }}
+          color="inherit"
+          variant="subtitle1"
+          component="div"
+        >
           {numSelected} selected
         </Typography>
       ) : (
@@ -35,6 +48,24 @@ export default function TableToolbar({ selectedList, handleDelete, handleEdit, h
         </Tooltip>
       )}
 
+      {customActions.map((customAction) => {
+        const { icon, title, hidden, onClick } = customAction;
+        console.log(typeof hidden === 'function'
+        ? hidden(selectedList)
+        : hidden);
+        const showAction = !(typeof hidden === 'function'
+          ? hidden(selectedList)
+          : hidden);
+        return (
+          showAction && (
+            <Tooltip title={title}>
+              <IconButton onClick={(e) => onClick(e, selectedList)}>
+                {icon}
+              </IconButton>
+            </Tooltip>
+          )
+        );
+      })}
       {numSelected === 1 && (
         <Tooltip title="Edit">
           <IconButton onClick={handleEdit}>
