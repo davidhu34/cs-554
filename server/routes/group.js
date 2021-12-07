@@ -35,6 +35,17 @@ router.post('/', async (req, res) => {
     }
 });
 
+//Get all groups
+router.get('/', async (req, res) => {
+  try {
+      const allGroups = await groupsData.getAllGroups();
+
+      return res.status(200).json(allGroups);
+  } catch (e) {
+      res.status(400).json({ error: e });
+  }
+});
+
 // Get group by ID
 router.get('/:id', async (req, res) => {
     try {
@@ -52,17 +63,6 @@ router.get('/:id', async (req, res) => {
       res.status(400).json({ error: e });
     }
   });
-  
-//Get all groups
-router.get('/all', async (req, res) => {
-    try {
-        const allGroups = await groupsData.getAllGroups();
-
-        return res.status(200).json(allGroups);
-    } catch (e) {
-        res.status(400).json({ error: e });
-    }
-});
 
 router.delete('/:id', async (req, res) => {
     try {

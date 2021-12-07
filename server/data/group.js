@@ -43,9 +43,9 @@ const getGroup = async (id) => {
 };
 
 const getGroupByName = async (name) => {
-    assertIsValuedString(name, 'Group name');
+    assertRequiredString(name, 'Group name');
   
-    const collection = await getGroupCollection;
+    const collection = await getGroupCollection();
     const group = await collection.findOne({ name: name });
     return parseMongoData(group);
 };
@@ -67,13 +67,11 @@ const createGroup = async (data) => {
 
     for (let user of users) {
         user.groupId = stringifyObjectId(groupData._id, "group ID");
-        userData.updateUser(stringifyObjectId(user._id, "user ID"), user);
+        userData.updateUser(user._id, user);
     }
 
-    const collection = await getGroupCollection;
-    const { result, insertedCount, insertedId } = await collection.insertOne(
-      groupData
-    );
+    const collection = await getGroupCollection();
+    const { result, insertedCount, insertedId } = await collection.insertOne(groupData);
   
     if (!result.ok || insertedCount !== 1) {
       throw new QueryError(`Could not create group`);
