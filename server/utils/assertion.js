@@ -184,6 +184,7 @@ module.exports = {
   assertRequiredType,
   assertRequiredNumber,
   assertRequiredObject,
+  assertRequiredString,
   assertNonEmptyArray,
   assertIsValuedString,
   assertDateString,

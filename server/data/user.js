@@ -2,17 +2,20 @@ const { users: getUserCollection } = require('../config/mongoCollections');
 let { ObjectId } = require('mongodb');
 
 const { QueryError, ValidationError } = require('../utils/errors');
-const { parseMongoData } = require('../utils/mongodb');
-
+const {
+  idQuery,
+  parseMongoData,
+} = require("../utils/mongodb");
 const {
   assertIsValuedString,
   assertRequiredObject,
   assertEmailString,
+  assertObjectIdString
 } = require('../utils/assertion');
 
 const getByObjectId = async (objectId) => {
   const collection = await getUserCollection();
-  const user = await collection.findOne({ _id: objectId });
+  const user = await collection.findOne(idQuery(objectId));
   return parseMongoData(user);
 };
 
@@ -26,7 +29,7 @@ const getAllUsers = async () => {
 };
 
 const getUser = async (id) => {
-  assertIsValuedString(id);
+  assertObjectIdString(id);
   return await getByObjectId(id);
 };
 
@@ -65,9 +68,56 @@ const createUser = async (data) => {
   return await getByObjectId(insertedId);
 };
 
+const updateUser = async (id, updates) => {
+  assertObjectIdString(id);
+  assertRequiredObject(updates, "User updates data");
+
+  let { uid, name, email, groupId } = updates;
+  
+  assertIsValuedString(uid, "User ID");
+  assertIsValuedString(name, "User name");
+  assertEmailString(email, "Email");
+  email = email.toLowerCase();
+  assertObjectIdString(groupId);
+
+  const user = await getUser(id);
+
+  if (!user) {
+    throw new QueryError(`User with ID\`${id}\` not found.`);
+  }
+
+  const options = { returnOriginal: false };
+  const collection = await getUserCollection();
+  
+  const newUpdate = {
+    uid: uid,
+    name : name,
+    email: email,
+    groupId: groupId
+  };
+
+  const ops = {
+    $set: newUpdate      
+  };
+
+  const { value: updatedUser, ok } = await collection.findOneAndUpdate(
+    idQuery(id),
+    ops,
+    options
+  );
+
+  if (!ok) {
+    throw new QueryError(`Could not update user with ID \`${id}\``);
+  }
+
+  return parseMongoData(updatedUser);
+};
+
+
 module.exports = {
   createUser,
   getUser,
   getAllUsers,
   getUsersByGroup,
+  updateUser
 };
