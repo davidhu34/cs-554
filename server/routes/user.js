@@ -3,6 +3,7 @@ const router = Router();
 const usersData = require('../data/user');
 
 const {
+  assertObjectIdString,
   assertIsValuedString,
   assertRequiredObject,
   assertEmailString,
@@ -38,6 +39,24 @@ router.post('/', async (req, res) => {
 
 router.put('/:id', async (req, res) => {
   console.log(req.body);
+});
+
+// Get user by ID
+router.get('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    assertObjectIdString(id, 'Group ID');
+    const result = await usersData.getUser(id);
+
+    if (!result) {
+      throw new HttpError(`Could not get user for user id:${id}`, 404);
+    }
+    
+    res.status(200).json(result);
+  } catch (e) {
+    console.log(e);
+    res.status(400).json({ error: e });
+  }
 });
 
 //Get all users
