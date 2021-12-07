@@ -17,19 +17,26 @@ const getByObjectId = async (objectId) => {
   return parseMongoData(cloth);
 };
 
-const getClothByUserId = async (userId) => {
+const getClothByGroupId = async (userId, groupId,  skip) => {
   assertObjectIdString(userId, 'User Id');
-  // const user = await getUser(userId);
-  // console.log(user);
-  // if (!user) {
-  //   throw new QueryError(`Could not get user for (${userId})`);
+
+  // We can only do this once we have group routes.
+
+  // const group = await getGroup(groupId);
+  // console.log(group);
+  // if (!group) {
+  //   throw new QueryError(`Could not get group for (${groupId})`);
   // }
 
   const collection = await getClothesCollection();
-  let cloth = await collection.find({ userId: new ObjectId(userId) }).toArray();
+  let cloth = await collection
+    .find({ groupId: new ObjectId(groupId) })
+    .skip(skip)
+    .limit(10)
+    .toArray();
 
   if (cloth == null) {
-    throw new QueryError(`Could not get cloth for (${userId})`);
+    throw new QueryError(`Could not get cloth for (${groupId})`);
   }
   return cloth;
 };
@@ -45,7 +52,7 @@ const getCloth = async (id) => {
 
 const addCloth = async (data) => {
   assertRequiredObject(data);
-  const { userId, name, type } = data;
+  const { userId, groupId, name, type } = data;
   const createdAt = new Date().getTime();
 
   assertObjectIdString(userId, 'Cloth added by user ID');
@@ -57,8 +64,9 @@ const addCloth = async (data) => {
   const collection = await getClothesCollection();
 
   const clothData = {
-    _id: new ObjectId(data.expenseId),
+    _id: new ObjectId(data.clothId),
     userId: new ObjectId(userId),
+    groupId: new ObjectId(groupId),
     name,
     type,
     createdAt,
@@ -78,9 +86,10 @@ const addCloth = async (data) => {
 
 const updateCloth = async (clothId, data) => {
   assertRequiredObject(data);
-  const { userId, name, type } = data;
+  const { userId, groupId, name, type } = data;
   assertObjectIdString(clothId, 'Cloth id');
   assertObjectIdString(userId, 'Cloth added by user ID');
+  assertObjectIdString(groupId, 'Group id');
   assertIsValuedString(name, 'Cloth name');
   assertIsValuedString(type, 'Cloth type');
 
@@ -92,6 +101,7 @@ const updateCloth = async (clothId, data) => {
 
   const newUpdate = {
     userId: new ObjectId(userId),
+    groupId: new ObjectId(groupId),
     name,
     type,
     updatedAt: new Date().getTime(),
@@ -105,12 +115,12 @@ const updateCloth = async (clothId, data) => {
   );
 
   if (!modifiedCount && !matchedCount) {
-    throw new QueryError(`Could not update expense ID(${expenseId})`);
+    throw new QueryError(`Could not update cloth ID(${clothId})`);
   }
-  const updatedExpense = await getExpense(expenseId);
-  data.expenseId = expenseId;
-  updatedExpense.payment = await updateExpensePayment(updatedExpense.paymentId, data);
-  return updatedExpense;
+  const updatedCloth = await getCloth(clothId);
+  data.clothId = clothId;
+  updatedCloth.payment = await updateClothPayment(updatedCloth.paymentId, data);
+  return updatedCloth;
 };
 
 const deleteCloth = async (id) => {
@@ -126,17 +136,20 @@ const deleteCloth = async (id) => {
   let { deletedCount } = await collection.deleteOne({ _id: new ObjectId(id) });
 
   if (deletedCount === 0) {
-    throw new QueryError(`Could not delete expense for (${id})`);
+    throw new QueryError(`Could not delete cloth for (${id})`);
   }
   deleteCloth.message = 'Successfully deleted';
   return deleteCloth;
 };
 
-const deleteClothByUserId = async (userId) => {
-  const allClothes = await getClothByUserId(userId);
+const deleteClothByGroupId = async (userId, groupId) => {
+  const allClothes = await getClothByGroupId(groupId);
 
   const collection = await getClothesCollection();
-  const { deletedCount } = await collection.deleteMany({ userId: new ObjectId(userId) });
+  const { deletedCount } = await collection.deleteMany({
+    userId: new ObjectId(userId),
+    groupId: new ObjectId(groupId),
+  });
   if (deletedCount === 0) {
     throw new QueryError(`Could not delete all clothes for (${userId})`);
   }
@@ -145,10 +158,10 @@ const deleteClothByUserId = async (userId) => {
 };
 
 module.exports = {
-  getClothByUserId,
+  getClothByGroupId,
   addCloth,
   getCloth,
   updateCloth,
   deleteCloth,
-  deleteClothByUserId,
+  deleteClothByGroupId,
 };
