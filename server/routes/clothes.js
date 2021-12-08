@@ -1,6 +1,7 @@
 const { Router, json } = require('express');
 const router = Router();
 const clothesData = require('../data/clothes');
+const userData = require('../data/user');
 
 const {
   assertIsValuedString,
@@ -35,11 +36,10 @@ router.post('/', async (req, res) => {
 //get clothes by userId
 router.get('/', async (req, res) => {
   try {
-    const { groupId } = req.session.user;
-    const { skip, limit } = req.params;
-    console.log(userId);
-    assertIsValuedString(userId, 'User Id');
-    const result = await clothesData.getClothByGroupId(groupId, skip);
+    const { _id: userId, groupId } = req.session.user;
+    const { skip } = req.query;
+    assertIsValuedString(groupId, 'Group Id');
+    const result = await clothesData.getClothByGroupId(userId, groupId, parseInt(skip));
     if (!result) {
       throw new HttpError(`Could not get cloth for group id:${groupId}`, 404);
     }
@@ -54,8 +54,13 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
+    const { _id: userId } = req.session.user;
     assertIsValuedString(id, 'Cloth Id');
-    const result = await clothesData.getCloth(id);
+    const user = await userData.getByObjectId(userId);
+    if (!user) {
+      throw new HttpError(`User not exist.`, 404);
+    }
+    const result = await clothesData.getCloth(userId, id);
     if (!result) {
       throw new HttpError(`Could not get cloth for cloth id:${id}`, 404);
     }

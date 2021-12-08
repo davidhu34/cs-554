@@ -9,7 +9,8 @@ const {
   assertRequiredObject,
 } = require('../utils/assertion');
 
-const { getUser } = require('./user');
+const usersData = require('./user');
+const { getGroup } = require('./group');
 
 const getByObjectId = async (objectId) => {
   const collection = await getClothesCollection();
@@ -17,22 +18,24 @@ const getByObjectId = async (objectId) => {
   return parseMongoData(cloth);
 };
 
-const getClothByGroupId = async (userId, groupId,  skip) => {
+const getClothByGroupId = async (userId, groupId, skip) => {
   assertObjectIdString(userId, 'User Id');
-
+  assertObjectIdString(groupId, 'Group Id');
   // We can only do this once we have group routes.
-
-  // const group = await getGroup(groupId);
-  // console.log(group);
-  // if (!group) {
-  //   throw new QueryError(`Could not get group for (${groupId})`);
-  // }
-
+  const user = await usersData.getByObjectId(userId);
+  if (!user) {
+    throw new QueryError(`Could not get user for (${userId})`);
+  }
+  const group = await getGroup(groupId);
+  console.log(group);
+  if (!group) {
+    throw new QueryError(`Could not get group for (${groupId})`);
+  }
   const collection = await getClothesCollection();
   let cloth = await collection
     .find({ groupId: new ObjectId(groupId) })
-    .skip(skip)
     .limit(10)
+    .skip(skip)
     .toArray();
 
   if (cloth == null) {
@@ -41,7 +44,7 @@ const getClothByGroupId = async (userId, groupId,  skip) => {
   return cloth;
 };
 
-const getCloth = async (id) => {
+const getCloth = async (userId,id) => {
   assertObjectIdString(id, 'Cloth Id');
   let cloth = await getByObjectId(id);
   if (cloth == null) {
@@ -58,6 +61,17 @@ const addCloth = async (data) => {
   assertObjectIdString(userId, 'Cloth added by user ID');
   assertIsValuedString(name, 'Cloth name');
   assertIsValuedString(type, 'Cloth type');
+  assertIsValuedString(groupId, 'Group');
+
+  const user = await usersData.getByObjectId(userId);
+  if (!user) {
+    throw new QueryError(`User not exist for user id (${userId})`);
+  }
+
+  const group = await getGroup(groupId);
+  if (!group) {
+    throw new QueryError(`Group not exist for group id (${userId})`);
+  }
 
   data.clothId = new ObjectId().toHexString();
 

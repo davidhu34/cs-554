@@ -2,15 +2,12 @@ const { users: getUserCollection } = require('../config/mongoCollections');
 let { ObjectId } = require('mongodb');
 
 const { QueryError, ValidationError } = require('../utils/errors');
-const {
-  idQuery,
-  parseMongoData,
-} = require("../utils/mongodb");
+const { idQuery, parseMongoData } = require('../utils/mongodb');
 const {
   assertIsValuedString,
   assertRequiredObject,
   assertEmailString,
-  assertObjectIdString
+  assertObjectIdString,
 } = require('../utils/assertion');
 
 const getByObjectId = async (objectId) => {
@@ -28,9 +25,10 @@ const getAllUsers = async () => {
   return parseMongoData(userList);
 };
 
-const getUser = async (id) => {
-  assertObjectIdString(id);
-  return await getByObjectId(id);
+const getUser = async (uid) => {
+  const collection = await getUserCollection();
+  const user = await collection.findOne({ uid });
+  return parseMongoData(user);
 };
 
 const getUsersByGroup = async (groupId) => {
@@ -46,7 +44,7 @@ const createUser = async (data) => {
 
   let { uid, displayName, email, createdAt = new Date().getTime() } = data;
 
-  assertIsValuedString(uid, 'User ID');
+  assertIsValuedString(uid, 'Firebase user ID');
   assertIsValuedString(displayName, 'Display name');
   assertEmailString(email, 'Email Address');
 
@@ -55,7 +53,6 @@ const createUser = async (data) => {
     name: displayName,
     email: email,
     createdAt: createdAt,
-    groupId: '1234',
   };
 
   const collection = await getUserCollection();
@@ -70,17 +67,17 @@ const createUser = async (data) => {
 
 const updateUser = async (id, updates) => {
   assertObjectIdString(id);
-  assertRequiredObject(updates, "User updates data");
+  assertRequiredObject(updates, 'User updates data');
 
   let { uid, name, email, groupId } = updates;
-  
-  assertIsValuedString(uid, "User ID");
-  assertIsValuedString(name, "User name");
-  assertEmailString(email, "Email");
+
+  assertIsValuedString(uid, 'User ID');
+  assertIsValuedString(name, 'User name');
+  assertEmailString(email, 'Email');
   email = email.toLowerCase();
   assertObjectIdString(groupId);
 
-  const user = await getUser(id);
+  const user = await getByObjectId(id);
 
   if (!user) {
     throw new QueryError(`User with ID\`${id}\` not found.`);
@@ -88,23 +85,19 @@ const updateUser = async (id, updates) => {
 
   const options = { returnOriginal: false };
   const collection = await getUserCollection();
-  
+
   const newUpdate = {
     uid: uid,
-    name : name,
+    name: name,
     email: email,
-    groupId: groupId
+    groupId: groupId,
   };
 
   const ops = {
-    $set: newUpdate      
+    $set: newUpdate,
   };
 
-  const { value: updatedUser, ok } = await collection.findOneAndUpdate(
-    idQuery(id),
-    ops,
-    options
-  );
+  const { value: updatedUser, ok } = await collection.findOneAndUpdate(idQuery(id), ops, options);
 
   if (!ok) {
     throw new QueryError(`Could not update user with ID \`${id}\``);
@@ -113,11 +106,11 @@ const updateUser = async (id, updates) => {
   return parseMongoData(updatedUser);
 };
 
-
 module.exports = {
   createUser,
   getUser,
   getAllUsers,
   getUsersByGroup,
-  updateUser
+  updateUser,
+  getByObjectId,
 };

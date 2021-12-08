@@ -1,46 +1,49 @@
 const { ObjectId } = require('mongodb');
 const { addCloth } = require('../data/clothes');
 
-const seedClothes = async ({
-  timestamp1 = new Date().getTime(),
-  timestamp2 = new Date().getTime(),
-  userId,
-  groupId,
-} = {}) => {
+const seedClothes = async (
+  user1,
+  user2,
+  user3,
+  user4,
+  group1,
+  group2,
+  { timestamp1 = new Date().getTime(), timestamp2 = new Date().getTime() } = {},
+) => {
   const cloth1 = {
-    userId: '123654987897456253181',
-    groupId: '123654987897456253171',
-    name: Tshirt1,
-    type: Tshirt,
+    userId: user1._id,
+    groupId: group1._id,
+    name: 'Tshirt1',
+    type: 'Tshirt',
   };
 
   const cloth2 = {
-    userId: '123654987897456253182',
-    groupId: '123654987897456253172',
-    name: Tshirt1,
-    type: Tshirt,
+    userId: user2._id,
+    groupId: group1._id,
+    name: 'Tshirt1',
+    type: 'Tshirt',
   };
 
   const cloth3 = {
-    userId: '123654987897456253182',
-    groupId: '123654987897456253172',
-    name: Tshirt1,
-    type: Tshirt,
+    userId: user3._id,
+    groupId: group2._id,
+    name: 'Tshirt1',
+    type: 'Tshirt',
   };
 
   const cloth4 = {
-    userId: '123654987897456253182',
-    groupId: '123654987897456253172',
-    name: Tshirt1,
-    type: Tshirt,
+    userId: user4._id,
+    groupId: group2._id,
+    name: 'Tshirt1',
+    type: 'Tshirt',
   };
 
-  const u1 = await createUser(user1);
-  const u2 = await createUser(user2);
-  const u3 = await createUser(user3);
-  const u4 = await createUser(user4);
+  const c1 = await addCloth(cloth1);
+  const c2 = await addCloth(cloth2);
+  const c3 = await addCloth(cloth3);
+  const c4 = await addCloth(cloth4);
 
-  return { u1, u2, u3, u4 };
+  return { c1, c2, c3, c4 };
 };
 
-module.exports = { seedUsers };
+module.exports = { seedClothes };

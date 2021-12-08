@@ -15,8 +15,10 @@ router.post('/', async (req, res) => {
     assertIsValuedString(name, 'Basket name');
     assertRequiredNumber(size, 'Basket size');
     assertIsValuedString(groupId, 'Group Id');
-    assertIsValuedString(status, 'Status');
-    assertIsValuedString(time, 'Time');
+    if (typeof status != 'boolean') {
+      throw new HttpError(`Status must be boolean`, 404);
+    }
+    assertRequiredNumber(time, 'Time');
 
     const result = await basketsData.addBasket({
       name,
