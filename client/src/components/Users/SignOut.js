@@ -1,10 +1,10 @@
-import { useContext } from "react";
-import { doSignOut } from "../../firebase/FirebaseFunctions";
-import { Navigate } from "react-router-dom";
-import { AuthContext } from "../../firebase/Auth";
+import { useContext } from 'react';
+import { doSignOut } from '../../firebase/FirebaseFunctions';
+import { Navigate } from 'react-router-dom';
+import { AuthContext } from '../../firebase/Auth';
 
 const SignOut = () => {
-  const currentUser = useContext(AuthContext);
+  const { currentUser } = useContext(AuthContext);
 
   //   if (currentUser === null) {
   //     return <Navigate to="/login" />;
@@ -14,7 +14,7 @@ const SignOut = () => {
       <button type="button" onClick={doSignOut}>
         Sign Out
       </button>
-      {/* {!currentUser  <Navigate to="/login" /> : "Logged In"} */}
+      {!currentUser ? <Navigate to="/login" /> : 'Logged In'}
     </div>
   );
 };

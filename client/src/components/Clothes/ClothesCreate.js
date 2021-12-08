@@ -31,7 +31,12 @@ export default function ClothesCreate() {
     <form onSubmit={handleFormSubmit}>
       <div>
         <label>Name</label>
-        <input name="name" type="text" value={clothesData.name} onChange={handleTextChange} />
+        <input
+          name="name"
+          type="text"
+          value={clothesData.name}
+          onChange={handleTextChange}
+        />
       </div>
       <div>
         <label>Description</label>
