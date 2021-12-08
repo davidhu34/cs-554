@@ -1,4 +1,1 @@
-export function useClothesData() {
-  
-
-}
+export function useClothesData() {}

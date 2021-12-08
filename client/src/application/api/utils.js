@@ -1,7 +1,8 @@
 import { axiosRequest } from '../../utils';
 import { BASE_URL } from './endpoints';
 
-const axiosBaseRequest = (config) => axiosRequest({ baseURL: BASE_URL, ...config });
+const axiosBaseRequest = (config) =>
+  axiosRequest({ baseURL: BASE_URL, ...config });
 
 export const axiosGet = (url, config = {}) =>
   axiosBaseRequest({
@@ -11,14 +12,16 @@ export const axiosGet = (url, config = {}) =>
 
 const getAxiosUpdateMethod =
   (method) =>
-  (url, data, config = {}) => ({
-    url,
-    ...config,
-    data,
-    method,
-  });
+  (url, data, config = {}) =>
+    axiosBaseRequest({
+      url,
+      ...config,
+      data,
+      method,
+    });
 
 export const axiosPost = getAxiosUpdateMethod('post');
 export const axiosPut = getAxiosUpdateMethod('put');
 export const axiosPatch = getAxiosUpdateMethod('patch');
-export const axiosDelete = (url, config = {}) => axiosGet(url, { ...config, method: 'delete' });
+export const axiosDelete = (url, config = {}) =>
+  axiosGet(url, { ...config, method: 'delete' });
