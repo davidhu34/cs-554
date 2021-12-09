@@ -10,7 +10,8 @@ import testClothes from './test-data/clothes.json';
 
 let tempClothes = [...testClothes];
 
-const delay = (data, time = 500) => new Promise((resolve) => setTimeout(() => resolve(data), time));
+const delay = (data, time = 500) =>
+  new Promise((resolve) => setTimeout(() => resolve(data), time));
 export const getPaginatedClothes = (options) => {
   const { page = 0, count = DEFAULT_PAGINATION_COUNT } = options;
   const start = page * count;

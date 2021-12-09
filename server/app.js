@@ -8,3 +8,9 @@ applyMiddleware(app);
 configRoutes(app);
 
 module.exports = app;
+
+/*
+
+return {data:data, length:data.length}
+
+*/
