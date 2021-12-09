@@ -1,3 +1,4 @@
+import { getMessaging } from '@firebase/messaging';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 const firebaseApp = firebase.initializeApp({
@@ -11,3 +12,5 @@ const firebaseApp = firebase.initializeApp({
 });
 
 export default firebaseApp;
+
+export const messaging = getMessaging(firebaseApp);

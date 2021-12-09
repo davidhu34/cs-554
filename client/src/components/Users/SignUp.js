@@ -1,7 +1,7 @@
 import { useContext, useState } from 'react';
-import { doSocialSignIn } from '../../firebase/FirebaseFunctions';
+import { doSocialSignIn } from '../../application/firebase/firebaseFunctions';
 import { Navigate } from 'react-router-dom';
-import { AuthContext } from '../../firebase/Auth';
+import { AuthContext } from '../../application/firebase/auth';
 import Axios from 'axios';
 import GoogleButton from 'react-google-button';
 const SignUp = () => {
@@ -10,7 +10,7 @@ const SignUp = () => {
   console.log('Socks:\n', currentUser?.providerData[0]);
   const findUser = async () => {
     try {
-      const mgUser = await Axios.get('http://localhost:3000/user/all');
+      const mgUser = await Axios.get('http://localhost:3001/user/all');
       console.log('MGUSERS: ', mgUser);
     } catch (error) {
       console.log(error);

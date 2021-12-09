@@ -3,6 +3,8 @@ import {
   GET_PAGINATED_CLOTHES,
   POST_CLOTHES,
   getPutClothesPath,
+  SUBSCRIBE_GROUP_TOPIC,
+  UNSUBSCRIBE_GROUP_TOPIC,
 } from './endpoints';
 import { axiosDelete, axiosGet, axiosPost, axiosPut } from './utils';
 import { DEFAULT_PAGINATION_COUNT } from '../constants';
@@ -85,4 +87,12 @@ export const getClothes = (id) => {
   }
   return delay({ data });
   // return axiosGet(getClothesPath(id), data);
+};
+
+export const subscribeGroupTopic = ({ groupId, token }) => {
+  return axiosPost(SUBSCRIBE_GROUP_TOPIC, { groupId, token });
+};
+
+export const unsubscribeGroupTopic = ({ groupId, token }) => {
+  return axiosPost(UNSUBSCRIBE_GROUP_TOPIC, { groupId, token });
 };
