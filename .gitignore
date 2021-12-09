@@ -1,3 +1,5 @@
+server/config/serviceAccountKey.json
+
 # Logs
 logs
 *.log

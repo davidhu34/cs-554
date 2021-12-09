@@ -1,5 +1,7 @@
 const express = require('express');
 const session = require('express-session');
+const cors = require('cors');
+
 const { AxiosError, HttpError, QueryError, ValidationError } = require('../utils/errors');
 
 const LOGIN_PATH = '/user/login';
@@ -19,6 +21,7 @@ const applyMiddleware = (app) =>
   app
     .use(express.json())
     .use(express.urlencoded({ extended: true }))
+    .use(cors())
     .use(
       session({
         name: 'AuthCookie',
