@@ -38,14 +38,22 @@ const getClothByGroupId = async (userId, groupId, skip) => {
     .skip(skip)
     .toArray();
 
+  let total = await collection.find({ groupId: new ObjectId(groupId) }).count();
+
   if (cloth == null) {
     throw new QueryError(`Could not get cloth for (${groupId})`);
   }
-  return cloth;
+  return { cloth, total };
 };
 
-const getCloth = async (userId,id) => {
+const getCloth = async (userId, id) => {
   assertObjectIdString(id, 'Cloth Id');
+  assertObjectIdString(userId, 'User Id');
+
+  const user = await usersData.getByObjectId(userId);
+  if (!user) {
+    throw new QueryError(`Could not get user for (${userId})`);
+  }
   let cloth = await getByObjectId(id);
   if (cloth == null) {
     throw new QueryError(`Could not get cloth for (${id})`);

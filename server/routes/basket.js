@@ -15,9 +15,7 @@ router.post('/', async (req, res) => {
     assertIsValuedString(name, 'Basket name');
     assertRequiredNumber(size, 'Basket size');
     assertIsValuedString(groupId, 'Group Id');
-    if (typeof status != 'boolean') {
-      throw new HttpError(`Status must be boolean`, 404);
-    }
+    assertIsValuedString(status, 'Basket status');
     assertRequiredNumber(time, 'Time');
 
     const result = await basketsData.addBasket({
@@ -102,20 +100,22 @@ router.delete('/:id', async (req, res) => {
 //update basket
 router.put('/:id', async (req, res) => {
   try {
-    const { id: clothId } = req.params;
-    const { id: userId } = req.session.user;
-    const { name, size, users, clothes } = req.body;
+    const { id: basketId } = req.params;
+    const { _id: userId, groupId } = req.session.user;
+    const { name, size, users, clothes, status, time } = req.body;
     assertIsValuedString(userId, 'User Id');
-    const result = clothesData.updateCloth(clothId, {
+    const result = await basketsData.updateBasket(basketId, {
       name,
       size,
       userId,
       groupId,
       users,
       clothes,
+      status,
+      time,
     });
     if (!result) {
-      throw new HttpError(`Could not update basket for basket id:${clothId}`, 404);
+      throw new HttpError(`Could not update basket for basket id:${id}`, 404);
     }
     res.status(200).json(result);
   } catch (e) {
