@@ -51,7 +51,7 @@ router.get('/:id', async (req, res) => {
     if (!result) {
       throw new HttpError(`Could not get user for user id:${id}`, 404);
     }
-    
+
     res.status(200).json(result);
   } catch (e) {
     console.log(e);

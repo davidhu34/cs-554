@@ -140,7 +140,6 @@ module.exports = {
     createGroup,
     getGroup,
     getAllGroups,
-    getGroup,
     getGroupByName,
     updateGroup,
     deleteGroup

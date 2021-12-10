@@ -3,7 +3,7 @@ const userRouter = require('./user');
 const clothesRouter = require('./clothes');
 const basketRouter = require('./basket');
 const groupRouter = require('./group');
-const messagingRouter = require('./messaging');
+// const messagingRouter = require('./messaging');
 
 const configRoutes = (app) =>
   app
@@ -11,7 +11,7 @@ const configRoutes = (app) =>
     .use('/clothes', clothesRouter)
     .use('/baskets', basketRouter)
     .use('/group', groupRouter)
-    .use('/messaging', messagingRouter)
+    // .use('/messaging', messagingRouter)
     .use(defaultErrorHandling);
 
 module.exports = {
