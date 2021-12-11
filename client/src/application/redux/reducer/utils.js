@@ -1,8 +1,8 @@
-import { DEFAULT_PAGINATION_COUNT } from "../../constants";
+import { DEFAULT_PAGINATION_LIMIT } from "../../constants";
 
 const paginationStateInit = {
   page: 0,
-  count: DEFAULT_PAGINATION_COUNT,
+  limit: DEFAULT_PAGINATION_LIMIT,
   total: null,
   loading: false,
   error: null,
@@ -20,7 +20,7 @@ const stateInit = {
   pagination: paginationStateInit,
 };
 
-export const getDataReducer = ({ actionTypes, key = 'id' }) => {
+export const getDataReducer = ({ actionTypes, key = '_id' }) => {
   const stateById = (state, action) => {
     switch (action.type) {
       case actionTypes.createStart: {
@@ -131,7 +131,7 @@ export const getDataReducer = ({ actionTypes, key = 'id' }) => {
             ...state.pagination,
             loading: true,
             page: action.page || 0,
-            count: action.count || DEFAULT_PAGINATION_COUNT,
+            limit: action.limit || DEFAULT_PAGINATION_LIMIT,
           },
         };
       }
@@ -144,7 +144,7 @@ export const getDataReducer = ({ actionTypes, key = 'id' }) => {
             loading: false,
             error: null,
             page: action.page,
-            count: action.count,
+            limit: action.limit,
             total: action.total,
           },
           idListByPage: {

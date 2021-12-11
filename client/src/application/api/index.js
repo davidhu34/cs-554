@@ -7,23 +7,23 @@ import {
   UNSUBSCRIBE_GROUP_TOPIC,
 } from './endpoints';
 import { axiosDelete, axiosGet, axiosPost, axiosPut } from './utils';
-import { DEFAULT_PAGINATION_COUNT } from '../constants';
+import { DEFAULT_PAGINATION_LIMIT } from '../constants';
 import testClothes from './test-data/clothes.json';
 
 let tempClothes = [...testClothes];
 
 const delay = (data, time = 500) => new Promise((resolve) => setTimeout(() => resolve(data), time));
 export const getPaginatedClothes = (options) => {
-  const { page = 0, count = DEFAULT_PAGINATION_COUNT } = options;
-  const start = page * count;
-  const testResult = {
-    data: tempClothes.slice(start, start + count),
-    page,
-    count,
-    total: tempClothes.length,
-  };
-  return delay(testResult);
-  // return axiosGet(GET_PAGINATED_CLOTHES, options);
+  const { page = 0, limit = DEFAULT_PAGINATION_LIMIT } = options;
+  const skip = page * limit;
+  // const testResult = {
+  //   data: tempClothes.slice(start, start + limit),
+  //   page,
+  //   limit,
+  //   total: tempClothes.length,
+  // };
+  // return delay(testResult);
+  return axiosGet(GET_PAGINATED_CLOTHES, { params: {skip, limit} });
 };
 
 export const postClothes = (data) => {

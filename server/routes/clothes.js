@@ -36,10 +36,15 @@ router.post('/', async (req, res) => {
 //get clothes by userId
 router.get('/', async (req, res) => {
   try {
-    const { _id: userId, groupId } = req.session.user;
-    const { skip } = req.query;
+    const { _id: userId = '61b12f933d2a722d43af730b', groupId = '61b12f933d2a722d43af730f' } = req.session.user || {};
+    const { skip, limit } = req.query;
     assertIsValuedString(groupId, 'Group Id');
-    const result = await clothesData.getClothByGroupId(userId, groupId, parseInt(skip));
+    const result = await clothesData.getClothByGroupId({
+      userId,
+      groupId,
+      skip: parseInt(skip),
+      limit: parseInt(limit),
+    });
     if (!result) {
       throw new HttpError(`Could not get cloth for group id:${groupId}`, 404);
     }
