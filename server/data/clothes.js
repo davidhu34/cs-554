@@ -51,14 +51,8 @@ const getClothByGroupId = async ({ userId, groupId, skip, limit }) => {
   return { data, skip, limit, total };
 };
 
-const getCloth = async (userId, id) => {
+const getCloth = async (id) => {
   assertObjectIdString(id, 'Cloth Id');
-  assertObjectIdString(userId, 'User Id');
-
-  const user = await usersData.getByObjectId(userId);
-  if (!user) {
-    throw new QueryError(`Could not get user for (${userId})`);
-  }
   let cloth = await getByObjectId(id);
   if (cloth == null) {
     throw new QueryError(`Could not get cloth for (${id})`);
@@ -120,7 +114,7 @@ const updateCloth = async (clothId, data) => {
   assertIsValuedString(name, 'Cloth name');
   assertIsValuedString(type, 'Cloth type');
 
-  const lastCloth = await getCloth(userId, clothId);
+  const lastCloth = await getCloth(clothId);
 
   if (lastCloth == null) {
     throw `Cloth not found for cloth ID(${clothId})`;
