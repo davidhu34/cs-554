@@ -7,6 +7,7 @@ const {
   assertObjectIdString,
   assertIsValuedString,
   assertRequiredObject,
+  assertRequiredNumber,
 } = require('../utils/assertion');
 
 const usersData = require('./user');
@@ -18,42 +19,40 @@ const getByObjectId = async (objectId) => {
   return parseMongoData(cloth);
 };
 
-const getClothByGroupId = async (userId, groupId, skip) => {
+const getClothByGroupId = async ({ userId, groupId, skip, limit }) => {
   assertObjectIdString(userId, 'User Id');
   assertObjectIdString(groupId, 'Group Id');
+  assertRequiredNumber(skip, 'Pagination Skip');
+  assertRequiredNumber(limit, 'Pagination Limit');
+
   // We can only do this once we have group routes.
   const user = await usersData.getByObjectId(userId);
   if (!user) {
     throw new QueryError(`Could not get user for (${userId})`);
   }
+
   const group = await getGroup(groupId);
-  console.log(group);
   if (!group) {
     throw new QueryError(`Could not get group for (${groupId})`);
   }
+
   const collection = await getClothesCollection();
-  let cloth = await collection
+  const data = await collection
     .find({ groupId: new ObjectId(groupId) })
-    .limit(10)
+    .limit(limit)
     .skip(skip)
     .toArray();
 
-  let total = await collection.find({ groupId: new ObjectId(groupId) }).count();
+  const total = await collection.find({ groupId: new ObjectId(groupId) }).count();
 
-  if (cloth == null) {
+  if (data == null) {
     throw new QueryError(`Could not get cloth for (${groupId})`);
   }
-  return { cloth, total };
+  return { data, skip, limit, total };
 };
 
-const getCloth = async (userId, id) => {
+const getCloth = async (id) => {
   assertObjectIdString(id, 'Cloth Id');
-  assertObjectIdString(userId, 'User Id');
-
-  const user = await usersData.getByObjectId(userId);
-  if (!user) {
-    throw new QueryError(`Could not get user for (${userId})`);
-  }
   let cloth = await getByObjectId(id);
   if (cloth == null) {
     throw new QueryError(`Could not get cloth for (${id})`);
