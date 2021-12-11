@@ -33,7 +33,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-//get clothes by userId
+//get clothes by groupId
 router.get('/', async (req, res) => {
   try {
     const { _id: userId, groupId } = req.session.user;
@@ -70,9 +70,6 @@ router.get('/:id', async (req, res) => {
     res.status(400).json({ error: e });
   }
 });
-
-//get clothes by groupId
-// router.get('group/:groupId', async (req, res) => {});
 
 //delete clothes
 router.delete('/:id', async (req, res) => {

@@ -141,7 +141,7 @@ const updateCloth = async (clothId, data) => {
   }
   const updatedCloth = await getCloth(clothId);
   data.clothId = clothId;
-  updatedCloth.payment = await updateClothPayment(updatedCloth.paymentId, data);
+  updatedCloth.payment = await updateCloth(updatedCloth.paymentId, data);
   return updatedCloth;
 };
 
