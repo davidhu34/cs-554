@@ -178,7 +178,7 @@ export default function DataList({
       </TableContainer>
 
       <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
+        rowsPerPageOptions={[1, 5, 10, 25]}
         component="div"
         count={total}
         rowsPerPage={limit}

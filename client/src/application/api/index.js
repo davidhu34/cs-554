@@ -61,19 +61,19 @@ export const putClothes = (id, data) => {
 };
 
 export const deleteClothes = (id) => {
-  let deletedClothes = null;
-  let i = 0;
-  while (i < tempClothes.length && tempClothes[i].id !== id) {
-    i++;
-  }
-  if (i < tempClothes.length) {
-    deletedClothes = tempClothes[i];
-    tempClothes.splice(i, 1);
-  }
-  return delay({
-    data: deletedClothes,
-  });
-  // return axiosDelete(getDeleteClothesPath(id));
+  // let deletedClothes = null;
+  // let i = 0;
+  // while (i < tempClothes.length && tempClothes[i].id !== id) {
+  //   i++;
+  // }
+  // if (i < tempClothes.length) {
+  //   deletedClothes = tempClothes[i];
+  //   tempClothes.splice(i, 1);
+  // }
+  // return delay({
+  //   data: deletedClothes,
+  // });
+  return axiosDelete(getDeleteClothesPath(id));
 };
 
 export const getClothes = (id) => {
