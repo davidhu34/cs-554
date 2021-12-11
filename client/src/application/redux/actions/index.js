@@ -56,7 +56,7 @@ export const createClothes = (clothesData) => async (dispatch, getState) => {
     const { data } = await postClothes(clothesData);
     dispatch({
       type: clothesActionTypes.createSuccess,
-      id: data.id,
+      id: data._id,
       data,
     });
   } catch (error) {
@@ -94,7 +94,7 @@ export const updateClothes = (id, clothesData) => async (dispatch, getState) => 
       id,
       data: clothesData,
     });
-    const { data } = await putClothes(id, clothesData);
+    const data = await putClothes(id, clothesData);
     dispatch({
       type: clothesActionTypes.updateSuccess,
       id,

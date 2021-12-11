@@ -57,7 +57,9 @@ export default function DataForm({
               case 'select':
                 return (
                   <div>
-                    <select name={name} defaultValue={defaultValue}>
+                    <label>{label}</label>
+                    <select name={name} defaultValue={defaultValue} 
+                      {...register(name, validation)}>
                       {options.map((option) => {
                         if (typeof option === 'string') {
                           return <option value={option}>{option}</option>;

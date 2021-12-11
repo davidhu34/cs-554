@@ -19,7 +19,7 @@ const getByObjectId = async (objectId) => {
   return parseMongoData(cloth);
 };
 
-const getClothByGroupId = async ({userId, groupId, skip, limit}) => {
+const getClothByGroupId = async ({ userId, groupId, skip, limit }) => {
   assertObjectIdString(userId, 'User Id');
   assertObjectIdString(groupId, 'Group Id');
   assertRequiredNumber(skip, 'Pagination Skip');
@@ -120,7 +120,7 @@ const updateCloth = async (clothId, data) => {
   assertIsValuedString(name, 'Cloth name');
   assertIsValuedString(type, 'Cloth type');
 
-  const lastCloth = await getCloth(clothId);
+  const lastCloth = await getCloth(userId, clothId);
 
   if (lastCloth == null) {
     throw `Cloth not found for cloth ID(${clothId})`;

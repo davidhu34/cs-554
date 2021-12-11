@@ -29,34 +29,35 @@ export const getPaginatedClothes = (options) => {
 export const postClothes = (data) => {
   const newClothes = {
     id: `clothes${tempClothes.length + 1}`,
-    ownerId: 'me',
+    // ownerId: 'me',
     name: data.name,
     description: data.description,
+    type: data.type,
   };
-  tempClothes.unshift(newClothes);
-  return delay({
-    data: newClothes,
-  });
-  // return axiosPost(POST_CLOTHES, data);
+  // tempClothes.unshift(newClothes);
+  // return delay({
+  //   data: newClothes,
+  // });
+  return axiosPost(POST_CLOTHES,  newClothes);
 };
 
 export const putClothes = (id, data) => {
-  let updatingClothes = null;
-  let i = 0;
-  while (i < tempClothes.length && tempClothes[i].id !== id) {
-    i++;
-  }
-  if (i < tempClothes.length) {
-    updatingClothes = {
-      ...tempClothes[i],
-      ...data,
-    };
-    tempClothes[i] = updatingClothes;
-  }
-  return delay({
-    data: updatingClothes,
-  });
-  // return axiosPut(getPutClothesPath(id), data);
+  // let updatingClothes = null;
+  // let i = 0;
+  // while (i < tempClothes.length && tempClothes[i].id !== id) {
+  //   i++;
+  // }
+  // if (i < tempClothes.length) {
+  //   updatingClothes = {
+  //     ...tempClothes[i],
+  //     ...data,
+  //   };
+  //   tempClothes[i] = updatingClothes;
+  // }
+  // return delay({
+  //   data: updatingClothes,
+  // });
+  return axiosPut(getPutClothesPath(id), data);
 };
 
 export const deleteClothes = (id) => {

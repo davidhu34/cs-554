@@ -24,12 +24,12 @@ const clothesFormConfigs = [
     },
   },
   {
-    label: 'Description',
     name: 'description',
+    label: 'Description',
   },
   {
-    label: 'Type of Clothes',
     name: 'type',
+    label: 'Type of Clothes',
     type: 'select',
     options: [
       {
