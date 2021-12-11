@@ -51,8 +51,14 @@ const getClothByGroupId = async ({ userId, groupId, skip, limit }) => {
   return { data, skip, limit, total };
 };
 
-const getCloth = async (id) => {
+const getCloth = async (userId, id) => {
   assertObjectIdString(id, 'Cloth Id');
+  assertObjectIdString(userId, 'User Id');
+
+  const user = await usersData.getByObjectId(userId);
+  if (!user) {
+    throw new QueryError(`Could not get user for (${userId})`);
+  }
   let cloth = await getByObjectId(id);
   if (cloth == null) {
     throw new QueryError(`Could not get cloth for (${id})`);
@@ -114,7 +120,17 @@ const updateCloth = async (clothId, data) => {
   assertIsValuedString(name, 'Cloth name');
   assertIsValuedString(type, 'Cloth type');
 
-  const lastCloth = await getCloth(clothId);
+  const user = await usersData.getByObjectId(userId);
+  if (!user) {
+    throw new QueryError(`Could not get user for (${userId})`);
+  }
+
+  const group = await getGroup(groupId);
+  if (!group) {
+    throw new QueryError(`Could not get group for (${groupId})`);
+  }
+
+  const lastCloth = await getCloth(userId, clothId);
 
   if (lastCloth == null) {
     throw `Cloth not found for cloth ID(${clothId})`;
@@ -138,23 +154,29 @@ const updateCloth = async (clothId, data) => {
   if (!modifiedCount && !matchedCount) {
     throw new QueryError(`Could not update cloth ID(${clothId})`);
   }
-  const updatedCloth = await getCloth(clothId);
-  data.clothId = clothId;
-  updatedCloth.payment = await updateCloth(updatedCloth.paymentId, data);
+  const updatedCloth = await getCloth(userId, clothId);
   return updatedCloth;
 };
 
-const deleteCloth = async (id) => {
+const deleteCloth = async (userId, id) => {
   assertObjectIdString(id, 'Cloth id');
+  assertObjectIdString(userId, 'User Id');
 
-  let deleteCloth = await getCloth(id);
+  const user = await usersData.getByObjectId(userId);
+  if (!user) {
+    throw new QueryError(`Could not get user for (${userId})`);
+  }
+  let deleteCloth = await getCloth(userId, id);
 
   if (deleteCloth == null) {
     throw `Cloth not found for cloth ID(${id})`;
   }
 
   const collection = await getClothesCollection();
-  let { deletedCount } = await collection.deleteOne({ _id: new ObjectId(id) });
+  let { deletedCount } = await collection.deleteOne({
+    _id: new ObjectId(id),
+    userId: new ObjectId(userId),
+  });
 
   if (deletedCount === 0) {
     throw new QueryError(`Could not delete cloth for (${id})`);
@@ -164,8 +186,18 @@ const deleteCloth = async (id) => {
 };
 
 const deleteClothByGroupId = async (userId, groupId) => {
-  const allClothes = await getClothByGroupId(groupId);
+  assertObjectIdString(userId, 'User Id');
+  assertObjectIdString(groupId, 'Group Id');
 
+  const user = await usersData.getByObjectId(userId);
+  if (!user) {
+    throw new QueryError(`Could not get user for (${userId})`);
+  }
+
+  const group = await getGroup(groupId);
+  if (!group) {
+    throw new QueryError(`Could not get group for (${groupId})`);
+  }
   const collection = await getClothesCollection();
   const { deletedCount } = await collection.deleteMany({
     userId: new ObjectId(userId),
@@ -174,8 +206,8 @@ const deleteClothByGroupId = async (userId, groupId) => {
   if (deletedCount === 0) {
     throw new QueryError(`Could not delete all clothes for (${userId})`);
   }
-  allClothes.message = 'Successfully deleted all clothes.';
-  return parseMongoData(allClothes);
+  const message = 'Successfully deleted all clothes.';
+  return parseMongoData({ message });
 };
 
 module.exports = {

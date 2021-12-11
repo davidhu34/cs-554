@@ -55,9 +55,10 @@ router.get('/', async (req, res) => {
 //get basket by basketId
 router.get('/:id', async (req, res) => {
   try {
+    const { _id: userId } = req.session.user;
     const { id } = req.params;
     assertIsValuedString(id, 'basket Id');
-    const result = await basketsData.getBasket(id);
+    const result = await basketsData.getBasket(userId, id);
     if (!result) {
       throw new HttpError(`Could not get basket for basket id:${id}`, 404);
     }
@@ -81,21 +82,6 @@ router.delete('/:id', async (req, res) => {
     res.status(400).json({ error: e });
   }
 });
-
-//delete basket by userId
-// router.delete('/', async (req, res) => {
-//   try {
-//     const { _id: userId } = req.session.user;
-//     const result = await basketsData.deleteClothByUserId(userId);
-//     if (!result) {
-//       throw new HttpError(`Could not delete cloth for cloth id:${id}`, 404);
-//     }
-//     res.status(200).json(result);
-//   } catch (e) {
-//     console.log(e);
-//     res.status(400).json({ error: e });
-//   }
-// });
 
 //update basket
 router.put('/:id', async (req, res) => {
