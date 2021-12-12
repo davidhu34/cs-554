@@ -37,6 +37,17 @@ router.post("/", async (req, res) => {
   }
 });
 
+//Get all users
+router.get("/all", async (req, res) => {
+  try {
+    const allUsers = await usersData.getAllUsers();
+    console.log("ALl Users: \n", allUsers);
+    return res.status(200).json(allUsers);
+  } catch (e) {
+    res.status(400).json({ error: e });
+  }
+});
+//end get all users
 router.put("/:id", async (req, res) => {
   console.log(req.body);
 });
@@ -55,17 +66,6 @@ router.get("/:id", async (req, res) => {
     res.status(200).json(result);
   } catch (e) {
     console.log(e);
-    res.status(400).json({ error: e });
-  }
-});
-
-//Get all users
-router.get("/all", async (req, res) => {
-  try {
-    const allUsers = await usersData.getAllUsers();
-    console.log(allUsers);
-    return res.status(200).json(allUsers);
-  } catch (e) {
     res.status(400).json({ error: e });
   }
 });

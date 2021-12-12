@@ -8,15 +8,28 @@ const { HttpError } = require('../utils/errors');
 //add basket
 router.post('/', async (req, res) => {
   try {
-    const { name, size, users, clothes } = req.body;
+    const { name, size, users, clothes, status, time } = req.body;
     const { _id: userId, groupId } = req.session.user;
 
     assertIsValuedString(userId, 'User Id');
     assertIsValuedString(name, 'Basket name');
     assertRequiredNumber(size, 'Basket size');
     assertIsValuedString(groupId, 'Group Id');
+    if (typeof status != 'boolean') {
+      throw new HttpError(`Status must be boolean`, 404);
+    }
+    assertRequiredNumber(time, 'Time');
 
-    const result = await basketsData.addBasket({ name, size, userId, groupId, users, clothes });
+    const result = await basketsData.addBasket({
+      name,
+      size,
+      userId,
+      groupId,
+      users,
+      clothes,
+      status,
+      time,
+    });
     if (!result) {
       throw new HttpError(`Could not add basket for id`, 404);
     }
@@ -27,22 +40,13 @@ router.post('/', async (req, res) => {
   }
 });
 
-//get basket by userId or groupId
+//get basket by groupId
 router.get('/', async (req, res) => {
   try {
     const { _id: userId, groupId } = req.session.user;
-    const { created, group } = req.params;
     assertIsValuedString(userId, 'User Id');
     assertIsValuedString(groupId, 'Group Id');
-    let result;
-    if (group) {
-      result = await basketsData.getBasketByGroupId(groupId);
-    } else {
-      result = await basketsData.getBasketByUserId(userId, created);
-    }
-    if (!result) {
-      throw new HttpError(`Could not get basket for user id:${userId}`, 404);
-    }
+    let result = await basketsData.getBasketByGroupId(userId, groupId);
     res.status(200).json(result);
   } catch (e) {
     console.log(e);
@@ -81,19 +85,19 @@ router.delete('/:id', async (req, res) => {
 });
 
 //delete basket by userId
-router.delete('/', async (req, res) => {
-  try {
-    const { _id: userId } = req.session.user;
-    const result = await basketsData.deleteClothByUserId(userId);
-    if (!result) {
-      throw new HttpError(`Could not delete cloth for cloth id:${id}`, 404);
-    }
-    res.status(200).json(result);
-  } catch (e) {
-    console.log(e);
-    res.status(400).json({ error: e });
-  }
-});
+// router.delete('/', async (req, res) => {
+//   try {
+//     const { _id: userId } = req.session.user;
+//     const result = await basketsData.deleteClothByUserId(userId);
+//     if (!result) {
+//       throw new HttpError(`Could not delete cloth for cloth id:${id}`, 404);
+//     }
+//     res.status(200).json(result);
+//   } catch (e) {
+//     console.log(e);
+//     res.status(400).json({ error: e });
+//   }
+// });
 
 //update basket
 router.put('/:id', async (req, res) => {

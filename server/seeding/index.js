@@ -1,13 +1,13 @@
-const { ObjectId } = require("mongodb");
-const { connect, disconnect } = require("../config/mongoConnection");
-
-const {
-  seedUsers,
-} = require("./users");
+const { ObjectId } = require('mongodb');
+const { connect, disconnect } = require('../config/mongoConnection');
+const { seedGroups } = require('./groups');
+const { seedUsers } = require('./users');
+const { seedClothes } = require('./clothes');
+const { seedBaskets } = require('./baskets');
 
 const unseed = async (db) => {
   if (!!db) {
-    console.log("cleaning up database..");
+    console.log('cleaning up database..');
     await db.dropDatabase();
   }
 };
@@ -18,14 +18,17 @@ const seed = async () => {
   try {
     await unseed(db);
 
-    await seedUsers();
+    const { u1, u2, u3, u4 } = await seedUsers();
+    const { g1, g2 } = await seedGroups(u1, u2, u3, u4);
+    const { c1, c2, c3, c4 } = await seedClothes(u1, u2, u3, u4, g1, g2);
+    const { b1, b2 } = await seedBaskets(u1, u2, u3, u4, c1, c2, c3, c4);
 
     console.log('Seeding Completed.');
     return {
       // ...seedData,
     };
   } catch (error) {
-    console.log("Seeding error:", error);
+    console.log('Seeding error:', error);
     await unseed(db);
     await disconnect();
   }

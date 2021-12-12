@@ -21,13 +21,14 @@ const getAllUsers = async () => {
 
   let userList = {};
   userList = await collection.find({}).toArray();
-
+  console.log("userList: \n", userList);
   return parseMongoData(userList);
 };
 
-const getUser = async (id) => {
-  assertObjectIdString(id);
-  return await getByObjectId(id);
+const getUser = async (uid) => {
+  const collection = await getUserCollection();
+  const user = await collection.findOne({ uid });
+  return parseMongoData(user);
 };
 
 const getUsersByGroup = async (groupId) => {
@@ -43,7 +44,7 @@ const createUser = async (data) => {
 
   let { uid, displayName, email, createdAt = new Date().getTime() } = data;
 
-  assertIsValuedString(uid, "User ID");
+  assertIsValuedString(uid, "Firebase user ID");
   assertIsValuedString(displayName, "Display name");
   assertEmailString(email, "Email Address");
 
@@ -52,7 +53,6 @@ const createUser = async (data) => {
     name: displayName,
     email: email,
     createdAt: createdAt,
-    groupId: null,
   };
 
   const collection = await getUserCollection();
@@ -79,7 +79,7 @@ const updateUser = async (id, updates) => {
   email = email.toLowerCase();
   assertObjectIdString(groupId);
 
-  const user = await getUser(id);
+  const user = await getByObjectId(id);
 
   if (!user) {
     throw new QueryError(`User with ID\`${id}\` not found.`);
@@ -118,4 +118,5 @@ module.exports = {
   getAllUsers,
   getUsersByGroup,
   updateUser,
+  getByObjectId,
 };

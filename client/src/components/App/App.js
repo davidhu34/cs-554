@@ -5,6 +5,7 @@ import Box from '@mui/system/Box';
 
 import ClothesPage from '../Clothes';
 import { SignUp, SignOut } from '../Users';
+import { Group } from '../Group';
 import NavBar from './NavBar';
 import SideBar from './SideBar';
 import { useGroupTopic } from '../../application/hooks/messaging';
@@ -15,7 +16,7 @@ function onMessage(payload) {
 export default function App() {
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up('sm'));
-  
+
   // TODO: get group ID as message topic
   useGroupTopic({ groupId: 'abc', onMessage });
 
@@ -32,7 +33,7 @@ export default function App() {
       <Box sx={{ flexGrow: 1 }}>
         <NavBar />
         <Routes>
-          <Route path="/" element={'asdasd'} />
+          <Route path="/" element={<Group />} />
           <Route path="/login" element={<SignUp />} />
           <Route path="/logout" element={<SignOut />} />
           <Route path="/clothes/*" element={<ClothesPage />} />
