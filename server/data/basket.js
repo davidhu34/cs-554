@@ -94,7 +94,7 @@ const getBasket = async (userId, id) => {
   return basket;
 };
 
-const getBasketByGroupId = async (userId, groupId) => {
+const getBasketByGroupId = async ({ userId, groupId, skip, limit }) => {
   assertObjectIdString(groupId, 'Group Id');
   const user = await usersData.getByObjectId(userId);
   if (!user) {
@@ -108,13 +108,13 @@ const getBasketByGroupId = async (userId, groupId) => {
 
   const collection = await getBasketsCollection();
 
-  let basket = await collection.find({ groupId: new ObjectId(groupId) }).toArray();
+  const data = await collection.find({ groupId: new ObjectId(groupId) }).toArray();
 
-  if (basket == null) {
+  if (data == null) {
     throw new QueryError(`Could not get basket for (${groupId})`);
   }
   let total = await collection.find({ groupId: new ObjectId(groupId) }).count();
-  return { basket, total };
+  return { data, skip, limit, total };
 };
 
 const deleteBasket = async (userId, id) => {

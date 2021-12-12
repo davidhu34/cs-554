@@ -1,10 +1,16 @@
 import {
   getDeleteClothesPath,
+  getDeleteBasketPath,
   GET_PAGINATED_CLOTHES,
+  GET_PAGINATED_BASKETS,
   POST_CLOTHES,
+  POST_BASKET,
   getPutClothesPath,
+  getPutBasketPath,
   SUBSCRIBE_GROUP_TOPIC,
   UNSUBSCRIBE_GROUP_TOPIC,
+  getClothesPath,
+  getBasketPath,
 } from './endpoints';
 import { axiosDelete, axiosGet, axiosPost, axiosPut } from './utils';
 import { DEFAULT_PAGINATION_LIMIT } from '../constants';
@@ -12,7 +18,8 @@ import testClothes from './test-data/clothes.json';
 
 let tempClothes = [...testClothes];
 
-const delay = (data, time = 500) => new Promise((resolve) => setTimeout(() => resolve(data), time));
+const delay = (data, time = 500) =>
+  new Promise((resolve) => setTimeout(() => resolve(data), time));
 export const getPaginatedClothes = (options) => {
   const { page = 0, limit = DEFAULT_PAGINATION_LIMIT } = options;
   const skip = page * limit;
@@ -23,7 +30,7 @@ export const getPaginatedClothes = (options) => {
   //   total: tempClothes.length,
   // };
   // return delay(testResult);
-  return axiosGet(GET_PAGINATED_CLOTHES, { params: {skip, limit} });
+  return axiosGet(GET_PAGINATED_CLOTHES, { params: { skip, limit } });
 };
 
 export const postClothes = (data) => {
@@ -38,7 +45,7 @@ export const postClothes = (data) => {
   // return delay({
   //   data: newClothes,
   // });
-  return axiosPost(POST_CLOTHES,  newClothes);
+  return axiosPost(POST_CLOTHES, newClothes);
 };
 
 export const putClothes = (id, data) => {
@@ -86,7 +93,33 @@ export const getClothes = (id) => {
     data = tempClothes[i];
   }
   return delay({ data });
-  // return axiosGet(getClothesPath(id), data);
+  // return axiosGet(getClothesPath(id));
+};
+
+export const getPaginatedBasket = (options) => {
+  const { page = 0, limit = DEFAULT_PAGINATION_LIMIT } = options;
+  const skip = page * limit;
+  return axiosGet(GET_PAGINATED_BASKETS, { params: { skip, limit } });
+};
+
+export const postBasket = (data) => {
+  const newBasket = {
+    name: data.name,
+    size: data.size,
+  };
+  return axiosPost(POST_BASKET, newBasket);
+};
+
+export const putBasket = (id, data) => {
+  return axiosPut(getPutBasketPath(id), data);
+};
+
+export const deleteBasket = (id) => {
+  return axiosDelete(getDeleteBasketPath(id));
+};
+
+export const getBasket = (id) => {
+  return axiosGet(getBasketPath(id));
 };
 
 export const subscribeGroupTopic = ({ groupId, token }) => {

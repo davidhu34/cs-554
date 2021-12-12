@@ -4,6 +4,7 @@ import { useMediaQuery, useTheme } from '@mui/material';
 import Box from '@mui/system/Box';
 
 import ClothesPage from '../Clothes';
+import BasketPage from '../Basket';
 import { SignUp, SignOut } from '../Users';
 import NavBar from './NavBar';
 import SideBar from './SideBar';
@@ -36,6 +37,7 @@ export default function App() {
           <Route path="/login" element={<SignUp />} />
           <Route path="/logout" element={<SignOut />} />
           <Route path="/clothes/*" element={<ClothesPage />} />
+          <Route path="/baskets/*" element={<BasketPage />} />
 
           <Route>Unknown</Route>
         </Routes>

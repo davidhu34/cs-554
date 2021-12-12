@@ -1,17 +1,28 @@
 import { createSelector } from 'reselect';
 
-export const clothesStateSelector = (state) => state.clothes;
-
-export const clothesPaginationSelector = createSelector(
-  clothesStateSelector,
-  ({ pagination, idListByPage }) => {
+const genPagingationSelector = (dataStateSelector) =>
+  createSelector(dataStateSelector, ({ pagination, idListByPage }) => {
     return {
       idList: idListByPage[pagination.page] || [],
       ...pagination,
     };
-  }
-);
-export const getClothesDetailSelector = (id) => createSelector(
-  clothesStateSelector,
-  ({ stateById }) => stateById[id] || {},
-);
+  });
+
+const genGetDetailSelector = (dataStateSelector) => (id) =>
+  createSelector(dataStateSelector, ({ stateById }) => stateById[id] || {});
+
+export const clothesStateSelector = (state) => state.clothes;
+
+export const basketStateSelector = (state) => state.basket;
+
+export const clothesPaginationSelector =
+  genPagingationSelector(clothesStateSelector);
+
+export const basketPaginationSelector =
+  genPagingationSelector(basketStateSelector);
+
+export const getClothesDetailSelector =
+  genGetDetailSelector(clothesStateSelector);
+
+export const getBasketDetailSelector =
+  genGetDetailSelector(basketStateSelector);

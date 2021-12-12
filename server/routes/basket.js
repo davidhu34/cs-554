@@ -38,13 +38,13 @@ router.post('/', async (req, res) => {
   }
 });
 
-//get basket by groupId
 router.get('/', async (req, res) => {
   try {
-    const { _id: userId, groupId } = req.session.user;
+    const { _id: userId = '61b12f933d2a722d43af730b', groupId = '61b12f933d2a722d43af730f' } = req.session.user || {};
     assertIsValuedString(userId, 'User Id');
     assertIsValuedString(groupId, 'Group Id');
-    let result = await basketsData.getBasketByGroupId(userId, groupId);
+    const { skip, limit } = req.query;
+    let result = await basketsData.getBasketByGroupId({ userId, groupId, skip, limit });
     res.status(200).json(result);
   } catch (e) {
     console.log(e);
