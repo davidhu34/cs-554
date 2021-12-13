@@ -8,8 +8,9 @@ const { HttpError } = require('../utils/errors');
 //add basket
 router.post('/', async (req, res) => {
   try {
-    const { name, size, users, clothes, status, time } = req.body;
-    const { _id: userId, groupId } = req.session.user;
+    const { name, users, clothes = [], status = 'PENDING', time = 0 } = req.body;
+    const size = parseInt(req.body.size);
+    const { _id: userId = '61b6e36f985cc7b6a36cd3e0', groupId = '61b6e370985cc7b6a36cd3e4' } = req.session.user || {};
 
     assertIsValuedString(userId, 'User Id');
     assertIsValuedString(name, 'Basket name');
@@ -78,7 +79,8 @@ router.get('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const result = await basketsData.deleteBasket(id);
+    const { _id: userId = '61b6e36f985cc7b6a36cd3e0', groupId = '61b6e370985cc7b6a36cd3e4' } = req.session.user || {};
+    const result = await basketsData.deleteBasket(userId, id);
     if (!result) {
       throw new HttpError(`Could not delete basket for basket id:${id}`, 404);
     }
@@ -92,7 +94,7 @@ router.delete('/:id', async (req, res) => {
 router.put('/:id', async (req, res) => {
   try {
     const { id: basketId } = req.params;
-    const { _id: userId, groupId } = req.session.user;
+    const { _id: userId = '61b6e36f985cc7b6a36cd3e0', groupId = '61b6e370985cc7b6a36cd3e4' } = req.session.user || {};
     const { name, size, users, clothes, status, time } = req.body;
     assertIsValuedString(userId, 'User Id');
     const result = await basketsData.updateBasket(basketId, {

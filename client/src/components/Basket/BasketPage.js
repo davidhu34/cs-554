@@ -32,7 +32,7 @@ const basketFormConfigs = [
 export default function BasketPage() {
   return (
     <DataPage
-      path="/clothes"
+      path="/baskets"
       paginationSelector={basketPaginationSelector}
       getDataSelector={getBasketDetailSelector}
       fetchPaginationAction={getBasketList}

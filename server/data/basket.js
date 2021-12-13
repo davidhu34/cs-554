@@ -111,7 +111,11 @@ const getBasketByGroupId = async ({ userId, groupId, skip, limit }) => {
 
   const collection = await getBasketsCollection();
 
-  const data = await collection.find({ groupId: new ObjectId(groupId) }).toArray();
+  const data = await collection
+    .find({ groupId: new ObjectId(groupId) })
+    .limit(limit)
+    .skip(skip)
+    .toArray();
 
   if (data == null) {
     throw new QueryError(`Could not get basket for (${groupId})`);
