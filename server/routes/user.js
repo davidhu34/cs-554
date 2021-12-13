@@ -21,10 +21,10 @@ router.post('/', async (req, res) => {
     assertIsValuedString(uid, 'User ID');
     assertIsValuedString(displayName, 'User name');
     assertEmailString(email, 'Email');
-    const userPresent = await usersData.getUser(uid);
+    const userPresent = await usersData.getUserByEmail(email);
 
     if (userPresent) {
-      throw new ValidationError(`User already exists.`);
+      return res.status(200).json(userPresent);
     }
 
     const newUser = await usersData.createUser(reqBody);

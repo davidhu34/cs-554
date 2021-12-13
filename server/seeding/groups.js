@@ -15,7 +15,7 @@ const seedGroups = async (
   };
 
   const group2 = {
-    name: 'Group 1',
+    name: 'Group 2',
     users: [user3, user4],
     createdAt: timestamp1,
   };
