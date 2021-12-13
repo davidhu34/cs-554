@@ -66,7 +66,7 @@ export default function DataList({
   const {
     idList,
     page,
-    count,
+    limit,
     total = 0,
     error,
     loading,
@@ -84,9 +84,9 @@ export default function DataList({
     setSelectedState({});
   }
 
-  function handleChangeCount(e) {
-    const newCount = parseInt(e.target.value, 10);
-    dispatch(fetchPaginationAction({ count: newCount }));
+  function handleChangeLimit(e) {
+    const newLimit = parseInt(e.target.value, 10);
+    dispatch(fetchPaginationAction({ limit: newLimit }));
   }
 
   function handleSelectItem(id) {
@@ -97,7 +97,7 @@ export default function DataList({
   }
 
   function handleSelectAll(e) {
-    if (numSelected === count) {
+    if (numSelected === limit) {
       setSelectedState({});
       // setNumSelected(0);
     } else {
@@ -151,8 +151,8 @@ export default function DataList({
               <TableCell padding="checkbox">
                 <Checkbox
                   color="primary"
-                  indeterminate={numSelected > 0 && numSelected < count}
-                  checked={total > 0 && numSelected === count}
+                  indeterminate={numSelected > 0 && numSelected < limit}
+                  checked={total > 0 && numSelected === limit}
                   onChange={handleSelectAll}
                   inputProps={{
                     'aria-label': 'select all desserts',
@@ -178,13 +178,13 @@ export default function DataList({
       </TableContainer>
 
       <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
+        rowsPerPageOptions={[1, 5, 10, 25]}
         component="div"
         count={total}
-        rowsPerPage={count}
+        rowsPerPage={limit}
         page={page}
         onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeCount}
+        onRowsPerPageChange={handleChangeLimit}
       />
 
       <Routes>

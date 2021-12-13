@@ -1,5 +1,5 @@
 import { getPaginatedClothes, postClothes, putClothes, deleteClothes as deleteClothesRequest } from '../../api';
-import { DEFAULT_PAGINATION_COUNT } from '../../constants';
+import { DEFAULT_PAGINATION_LIMIT } from '../../constants';
 import { clothesPaginationSelector } from '../selectors';
 import { clothesActionTypes } from './actionTypes';
 
@@ -13,25 +13,31 @@ export const getClothesList = (options) => async (dispatch, getState) => {
     if (options.page !== undefined) {
       newPagination.page = options.page;
     }
-    if (options.count !== undefined) {
-      newPagination.count = options.count;
+    if (options.limit !== undefined) {
+      newPagination.limit = options.limit;
     }
     dispatch({
       type: clothesActionTypes.fetchListStart,
       page: newPagination.page,
-      count: newPagination.count || DEFAULT_PAGINATION_COUNT,
+      limit: newPagination.limit || DEFAULT_PAGINATION_LIMIT,
     });
+    // const {
+    //   data,
+    //   page = newPagination.page,
+    //   limit = newPagination.limit,
+    //   total,
+    // } = await getPaginatedClothes(options);
     const {
       data,
-      page = newPagination.page,
-      count = newPagination.count,
+      limit = newPagination.limit,
+      skip = newPagination.page * limit,
       total,
     } = await getPaginatedClothes(options);
     dispatch({
       type: clothesActionTypes.fetchListSuccess,
       data,
-      page,
-      count,
+      limit,
+      page: skip * limit,
       total,
     });
   } catch (error) {
@@ -50,7 +56,7 @@ export const createClothes = (clothesData) => async (dispatch, getState) => {
     const { data } = await postClothes(clothesData);
     dispatch({
       type: clothesActionTypes.createSuccess,
-      id: data.id,
+      id: data._id,
       data,
     });
   } catch (error) {
@@ -88,7 +94,7 @@ export const updateClothes = (id, clothesData) => async (dispatch, getState) => 
       id,
       data: clothesData,
     });
-    const { data } = await putClothes(id, clothesData);
+    const data = await putClothes(id, clothesData);
     dispatch({
       type: clothesActionTypes.updateSuccess,
       id,

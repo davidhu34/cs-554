@@ -118,7 +118,7 @@ const getBasketByGroupId = async (userId, groupId) => {
 };
 
 const deleteBasket = async (userId, id) => {
-  assertObjectIdString(id, 'Cloth id');
+  assertObjectIdString(id, 'Basket id');
   assertObjectIdString(userId, 'User Id');
   const user = await usersData.getByObjectId(userId);
   if (!user) {
@@ -129,7 +129,7 @@ const deleteBasket = async (userId, id) => {
     throw new QueryError(`Could not get basket for (${id})`);
   }
 
-  let deleteBasket = await getBasket(id);
+  let deleteBasket = await getBasket(userId, id);
 
   if (deleteBasket == null) {
     throw `Basket not found for basket ID(${id})`;
