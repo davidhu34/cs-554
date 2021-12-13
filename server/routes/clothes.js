@@ -1,27 +1,27 @@
-const { Router, json } = require('express');
+const { Router, json } = require("express");
 const router = Router();
-const clothesData = require('../data/clothes');
-const userData = require('../data/user');
+const clothesData = require("../data/clothes");
+const userData = require("../data/user");
 
 const {
   assertIsValuedString,
   assertRequiredObject,
   assertEmailString,
   assertNonEmptyArray,
-} = require('../utils/assertion');
-const { QueryError, ValidationError, HttpError } = require('../utils/errors');
+} = require("../utils/assertion");
+const { QueryError, ValidationError, HttpError } = require("../utils/errors");
 
 //add clothes
-router.post('/', async (req, res) => {
+router.post("/", async (req, res) => {
   try {
     const { name, type } = req.body;
     console.log(req.session.user);
     const { _id: userId, groupId } = req.session.user || {};
 
-    assertIsValuedString(userId, 'User Id');
-    assertIsValuedString(groupId, 'Group Id');
-    assertIsValuedString(name, 'Cloth name');
-    assertIsValuedString(type, 'Type');
+    assertIsValuedString(userId, "User Id");
+    assertIsValuedString(groupId, "Group Id");
+    assertIsValuedString(name, "Cloth name");
+    assertIsValuedString(type, "Type");
 
     const result = await clothesData.addCloth({ name, type, userId, groupId });
     if (!result) {
@@ -34,12 +34,14 @@ router.post('/', async (req, res) => {
   }
 });
 
-router.get('/', async (req, res) => {
+router.get("/", async (req, res) => {
   try {
-    const { _id: userId = '61b12f933d2a722d43af730b', groupId = '61b12f933d2a722d43af730f' } =
-      req.session.user || {};
+    const {
+      _id: userId = "61b12f933d2a722d43af730b",
+      groupId = "61b12f933d2a722d43af730f",
+    } = req.session.user || {};
     const { skip, limit } = req.query;
-    assertIsValuedString(groupId, 'Group Id');
+    assertIsValuedString(groupId, "Group Id");
     const result = await clothesData.getClothByGroupId({
       userId,
       groupId,
@@ -57,11 +59,11 @@ router.get('/', async (req, res) => {
 });
 
 //get clothes by clothId
-router.get('/:id', async (req, res) => {
+router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const { _id: userId } = req.session.user;
-    assertIsValuedString(id, 'Cloth Id');
+    assertIsValuedString(id, "Cloth Id");
     const user = await userData.getByObjectId(userId);
     if (!user) {
       throw new HttpError(`User not exist.`, 404);
@@ -78,11 +80,13 @@ router.get('/:id', async (req, res) => {
 });
 
 //delete clothes
-router.delete('/:id', async (req, res) => {
+router.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const { _id: userId = '61b12f933d2a722d43af730b', groupId = '61b12f933d2a722d43af730f' } =
-      req.session.user || {};
+    const {
+      _id: userId = "61b12f933d2a722d43af730b",
+      groupId = "61b12f933d2a722d43af730f",
+    } = req.session.user || {};
     const result = await clothesData.deleteCloth(userId, id);
     if (!result) {
       throw new HttpError(`Could not delete cloth for cloth id:${id}`, 404);
@@ -94,7 +98,7 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-router.delete('/', async (req, res) => {
+router.delete("/", async (req, res) => {
   try {
     const { _id: userId, groupId } = req.session.user;
     const result = await clothesData.deleteClothByGroupId(userId, groupId);
@@ -110,17 +114,27 @@ router.delete('/', async (req, res) => {
 });
 
 //update clothes
-router.put('/:id', async (req, res) => {
+router.put("/:id", async (req, res) => {
   try {
     const { id: clothId } = req.params;
-    const { _id: userId = '61b12f933d2a722d43af730b', groupId = '61b12f933d2a722d43af730f' } =
-      req.session.user || {};
+    const {
+      _id: userId = "61b12f933d2a722d43af730b",
+      groupId = "61b12f933d2a722d43af730f",
+    } = req.session.user || {};
     const { name, type } = req.body;
-    assertIsValuedString(userId, 'User Id');
-    assertIsValuedString(groupId, 'Group Id');
-    const result = await clothesData.updateCloth(clothId, { userId, groupId, name, type });
+    assertIsValuedString(userId, "User Id");
+    assertIsValuedString(groupId, "Group Id");
+    const result = await clothesData.updateCloth(clothId, {
+      userId,
+      groupId,
+      name,
+      type,
+    });
     if (!result) {
-      throw new HttpError(`Could not update cloth for cloth id:${clothId}`, 404);
+      throw new HttpError(
+        `Could not update cloth for cloth id:${clothId}`,
+        404
+      );
     }
     res.status(200).json(result);
   } catch (e) {

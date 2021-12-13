@@ -4,11 +4,11 @@ import { Navigate } from 'react-router-dom';
 import { AuthContext } from '../../application/firebase/auth';
 import Axios from 'axios';
 import GoogleButton from 'react-google-button';
-let userExist = false;
+
 const SignUp = () => {
   const [dummy, setDummy] = useState();
   const { currentUser } = useContext(AuthContext);
-  console.log('Current User Data:\n', currentUser?.providerData[0]);
+  // console.log('Current User Data:\n', currentUser?.providerData[0]);
   // const findUser = async () => {
   //   try {
   //     const { data } = await Axios.get('http://localhost:3001/user/all');

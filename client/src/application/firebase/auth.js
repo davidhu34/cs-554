@@ -7,87 +7,39 @@ export const AuthProvider = ({ children }) => {
   let response;
 
   const [currentUser, setCurrentUser] = useState(null);
+  const [user, setUser] = useState(null);
+
   const [loadingUser, setLoadingUser] = useState(false);
   // const [userExist, setUserExist] = useState(false);
-  const [usersData, setUsersData] = useState();
 
+  const obj = {
+    _id: '61b6b124fd135f4eb08dfefd',
+    uid: '104811364644330735224',
+    name: 'Dhruveel Doshi',
+    email: 'ddoshi4@stevens.edu',
+    createdAt: 1639362852591,
+  };
   useEffect(() => {
-    firebaseApp.auth().onAuthStateChanged(async (user) => {
-      console.log('Current User{Firebase}:\n', user);
-      // Making post request to mongodb
-      try {
-        if (user?.providerData[0]) {
-          response = await Axios.post(
-            'http://localhost:3001/user',
-            user.providerData[0]
-          );
-          console.log(response);
-        } else {
-        }
-      } catch (error) {
-        console.log(error);
-      }
-
-      // const { data } = await Axios.get('http://localhost:3001/user/all');
-      // console.log(user && user?.providerData[0]);
-      // user?.providerData[0] &&
-      //   data.map((user1) => {
-      //     if (
-      //       user?.providerData[0] &&
-      //       user1.email === user?.providerData[0].email
-      //     ) {
-      //       // setUserExist(() => true);
-      //       userExist = true;
-      //       console.log(
-      //         'Email check: ',
-      //         user?.providerData[0] &&
-      //           user1.email === user?.providerData[0].email
-      //       );
-      //       console.log(user1.email, user?.providerData[0].email, userExist);
-      //       setLoadingUser(false);
-
-      //       return;
-      //     } else {
-      //       // setUserExist(false);
-      //       userExist = false;
-      //       console.log('Email check else: ', userExist);
-      //       setLoadingUser(false);
-      //     }
-      //   });
+    firebaseApp.auth().onAuthStateChanged((user) => {
+      setUser(user);
       setLoadingUser(false);
     });
-
-    async function fetchUserData() {
-      // const { data } = await Axios.get('http://localhost:3001/user/all');
-      // console.log(currentUser && currentUser?.providerData[0]);
-      // currentUser?.providerData[0] &&
-      //   data.map((user) => {
-      //     if (
-      //       currentUser?.providerData[0] &&
-      //       user.email === currentUser?.providerData[0].email
-      //     ) {
-      //       setUserExist(() => true);
-      //       console.log(
-      //         'Email check: ',
-      //         currentUser?.providerData[0] &&
-      //           user.email === currentUser?.providerData[0].email
-      //       );
-      //       console.log(
-      //         user.email,
-      //         currentUser?.providerData[0].email,
-      //         userExist
-      //       );
-      //       setLoadingUser(false);
-      //       return;
-      //     } else {
-      //       setUserExist(false);
-      //       console.log('Email check else: ', userExist);
-      //       setLoadingUser(false);
-      //     }
-      //   });
-    }
   }, []);
 
+  // post user into Database
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (user?.providerData[0]) {
+        const { data } = await Axios.post(
+          'http://localhost:3001/user',
+          user.providerData[0]
+        );
+        console.log('data', data);
+        setCurrentUser(data);
+      }
+    };
+    fetchUserData();
+  }, [user]);
   // useEffect(() => {
   //   const fetchUserData = async () => {
   //     try {
@@ -121,7 +73,7 @@ export const AuthProvider = ({ children }) => {
   //   };
   //   fetchUserData();
   // }, []);
-
+  console.log('current user', currentUser);
   if (loadingUser) {
     return (
       <div>
@@ -131,7 +83,7 @@ export const AuthProvider = ({ children }) => {
   }
 
   return (
-    <AuthContext.Provider value={{ currentUser }}>
+    <AuthContext.Provider value={{ currentUser, setCurrentUser }}>
       {children}
     </AuthContext.Provider>
   );
