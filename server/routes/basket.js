@@ -40,11 +40,16 @@ router.post('/', async (req, res) => {
 
 router.get('/', async (req, res) => {
   try {
-    const { _id: userId = '61b12f933d2a722d43af730b', groupId = '61b12f933d2a722d43af730f' } = req.session.user || {};
+    const { _id: userId = '61b6e36f985cc7b6a36cd3e0', groupId = '61b6e370985cc7b6a36cd3e4' } = req.session.user || {};
     assertIsValuedString(userId, 'User Id');
     assertIsValuedString(groupId, 'Group Id');
     const { skip, limit } = req.query;
-    let result = await basketsData.getBasketByGroupId({ userId, groupId, skip, limit });
+    let result = await basketsData.getBasketByGroupId({
+      userId,
+      groupId,
+      skip: parseInt(skip),
+      limit: parseInt(limit),
+    });
     res.status(200).json(result);
   } catch (e) {
     console.log(e);

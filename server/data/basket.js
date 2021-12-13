@@ -96,6 +96,9 @@ const getBasket = async (userId, id) => {
 
 const getBasketByGroupId = async ({ userId, groupId, skip, limit }) => {
   assertObjectIdString(groupId, 'Group Id');
+  assertRequiredNumber(skip, 'Pagination Skip');
+  assertRequiredNumber(limit, 'Pagination Limit');
+
   const user = await usersData.getByObjectId(userId);
   if (!user) {
     throw new QueryError(`User not exist for user id (${userId})`);

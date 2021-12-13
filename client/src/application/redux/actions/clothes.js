@@ -21,12 +21,6 @@ export const getClothesList = (options) => async (dispatch, getState) => {
       page: newPagination.page,
       limit: newPagination.limit || DEFAULT_PAGINATION_LIMIT,
     });
-    // const {
-    //   data,
-    //   page = newPagination.page,
-    //   limit = newPagination.limit,
-    //   total,
-    // } = await getPaginatedClothes(options);
     const {
       data,
       limit = newPagination.limit,
