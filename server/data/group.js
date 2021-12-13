@@ -66,6 +66,9 @@ const createGroup = async (data) => {
     }
 
     for (let user of users) {
+        if (user.groupId && user.groupId !== stringifyObjectId(groupData._id, "group ID"))
+            throw ValidationError(`User ${user.name} is already present in another group`);
+
         user.groupId = stringifyObjectId(groupData._id, "group ID");
         userData.updateUser(user._id, user);
     }
@@ -121,6 +124,17 @@ const updateGroup = async (id, updates) => {
 
 const deleteGroup = async (id) => {
     const collection = await getGroupCollection();  
+
+    const group = await getGroup(id);
+
+    if (!group) {
+        return true;
+    }
+
+    for (let user of group.users) {
+        user.groupId = null;
+        userData.updateUser(user._id, user);
+    }
 
     const deletionInfo = await collection.deleteOne({ _id: new ObjectID(id) });
 
