@@ -86,7 +86,7 @@ export default function DataList({
 
   function handleChangeLimit(e) {
     const newLimit = parseInt(e.target.value, 10);
-    dispatch(fetchPaginationAction({ limit: newLimit }));
+    dispatch(fetchPaginationAction({ page: 0, limit: newLimit }));
   }
 
   function handleSelectItem(id) {

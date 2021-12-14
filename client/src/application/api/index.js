@@ -7,12 +7,13 @@ import {
   POST_BASKET,
   getPutClothesPath,
   getPutBasketPath,
+  getPatchBasketStatusPath,
   SUBSCRIBE_GROUP_TOPIC,
   UNSUBSCRIBE_GROUP_TOPIC,
   getClothesPath,
   getBasketPath,
 } from './endpoints';
-import { axiosDelete, axiosGet, axiosPost, axiosPut } from './utils';
+import { axiosDelete, axiosGet, axiosPost, axiosPut, axiosPatch } from './utils';
 import { DEFAULT_PAGINATION_LIMIT } from '../constants';
 import testClothes from './test-data/clothes.json';
 
@@ -113,7 +114,9 @@ export const postBasket = (data) => {
 export const putBasket = (id, data) => {
   return axiosPut(getPutBasketPath(id), data);
 };
-
+export const patchBasketStatus = (id, data) => {
+  return axiosPatch(getPatchBasketStatusPath(id), data);
+};
 export const deleteBasket = (id) => {
   return axiosDelete(getDeleteBasketPath(id));
 };

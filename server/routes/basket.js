@@ -2,7 +2,7 @@ const { Router } = require('express');
 const router = Router();
 const basketsData = require('../data/basket');
 
-const { assertIsValuedString, assertRequiredNumber } = require('../utils/assertion');
+const { assertIsValuedString, assertRequiredNumber, assertObjectIdString } = require('../utils/assertion');
 const { HttpError, ValidationError } = require('../utils/errors');
 
 //add basket
@@ -10,7 +10,7 @@ router.post('/', async (req, res, next) => {
   try {
     const { name, users, clothes = [], status = 'PENDING', time = 0 } = req.body;
     const size = parseInt(req.body.size);
-    const { _id: userId = '61b6e36f985cc7b6a36cd3e0', groupId = '61b6e370985cc7b6a36cd3e4' } =
+    const { _id: userId = '61b91631d36271f9dc9b9bc4', groupId = '61b91631d36271f9dc9b9bc7' } =
       req.session.user || {};
 
     assertIsValuedString(userId, 'User Id');
@@ -47,7 +47,7 @@ router.post('/', async (req, res, next) => {
 
 router.get('/', async (req, res) => {
   try {
-    const { _id: userId = '61b6e36f985cc7b6a36cd3e0', groupId = '61b6e370985cc7b6a36cd3e4' } =
+    const { _id: userId = '61b91631d36271f9dc9b9bc4', groupId = '61b91631d36271f9dc9b9bc7' } =
       req.session.user || {};
     assertIsValuedString(userId, 'User Id');
     assertIsValuedString(groupId, 'Group Id');
@@ -99,7 +99,7 @@ router.delete('/:id', async (req, res) => {
 router.put('/:id', async (req, res) => {
   try {
     const { id: basketId } = req.params;
-    const { _id: userId = '61b6e36f985cc7b6a36cd3e0', groupId = '61b6e370985cc7b6a36cd3e4' } =
+    const { _id: userId = '61b91631d36271f9dc9b9bc4', groupId = '61b91631d36271f9dc9b9bc7' } =
       req.session.user || {};
     const { name, size, users, clothes, status, time } = req.body;
     assertIsValuedString(userId, 'User Id');
@@ -113,6 +113,32 @@ router.put('/:id', async (req, res) => {
       status,
       time,
     });
+    if (!result) {
+      throw new HttpError(`Could not update basket for basket id:${id}`, 404);
+    }
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// update basket status
+router.patch('/:id/status', async (req, res, next) => {
+  try {
+    const { id: basketId } = req.params;
+    const { _id: userId = '61b91631d36271f9dc9b9bc4', groupId = '61b91631d36271f9dc9b9bc7' } =
+      req.session.user || {};
+    const { lastUpdateId, status, time } = req.body;
+    assertObjectIdString(userId, 'User ID');
+    assertObjectIdString(groupId, 'Group ID');
+    const result = await basketsData.updateBasketStatus(basketId, {
+      userId,
+      groupId,
+      status,
+      time,
+      lastUpdateId,
+    });
+  
     if (!result) {
       throw new HttpError(`Could not update basket for basket id:${id}`, 404);
     }

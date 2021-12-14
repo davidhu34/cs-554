@@ -48,7 +48,7 @@ const getClothByGroupId = async ({ userId, groupId, skip, limit }) => {
   if (data == null) {
     throw new QueryError(`Could not get cloth for (${groupId})`);
   }
-  return { data, skip, limit, total };
+  return { data: parseMongoData(data), skip, limit, total };
 };
 
 const getCloth = async (userId, id) => {
@@ -106,9 +106,7 @@ const addCloth = async (data) => {
     throw new QueryError(`Could not add cloth for user ID(${userId})`);
   }
 
-  let cloth = await getByObjectId(insertedId);
-  console.log(cloth);
-  return cloth;
+  return await getByObjectId(insertedId);
 };
 
 const updateCloth = async (clothId, data) => {
@@ -154,8 +152,7 @@ const updateCloth = async (clothId, data) => {
   if (!modifiedCount && !matchedCount) {
     throw new QueryError(`Could not update cloth ID(${clothId})`);
   }
-  const updatedCloth = await getCloth(userId, clothId);
-  return updatedCloth;
+  return await getCloth(userId, clothId);
 };
 
 const deleteCloth = async (userId, id) => {
@@ -181,7 +178,6 @@ const deleteCloth = async (userId, id) => {
   if (deletedCount === 0) {
     throw new QueryError(`Could not delete cloth for (${id})`);
   }
-  deleteCloth.message = 'Successfully deleted';
   return deleteCloth;
 };
 

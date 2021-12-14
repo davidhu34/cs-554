@@ -35,7 +35,7 @@ router.post('/', async (req, res, next) => {
 
 router.get('/', async (req, res, next) => {
   try {
-    const { _id: userId = '61b6e36f985cc7b6a36cd3e0', groupId = '61b6e370985cc7b6a36cd3e4' } =
+    const { _id: userId = '61b91631d36271f9dc9b9bc4', groupId = '61b91631d36271f9dc9b9bc7' } =
       req.session.user || {};
     const { skip, limit } = req.query;
     assertIsValuedString(groupId, 'Group Id');
@@ -78,7 +78,7 @@ router.get('/:id', async (req, res, next) => {
 router.delete('/:id', async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { _id: userId = '61b6e36f985cc7b6a36cd3e0', groupId = '61b6e370985cc7b6a36cd3e4' } =
+    const { _id: userId = '61b91631d36271f9dc9b9bc4', groupId = '61b91631d36271f9dc9b9bc7' } =
       req.session.user || {};
     const result = await clothesData.deleteCloth(userId, id);
     if (!result) {
@@ -108,7 +108,7 @@ router.delete('/', async (req, res, next) => {
 router.put('/:id', async (req, res, next) => {
   try {
     const { id: clothId } = req.params;
-    const { _id: userId = '61b6e36f985cc7b6a36cd3e0', groupId = '61b6e370985cc7b6a36cd3e4' } =
+    const { _id: userId = '61b91631d36271f9dc9b9bc4', groupId = '61b91631d36271f9dc9b9bc7' } =
       req.session.user || {};
     const { name, type } = req.body;
     assertIsValuedString(userId, 'User Id');

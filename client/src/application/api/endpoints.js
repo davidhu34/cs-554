@@ -11,6 +11,7 @@ export const GET_PAGINATED_BASKETS = '/baskets';
 export const POST_BASKET = '/baskets';
 
 export const getPutBasketPath = (id) => `/baskets/${id}`;
+export const getPatchBasketStatusPath = (id) => `/baskets/${id}/status`;
 export const getDeleteBasketPath = (id) => `/baskets/${id}`;
 export const getBasketPath = (id) => `/baskets/${id}`;
 

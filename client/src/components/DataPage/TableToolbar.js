@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { alpha } from '@mui/material/styles';
+import Button from '@mui/material/Button';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
@@ -58,11 +59,14 @@ export default function TableToolbar({
           : hidden);
         return (
           showAction && (
-            <Tooltip title={title}>
-              <IconButton onClick={(e) => onClick(e, selectedList)}>
-                {icon}
-              </IconButton>
-            </Tooltip>
+            // <Tooltip title={title}>
+            //   <IconButton onClick={(e) => onClick(e, selectedList)}>
+            //     {icon}
+            //   </IconButton>
+            // </Tooltip>
+            <Button startIcon={icon}  onClick={(e) => onClick(e, selectedList)}>
+              {title}
+            </Button>
           )
         );
       })}
