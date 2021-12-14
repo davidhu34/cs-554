@@ -3,7 +3,7 @@ import { DEFAULT_PAGINATION_LIMIT } from "../../constants";
 const paginationStateInit = {
   page: 0,
   limit: DEFAULT_PAGINATION_LIMIT,
-  total: null,
+  total: 0,
   loading: false,
   error: null,
 };

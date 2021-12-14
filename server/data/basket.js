@@ -108,6 +108,9 @@ const getBasket = async (userId, id) => {
 
 const getBasketByGroupId = async ({ userId, groupId, skip, limit }) => {
   assertObjectIdString(groupId, 'Group Id');
+  assertRequiredNumber(skip, 'Pagination Skip');
+  assertRequiredNumber(limit, 'Pagination Limit');
+
   const user = await usersData.getByObjectId(userId);
   if (!user) {
     throw new QueryError(`User not exist for user id (${userId})`);
@@ -120,7 +123,11 @@ const getBasketByGroupId = async ({ userId, groupId, skip, limit }) => {
 
   const collection = await getBasketsCollection();
 
-  const data = await collection.find({ groupId: new ObjectId(groupId) }).toArray();
+  const data = await collection
+    .find({ groupId: new ObjectId(groupId) })
+    .limit(limit)
+    .skip(skip)
+    .toArray();
 
   if (data == null) {
     throw new QueryError(`Could not get basket for (${groupId})`);

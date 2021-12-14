@@ -19,7 +19,7 @@ const seedBaskets = async (
     groupId: user1.groupId,
     users: [user1, user2],
     clothes: [cloth1, cloth2],
-    status: false,
+    status: 'PENDING',
     time: 2,
     createdAt: timestamp1,
   };
@@ -31,7 +31,7 @@ const seedBaskets = async (
     groupId: user3.groupId,
     users: [user3, user4],
     clothes: [cloth3, cloth4],
-    status: false,
+    status: 'PENDING',
     time: 3,
     createdAt: timestamp1,
   };
