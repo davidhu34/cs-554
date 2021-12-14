@@ -42,6 +42,11 @@ const checkFieldTypes = (types, data, dataPath = "") => {
           } ${fieldTypes}: ${printData}`
         );
       }
+      if (fieldTypes === "number" && isNaN(data)) {
+        throw new ValidationError(
+          `${dataPath} should be valid number`
+        );
+      }
     } else if (typeof fieldTypes === "object") {
       if (typeof data !== "object") {
         throw new ValidationError(

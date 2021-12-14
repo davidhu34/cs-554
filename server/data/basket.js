@@ -32,17 +32,17 @@ const addBasket = async (data) => {
   assertIsValuedString(status, 'Basket status');
 
   if (
-    status != 'PENDING' &&
-    status != 'WASHING' &&
-    status != 'WASHING_DONE' &&
-    status != 'DRYING' &&
-    status != 'DRYING_DONE'
+    status !== 'PENDING' &&
+    status !== 'WASHING' &&
+    status !== 'WASHING_DONE' &&
+    status !== 'DRYING' &&
+    status !== 'DRYING_DONE'
   ) {
     throw new QueryError(`Please provide proper status`);
   }
-  assertRequiredNumber(time, 'Time');
-  if (time <= 0) {
-    throw new QueryError(`Time must be greater than 0 sec.`);
+
+  if (status !== 'WASHING' || status !== 'DRYING') {
+    assertRequiredNumber(time, 'Task Time');
   }
 
   const user = await usersData.getByObjectId(userId);
