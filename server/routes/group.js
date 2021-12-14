@@ -1,11 +1,14 @@
 const { Router } = require("express");
 const router = Router();
 const groupsData = require("../data/group");
+const usersData = require("../data/user");
 
 const {
   assertObjectIdString,
+  assertIsValuedString,
   assertRequiredString,
   assertRequiredObject,
+  assertEmailString,
   assertNonEmptyArray,
 } = require("../utils/assertion");
 const { QueryError, ValidationError, HttpError } = require("../utils/errors");
@@ -64,6 +67,87 @@ router.get("/:id", async (req, res) => {
     res.status(200).json(result);
   } catch (e) {
     console.log(e);
+    res.status(400).json({ error: e });
+  }
+});
+
+router.put("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const reqBody = req.body;
+    assertRequiredObject(reqBody);
+
+    let { user } = reqBody;
+
+    const group = await groupsData.getGroup(id);
+
+    if (!group) {
+      throw new HttpError(`Could not get group for group id: ${id}`, 404);
+    }
+
+    const isUserPresent = await usersData.getByObjectId(user._id);
+
+    if (!isUserPresent) {
+      throw new HttpError(`Could not get user for user id: ${user._id}`, 404);
+    }
+
+    assertIsValuedString(user.uid, "User ID");
+    assertIsValuedString(user.name, "User name");
+    assertEmailString(user.email, "Email");
+
+    if (user.groupId && user.groupId !== id) {
+      throw new ValidationError(`User already in another group`, 404);
+    }
+
+    user.groupId = id;
+    usersData.updateUser(user._id, user);
+
+    const users = group.users;
+    users.push(user);
+    group.users = users;
+
+    const updatedGroup = await groupsData.updateGroup(id, group);
+    console.log(updatedGroup);
+    res.status(200).json(updatedGroup);
+  } catch (e) {
+    res.status(400).json({ error: e });
+  }
+});
+
+router.delete("/user/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const reqBody = req.body;
+    assertRequiredObject(reqBody);
+
+    let { user } = reqBody;
+
+    assertObjectIdString(id);
+
+    const group = await groupsData.getGroup(id);
+
+    if (!group) {
+      throw new HttpError(`Could not get group for group id: ${id}`, 404);
+    }
+
+    const isUserPresent = await usersData.getByObjectId(user._id);
+
+    if (!isUserPresent) {
+      throw new HttpError(`Could not get user for user id: ${user._id}`, 404);
+    }
+
+    user.groupId = null;
+    usersData.updateUser(user._id, user);
+
+    let users = group.users;
+    users = users.filter((el) => el._id !== user._id);
+
+    group.users = users;
+
+    const updatedGroup = await groupsData.updateGroup(id, group);
+    console.log(updatedGroup);
+    res.status(200).json(updatedGroup);
+  } catch (e) {
     res.status(400).json({ error: e });
   }
 });

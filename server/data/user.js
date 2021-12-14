@@ -31,6 +31,12 @@ const getUser = async (uid) => {
   return parseMongoData(user);
 };
 
+const getUserByEmail = async (email) => {
+  const collection = await getUserCollection();
+  const user = await collection.findOne({ email });
+  return parseMongoData(user);
+};
+
 const getUsersByGroup = async (groupId) => {
   assertIsValuedString(groupId, "Group ID");
 
@@ -52,6 +58,7 @@ const createUser = async (data) => {
     uid: uid,
     name: displayName,
     email: email,
+    groupId: null,
     createdAt: createdAt,
   };
 
@@ -77,7 +84,8 @@ const updateUser = async (id, updates) => {
   assertIsValuedString(name, "User name");
   assertEmailString(email, "Email");
   email = email.toLowerCase();
-  assertObjectIdString(groupId);
+  if (groupId)
+    assertObjectIdString(groupId);
 
   const user = await getByObjectId(id);
 
@@ -119,4 +127,5 @@ module.exports = {
   getUsersByGroup,
   updateUser,
   getByObjectId,
+  getUserByEmail
 };

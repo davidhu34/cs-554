@@ -7,13 +7,14 @@ const GroupForm = (props) => {
   const { register, handleSubmit, error } = useForm();
 
   const handleFormSubmit = async (data) => {
+    console.log('CUrrent User group list:', currentUser);
     const res = await Axios.post('http://localhost:3001/group', {
       name: data.groupName,
       users: [currentUser],
     });
     console.log('Res Data: \n', res.data.users[0]);
     setCurrentUser(res.data.users[0]);
-    alert('Current User:', [currentUser]);
+    console.log('Current User:', [currentUser]);
   };
   return (
     <div>

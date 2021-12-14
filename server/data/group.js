@@ -37,7 +37,7 @@ const getAllGroups = async () => {
 
 const getGroup = async (id) => {
   assertObjectIdString(id);
-  return await getByObjectId(new ObjectId(id));
+  return await getByObjectId(id);
 };
 
 const getGroupByName = async (name) => {
