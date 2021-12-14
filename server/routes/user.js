@@ -24,11 +24,11 @@ router.post('/', async (req, res) => {
     const userPresent = await usersData.getUserByEmail(email);
 
     if (userPresent) {
+      req.session.user = userPresent;
       return res.status(200).json(userPresent);
     }
 
     const newUser = await usersData.createUser(reqBody);
-    console.log(newUser);
     req.session.user = newUser;
     res.status(200).json(newUser);
   } catch (e) {

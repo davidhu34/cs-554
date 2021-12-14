@@ -3,12 +3,13 @@ const router = Router();
 const basketsData = require('../data/basket');
 
 const { assertIsValuedString, assertRequiredNumber } = require('../utils/assertion');
-const { HttpError } = require('../utils/errors');
+const { HttpError, ValidationError } = require('../utils/errors');
 
 //add basket
 router.post('/', async (req, res) => {
   try {
     const { name, size, users, clothes, status, time } = req.body;
+    console.log(req.session.user);
     const { _id: userId, groupId } = req.session.user;
 
     assertIsValuedString(userId, 'User Id');
@@ -17,6 +18,12 @@ router.post('/', async (req, res) => {
     assertIsValuedString(groupId, 'Group Id');
     assertIsValuedString(status, 'Basket status');
     assertRequiredNumber(time, 'Time');
+
+    const basket = await basketsData.getBasketByName(name);
+
+    if (basket) {
+      throw new ValidationError(`Basket already exists.`);
+    }
 
     const result = await basketsData.addBasket({
       name,
@@ -40,7 +47,8 @@ router.post('/', async (req, res) => {
 
 router.get('/', async (req, res) => {
   try {
-    const { _id: userId = '61b12f933d2a722d43af730b', groupId = '61b12f933d2a722d43af730f' } = req.session.user || {};
+    const { _id: userId = '61b12f933d2a722d43af730b', groupId = '61b12f933d2a722d43af730f' } =
+      req.session.user || {};
     assertIsValuedString(userId, 'User Id');
     assertIsValuedString(groupId, 'Group Id');
     const { skip, limit } = req.query;
@@ -73,7 +81,8 @@ router.get('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const result = await basketsData.deleteBasket(id);
+    const { _id: userId, groupId } = req.session.user;
+    const result = await basketsData.deleteBasket(userId, groupId, id);
     if (!result) {
       throw new HttpError(`Could not delete basket for basket id:${id}`, 404);
     }

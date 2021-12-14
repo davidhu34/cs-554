@@ -18,9 +18,9 @@ router.post('/', async (req, res) => {
   try {
     const reqBody = req.body;
     assertRequiredObject(reqBody);
-
+    console.log(req.session.user);
     let { name, users } = reqBody;
-    assertRequiredString(name, 'Group name');
+    assertIsValuedString(name, 'Group name');
     assertNonEmptyArray(users, 'Users');
 
     const groupPresent = await groupsData.getGroupByName(name);
@@ -109,7 +109,7 @@ router.put('/:id', async (req, res) => {
   } catch (e) {
     res.status(400).json({ error: e });
   }
-})
+});
 
 router.delete('/user/:id', async (req, res) => {
   try {
@@ -135,16 +135,15 @@ router.delete('/user/:id', async (req, res) => {
 
     user.groupId = null;
     usersData.updateUser(user._id, user);
- 
+
     let users = group.users;
-    users = users.filter( el => el._id !== user._id);
+    users = users.filter((el) => el._id !== user._id);
 
     group.users = users;
 
     const updatedGroup = await groupsData.updateGroup(id, group);
     console.log(updatedGroup);
     res.status(200).json(updatedGroup);
-    
   } catch (e) {
     res.status(400).json({ error: e });
   }

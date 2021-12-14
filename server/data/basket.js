@@ -7,6 +7,7 @@ const {
   assertObjectIdString,
   assertIsValuedString,
   assertRequiredObject,
+  assertRequiredString,
   assertRequiredNumber,
 } = require('../utils/assertion');
 
@@ -21,7 +22,7 @@ const getByObjectId = async (objectId) => {
 
 const addBasket = async (data) => {
   assertRequiredObject(data);
-  const { name, size, userId, groupId, users, clothes, status, time } = data;
+  const { name, size, userId, groupId, clothes, status, time } = data;
   const createdAt = new Date().getTime();
 
   assertObjectIdString(userId, 'Basket added by user ID');
@@ -40,6 +41,9 @@ const addBasket = async (data) => {
     throw new QueryError(`Please provide proper status`);
   }
   assertRequiredNumber(time, 'Time');
+  if (time <= 0) {
+    throw new QueryError(`Time must be greater than 0 sec.`);
+  }
 
   const user = await usersData.getByObjectId(userId);
   if (!user) {
@@ -62,9 +66,9 @@ const addBasket = async (data) => {
     groupId: new ObjectId(groupId),
     name,
     size,
-    users,
     clothes,
     status,
+    history: [],
     time,
     createdAt,
     updatedAt: createdAt,
@@ -78,6 +82,14 @@ const addBasket = async (data) => {
 
   let basket = await getByObjectId(insertedId);
   return basket;
+};
+
+const getBasketByName = async (name) => {
+  assertRequiredString(name, 'Basket name');
+
+  const collection = await getBasketsCollection();
+  const basket = await collection.findOne({ name: name });
+  return parseMongoData(basket);
 };
 
 const getBasket = async (userId, id) => {
@@ -117,12 +129,17 @@ const getBasketByGroupId = async ({ userId, groupId, skip, limit }) => {
   return { data, skip, limit, total };
 };
 
-const deleteBasket = async (userId, id) => {
+const deleteBasket = async (userId, groupId, id) => {
   assertObjectIdString(id, 'Basket id');
   assertObjectIdString(userId, 'User Id');
+  assertObjectIdString(groupId, 'Group Id');
   const user = await usersData.getByObjectId(userId);
   if (!user) {
     throw new QueryError(`User not exist for user id (${userId})`);
+  }
+  const group = await getGroup(groupId);
+  if (!group) {
+    throw new QueryError(`Group not exist for group id (${groupId})`);
   }
   let basket = await getByObjectId(id);
   if (basket == null) {
@@ -136,7 +153,11 @@ const deleteBasket = async (userId, id) => {
   }
 
   const collection = await getBasketsCollection();
-  let { deletedCount } = await collection.deleteOne({ _id: new ObjectId(id) });
+  let { deletedCount } = await collection.deleteOne({
+    _id: new ObjectId(id),
+    userId: userId,
+    groupId: groupId,
+  });
 
   if (deletedCount === 0) {
     throw new QueryError(`Could not delete basket for (${id})`);
@@ -169,7 +190,7 @@ const deleteBasketByGroupId = async (userId, groupId) => {
 
 const updateBasket = async (id, data) => {
   assertRequiredObject(data);
-  const { name, size, userId, groupId, users, clothes, status, time } = data;
+  const { name, size, userId, groupId, users, clothes, status, history, time } = data;
   const updatedAt = new Date().getTime();
 
   assertObjectIdString(id, 'Basket ID');
@@ -207,6 +228,7 @@ const updateBasket = async (id, data) => {
   }
 
   data.basketId = new ObjectId().toHexString();
+  previousBasket.history.push(previousBasket.status);
 
   const collection = await getBasketsCollection();
 
@@ -214,9 +236,9 @@ const updateBasket = async (id, data) => {
     groupId: new ObjectId(groupId),
     name,
     size,
-    users,
     clothes,
     status,
+    history: previousBasket.history,
     time,
     createdAt: previousBasket.createdAt,
     updatedAt,
@@ -244,4 +266,5 @@ module.exports = {
   deleteBasket,
   deleteBasketByGroupId,
   updateBasket,
+  getBasketByName,
 };
