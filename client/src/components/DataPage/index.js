@@ -16,7 +16,7 @@ import TableToolbar from './TableToolbar';
 import DataCreate from './DataCreate';
 import DataEdit from './DataEdit';
 
-function DataRowItem({ id, selected = false, onClick, getDataSelector }) {
+function DataRowItem({ id, selected = false, onClick, getDataSelector, columns }) {
   const { data, error, loading } = useSelector(getDataSelector(id));
   return data ? (
     <TableRow
@@ -38,11 +38,10 @@ function DataRowItem({ id, selected = false, onClick, getDataSelector }) {
           }}
         />
       </TableCell>
-      <TableCell id={id} component="th" scope="row">
-        {data.name}
-      </TableCell>
-      <TableCell align="right">{data.description}</TableCell>
-      <TableCell align="right">{id}</TableCell>
+
+      {columns.map(({ field, align }) => (
+        <TableCell align={align}>{data[field] || ''}</TableCell>
+      ))}
     </TableRow>
   ) : null;
 }
@@ -55,6 +54,7 @@ export default function DataList({
   deleteAction,
   updateAction,
   createAction,
+  columns,
   formConfigs,
   createFormTitle,
   editFormTitle,
@@ -159,9 +159,9 @@ export default function DataList({
                   }}
                 />
               </TableCell>
-              <TableCell>Name</TableCell>
-              <TableCell align="right">Description</TableCell>
-              <TableCell align="right">ID</TableCell>
+              {columns.map(({ field, label = field, align }) => (
+                <TableCell align={align}>{label}</TableCell>
+              ))}
             </TableRow>
           </TableHead>
           <TableBody>
@@ -171,6 +171,7 @@ export default function DataList({
                 selected={selectedState[id]}
                 onClick={() => handleSelectItem(id)}
                 getDataSelector={getDataSelector}
+                columns={columns}
               />
             ))}
           </TableBody>
@@ -188,7 +189,9 @@ export default function DataList({
       />
 
       <Routes>
-        {customRoutes.map(customRouteProps => <Route {...customRouteProps} />)}
+        {customRoutes.map((customRouteProps) => (
+          <Route {...customRouteProps} />
+        ))}
         <Route
           path="/create"
           element={

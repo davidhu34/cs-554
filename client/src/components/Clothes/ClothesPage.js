@@ -15,6 +15,23 @@ import {
 import DataPage from '../DataPage';
 import AddClothesToBasket from './AddClothesToBasket';
 
+const clothesColumns = [
+  {
+    field: 'name',
+    label: 'Name',
+  },
+  {
+    field: 'size',
+    label: 'Size',
+    align: 'right',
+  },
+  {
+    field: '_id',
+    label: 'ID',
+    align: 'right',
+  },
+];
+
 const clothesFormConfigs = [
   {
     name: 'name',
@@ -64,6 +81,7 @@ export default function ClothesPage() {
   return (
     <DataPage
       path="/clothes"
+      columns={clothesColumns}
       paginationSelector={clothesPaginationSelector}
       getDataSelector={getClothesDetailSelector}
       fetchPaginationAction={getClothesList}

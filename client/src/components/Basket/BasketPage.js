@@ -15,6 +15,26 @@ import {
 import DataPage from '../DataPage';
 import ChangeStatus from './ChangeStatus';
 
+const basketColumns = [
+  {
+    field: 'name',
+    label: 'Name',
+  },
+  {
+    field: 'status',
+    label: 'Status',
+  },
+  {
+    field: 'size',
+    label: 'Size',
+  },
+  {
+    field: '_id',
+    label: 'ID',
+    align: 'right',
+  },
+];
+
 const basketFormConfigs = [
   {
     name: 'name',
@@ -41,6 +61,7 @@ export default function BasketPage() {
   return (
     <DataPage
       path="/baskets"
+      columns={basketColumns}
       paginationSelector={basketPaginationSelector}
       getDataSelector={getBasketDetailSelector}
       fetchPaginationAction={getBasketList}
