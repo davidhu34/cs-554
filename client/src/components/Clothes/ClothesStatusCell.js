@@ -17,8 +17,9 @@ export default function ClothesStatusCell({ clothes }) {
 
   useEffect(() => {
     if (
-      !basketData ||
-      (!basketData.data && !basketData.loading && !basketData.error)
+      basketId &&
+      (!basketData ||
+        (!basketData.data && !basketData.loading && !basketData.error))
     ) {
       dispatch(getBasketDetail(basketId));
     }

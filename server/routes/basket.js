@@ -85,7 +85,8 @@ router.get('/pending', async (req, res, next) => {
 //get basket by basketId
 router.get('/:id', async (req, res, next) => {
   try {
-    const { _id: userId } = req.session.user;
+    const { _id: userId = '61b91631d36271f9dc9b9bc4', groupId = '61b91631d36271f9dc9b9bc7' } =
+      req.session.user || {};
     const { id } = req.params;
     assertIsValuedString(id, 'basket Id');
     const result = await basketsData.getBasket(userId, id);
@@ -102,7 +103,8 @@ router.get('/:id', async (req, res, next) => {
 router.delete('/:id', async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { _id: userId, groupId } = req.session.user;
+    const { _id: userId = '61b91631d36271f9dc9b9bc4', groupId = '61b91631d36271f9dc9b9bc7' } =
+      req.session.user || {};
     const result = await basketsData.deleteBasket(userId, groupId, id);
     if (!result) {
       throw new HttpError(`Could not delete basket for basket id:${id}`, 400);

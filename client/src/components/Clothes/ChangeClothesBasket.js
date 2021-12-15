@@ -46,7 +46,6 @@ export default function ChangeClothesBasket() {
   }
 
   async function handlePutClothesToBasket() {
-    console.log(clothesIdList, basketId);
     if (clothesIdList.length > 0) {
       await dispatch(updateBasketClothes(basketId, clothesIdList));
       await dispatch(fetchClothesLocations());

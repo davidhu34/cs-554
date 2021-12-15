@@ -39,10 +39,10 @@ function DataRowItem({ id, selected = false, onClick, getDataSelector, columns }
         />
       </TableCell>
 
-      {columns.map(({ field, align, render }) => {
+      {columns.map(({ field, align, render }, i) => {
         const item = data[field] || '';
         return (
-          <TableCell align={align}>{render ? render(item, data) : item}</TableCell>
+          <TableCell key={`cell-${field}-${i}`} align={align}>{render ? render(item, data) : item}</TableCell>
         );
       })}
     </TableRow>
@@ -138,6 +138,7 @@ export default function DataList({
   }
 
   const numSelected = selectedList.length;
+  const maxSelected = Math.min(idList.length, limit);
   return (
     <>
       <TableToolbar
@@ -154,8 +155,8 @@ export default function DataList({
               <TableCell padding="checkbox">
                 <Checkbox
                   color="primary"
-                  indeterminate={numSelected > 0 && numSelected < limit}
-                  checked={total > 0 && numSelected === limit}
+                  indeterminate={numSelected > 0 && numSelected < maxSelected}
+                  checked={total > 0 && numSelected === maxSelected}
                   onChange={handleSelectAll}
                   inputProps={{
                     'aria-label': 'select all desserts',
@@ -163,13 +164,16 @@ export default function DataList({
                 />
               </TableCell>
               {columns.map(({ field, label = field, align }) => (
-                <TableCell align={align}>{label}</TableCell>
+                <TableCell key={`header_cell-${field}`} align={align}>
+                  {label}
+                </TableCell>
               ))}
             </TableRow>
           </TableHead>
           <TableBody>
             {idList.map((id) => (
               <DataRowItem
+                key={`data_row-${id}`}
                 id={id}
                 selected={selectedState[id]}
                 onClick={() => handleSelectItem(id)}
@@ -193,7 +197,10 @@ export default function DataList({
 
       <Routes>
         {customRoutes.map((customRouteProps) => (
-          <Route {...customRouteProps} />
+          <Route
+            key={`custom_route-${customRouteProps.path}`}
+            {...customRouteProps}
+          />
         ))}
         <Route
           path="/create"

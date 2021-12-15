@@ -25,7 +25,7 @@ export default function BasketClothesCell({ clothesIdList }) {
   return (
     <>
       {clothesIdList.map((id) => (
-        <BasketClothesPiece id={id} />
+        <BasketClothesPiece id={id} key={`basket-clothes-${id}`} />
       ))}
     </>
   );
