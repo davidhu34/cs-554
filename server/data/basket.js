@@ -180,10 +180,7 @@ const deleteBasket = async (userId, groupId, id) => {
   }
 
   const collection = await getBasketsCollection();
-  let { deletedCount } = await collection.deleteOne({
-    _id: new ObjectId(id),
-    groupId: groupId,
-  });
+  let { deletedCount } = await collection.deleteOne(idQuery(id));
 
   if (deletedCount === 0) {
     throw new QueryError(`Could not delete basket for (${id})`);
@@ -216,14 +213,13 @@ const deleteBasketByGroupId = async (userId, groupId) => {
 
 const updateBasket = async (id, data) => {
   assertRequiredObject(data);
-  const { name, userId, groupId, clothes } = data;
+  const { name, userId, groupId, clothes, size } = data;
   const updatedAt = new Date().getTime();
 
   assertObjectIdString(id, 'Basket ID');
   assertObjectIdString(userId, 'Basket added by user ID');
   assertIsValuedString(name, 'Basket name');
   assertIsValuedString(groupId, 'Group Id');
-  assertIsValuedString(status, 'Basket status');
 
   let previousBasket = await getByObjectId(id);
 
@@ -250,6 +246,7 @@ const updateBasket = async (id, data) => {
     updatedAt,
     updatedBy: new ObjectId(userId),
   };
+  delete basketData['_id'];
 
   const { modifiedCount, matchedCount } = await collection.updateOne(
     { _id: new ObjectId(id), groupId: new ObjectId(groupId) },

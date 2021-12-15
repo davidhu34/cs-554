@@ -6,13 +6,12 @@ import {
   deleteBasket as deleteBasketRequest,
   patchBasketStatus,
   patchBasketClothes,
-  getClothesBasketLocations,
 } from '../../api';
 import { DEFAULT_PAGINATION_LIMIT } from '../../constants';
 import {
   basketPaginationSelector,
 } from '../selectors';
-import { basketActionTypes, clothesLocationActionTypes } from './actionTypes';
+import { basketActionTypes } from './actionTypes';
 import { fetchClothesLocations } from './clothesLocation';
 
 export const getBasketList = (options) => async (dispatch, getState) => {
@@ -79,7 +78,7 @@ export const createBasket = (clothesData) => async (dispatch, getState) => {
     dispatch({
       type: basketActionTypes.createStart,
     });
-    const { data } = await postBasket(clothesData);
+    const data = await postBasket(clothesData);
     dispatch({
       type: basketActionTypes.createSuccess,
       id: data._id,
@@ -99,7 +98,7 @@ export const deleteBasket = (id) => async (dispatch, getState) => {
       type: basketActionTypes.deleteStart,
       id,
     });
-    const { data } = await deleteBasketRequest(id);
+    const data = await deleteBasketRequest(id);
     dispatch({
       type: basketActionTypes.deleteSuccess,
       id,

@@ -15,8 +15,8 @@ const { QueryError, ValidationError, HttpError } = require('../utils/errors');
 router.post('/', async (req, res, next) => {
   try {
     const { name, type } = req.body;
-    console.log(req.session.user);
-    const { _id: userId, groupId } = req.session.user || {};
+    const { _id: userId = '61b91631d36271f9dc9b9bc4', groupId = '61b91631d36271f9dc9b9bc7' } =
+      req.session.user || {};
 
     assertIsValuedString(userId, 'User Id');
     assertIsValuedString(groupId, 'Group Id');

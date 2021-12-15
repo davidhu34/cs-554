@@ -147,7 +147,7 @@ const updateCloth = async (clothId, data) => {
 
   const collection = await getClothesCollection();
   const { modifiedCount, matchedCount } = await collection.updateOne(
-    { _id: new ObjectId(clothId), userId: new ObjectId(userId) },
+    idQuery(clothId),
     { $set: newUpdate },
   );
 
