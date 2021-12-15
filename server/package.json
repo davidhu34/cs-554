@@ -7,6 +7,7 @@
     "start": "node index.js",
     "seed": "node seed.js",
     "dev": "node seed.js && node index.js",
+    "nodeM": "nodemon index.js",
     "test": "jest"
   },
   "repository": {

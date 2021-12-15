@@ -1,6 +1,6 @@
-const { Router } = require('express');
+const { Router } = require("express");
 const router = Router();
-const basketsData = require('../data/basket');
+const basketsData = require("../data/basket");
 
 const {
   assertIsValuedString,
@@ -18,12 +18,12 @@ router.post('/', async (req, res, next) => {
     const { _id: userId = '61b91631d36271f9dc9b9bc4', groupId = '61b91631d36271f9dc9b9bc7' } =
       req.session.user || {};
 
-    assertIsValuedString(userId, 'User Id');
-    assertIsValuedString(name, 'Basket name');
-    assertRequiredNumber(size, 'Basket size');
-    assertIsValuedString(groupId, 'Group Id');
-    assertIsValuedString(status, 'Basket status');
-    assertRequiredNumber(time, 'Time');
+    assertIsValuedString(userId, "User Id");
+    assertIsValuedString(name, "Basket name");
+    assertRequiredNumber(size, "Basket size");
+    assertIsValuedString(groupId, "Group Id");
+    assertIsValuedString(status, "Basket status");
+    assertRequiredNumber(time, "Time");
 
     const basket = await basketsData.getBasketByName(name);
 
@@ -88,7 +88,7 @@ router.get('/:id', async (req, res, next) => {
     const { _id: userId = '61b91631d36271f9dc9b9bc4', groupId = '61b91631d36271f9dc9b9bc7' } =
       req.session.user || {};
     const { id } = req.params;
-    assertIsValuedString(id, 'basket Id');
+    assertIsValuedString(id, "basket Id");
     const result = await basketsData.getBasket(userId, id);
     if (!result) {
       throw new HttpError(`Could not get basket for basket id:${id}`, 400);
@@ -122,7 +122,7 @@ router.put('/:id', async (req, res, next) => {
     const { _id: userId = '61b91631d36271f9dc9b9bc4', groupId = '61b91631d36271f9dc9b9bc7' } =
       req.session.user || {};
     const { name, size, users, clothes, status, time } = req.body;
-    assertIsValuedString(userId, 'User Id');
+    assertIsValuedString(userId, "User Id");
     const result = await basketsData.updateBasket(basketId, {
       name,
       size,

@@ -1,10 +1,14 @@
-const { groups: getGroupCollection } = require('../config/mongoCollections');
-let { ObjectId, ObjectID } = require('mongodb');
+const { groups: getGroupCollection } = require("../config/mongoCollections");
+let { ObjectId, ObjectID } = require("mongodb");
 
-const userData = require('./user');
+const userData = require("./user");
 
-const { QueryError, ValidationError } = require('../utils/errors');
-const { idQuery, parseMongoData, stringifyObjectId } = require('../utils/mongodb');
+const { QueryError, ValidationError } = require("../utils/errors");
+const {
+  idQuery,
+  parseMongoData,
+  stringifyObjectId,
+} = require("../utils/mongodb");
 const {
   assertObjectIdString,
   assertRequiredString,
@@ -13,7 +17,7 @@ const {
   assertRequiredNumber,
   assertEmailString,
   assertContactString,
-} = require('../utils/assertion');
+} = require("../utils/assertion");
 
 const getByObjectId = async (objectId) => {
   const collection = await getGroupCollection();
@@ -37,7 +41,7 @@ const getGroup = async (id) => {
 };
 
 const getGroupByName = async (name) => {
-  assertRequiredString(name, 'Group name');
+  assertRequiredString(name, "Group name");
 
   const collection = await getGroupCollection();
   const group = await collection.findOne({ name: name });
@@ -49,8 +53,8 @@ const createGroup = async (data) => {
 
   let { name, users, createdAt = new Date().getTime() } = data;
 
-  assertRequiredString(name, 'Group name');
-  assertNonEmptyArray(users, 'Users');
+  assertRequiredString(name, "Group name");
+  assertNonEmptyArray(users, "Users");
 
   const groupData = {
     _id: new ObjectId(),
@@ -60,12 +64,14 @@ const createGroup = async (data) => {
   };
 
   for (let user of users) {
-    user.groupId = stringifyObjectId(groupData._id, 'group ID');
+    user.groupId = stringifyObjectId(groupData._id, "group ID");
     userData.updateUser(user._id, user);
   }
 
   const collection = await getGroupCollection();
-  const { result, insertedCount, insertedId } = await collection.insertOne(groupData);
+  const { result, insertedCount, insertedId } = await collection.insertOne(
+    groupData
+  );
 
   if (!result.ok || insertedCount !== 1) {
     throw new QueryError(`Could not create group`);
@@ -79,8 +85,8 @@ const updateGroup = async (id, updates) => {
 
   let { name, users } = updates;
 
-  assertRequiredString(name, 'Group name');
-  assertNonEmptyArray(users, 'Users');
+  assertRequiredString(name, "Group name");
+  assertNonEmptyArray(users, "Users");
 
   const group = await getGroup(id);
 
@@ -100,7 +106,11 @@ const updateGroup = async (id, updates) => {
     $set: newUpdate,
   };
 
-  const { value: updatedGroup, ok } = await collection.findOneAndUpdate(idQuery(id), ops, options);
+  const { value: updatedGroup, ok } = await collection.findOneAndUpdate(
+    idQuery(id),
+    ops,
+    options
+  );
 
   if (!ok) {
     throw new QueryError(`Could not update user with ID \`${id}\``);
