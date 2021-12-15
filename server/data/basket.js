@@ -9,11 +9,32 @@ const {
   assertRequiredObject,
   assertRequiredString,
   assertRequiredNumber,
+  assertNonEmptyArray,
 } = require('../utils/assertion');
 
+const nextStatus = {
+  'PENDING': 'WASHING',
+  'WASHING': 'WASHING_DONE',
+  'WASHING_DONE': 'DRYING',
+  'DRYING': 'DRYING_DONE',
+  'DRYING_DONE': 'PENDING',
+};
 const usersData = require('./user');
 const { getGroup } = require('./group');
 
+const assertStatus = (status) => {
+  assertIsValuedString(status, 'Basket status');
+
+  if (
+    status !== 'PENDING' &&
+    status !== 'WASHING' &&
+    status !== 'WASHING_DONE' &&
+    status !== 'DRYING' &&
+    status !== 'DRYING_DONE'
+  ) {
+    throw new QueryError(`Please provide proper status`);
+  }
+}
 const getByObjectId = async (objectId) => {
   const collection = await getBasketsCollection();
   let basket = await collection.findOne(idQuery(objectId));
@@ -29,17 +50,7 @@ const addBasket = async (data) => {
   assertIsValuedString(name, 'Basket name');
   assertRequiredNumber(size, 'Basket size');
   assertIsValuedString(groupId, 'Group Id');
-  assertIsValuedString(status, 'Basket status');
-
-  if (
-    status !== 'PENDING' &&
-    status !== 'WASHING' &&
-    status !== 'WASHING_DONE' &&
-    status !== 'DRYING' &&
-    status !== 'DRYING_DONE'
-  ) {
-    throw new QueryError(`Please provide proper status`);
-  }
+  assertStatus(status);
 
   if (status === 'WASHING' || status === 'DRYING') {
     assertRequiredNumber(time, 'Task Time');
@@ -96,6 +107,15 @@ const getBasketByName = async (name) => {
   const basket = await collection.findOne({ name: name });
   return parseMongoData(basket);
 };
+
+const getBasketsByStatus = async (status) => {
+  assertStatus(status);
+
+  const collection = await getBasketsCollection();
+  const basket = await collection.find({ status }).toArray();
+  return parseMongoData(basket);
+};
+
 
 const getBasket = async (userId, id) => {
   assertObjectIdString(id, 'Basket Id');
@@ -248,13 +268,6 @@ const updateBasket = async (id, data) => {
   return await getByObjectId(id);
 };
 
-const nextStatus = {
-  'PENDING': 'WASHING',
-  'WASHING': 'WASHING_DONE',
-  'WASHING_DONE': 'DRYING',
-  'DRYING': 'DRYING_DONE',
-  'DRYING_DONE': 'PENDING',
-};
 
 const updateBasketStatus = async (id, data) => {
   assertRequiredObject(data);
@@ -316,13 +329,59 @@ const updateBasketStatus = async (id, data) => {
   return parseMongoData(updatedBasket);
 };
 
+const updateBasketClothes = async (id, {clothesIdList, userId}, isRemove = false) => {
+  assertNonEmptyArray(clothesIdList);
+
+
+  let basket = await getByObjectId(id);
+  if (
+    !basket ||
+    !Array.isArray(basket.history) ||
+    basket.history.length === 0
+  ) {
+    throw new QueryError(`Basket with ID\`${id}\` has invalid status history.`);
+  }
+
+  for (const clothesId of clothesIdList) {
+    assertObjectIdString(clothesId);
+    //  assertClothes not in basket
+  }
+
+  const options = { returnOriginal: false };
+  const collection = await getBasketsCollection();
+  const currentTimestamp = new Date().getTime();
+  const ops = {
+    $set: {
+      updatedAt: currentTimestamp,
+      updatedBy: new ObjectId(userId),
+    },
+    [isRemove ? '$pull' : '$addToSet']: {
+      clothes: { $each: clothesIdList },
+    },
+  };
+
+  const { value: updatedBasket, ok } = await collection.findOneAndUpdate(
+    idQuery(id),
+    ops,
+    options
+  );
+
+  if (!ok) {
+    throw new QueryError(`Could not update basket with ID \`${id}\``);
+  }
+
+  return parseMongoData(updatedBasket);
+};
+
 module.exports = {
   addBasket,
   getBasket,
   getBasketByGroupId,
+  getBasketsByStatus,
   deleteBasket,
   deleteBasketByGroupId,
   updateBasket,
   updateBasketStatus,
+  updateBasketClothes,
   getBasketByName,
 };

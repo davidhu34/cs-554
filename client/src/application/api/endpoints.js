@@ -12,6 +12,7 @@ export const POST_BASKET = '/baskets';
 
 export const getPutBasketPath = (id) => `/baskets/${id}`;
 export const getPatchBasketStatusPath = (id) => `/baskets/${id}/status`;
+export const getPatchBasketClothesPath = (id) => `/baskets/${id}/clothes`;
 export const getDeleteBasketPath = (id) => `/baskets/${id}`;
 export const getBasketPath = (id) => `/baskets/${id}`;
 

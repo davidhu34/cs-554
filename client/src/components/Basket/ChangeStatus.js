@@ -27,6 +27,7 @@ export default function ChangeStatus() {
   const nextStatus = validNextStatus[basket?.status];
   const [taskTime, setTaskTime] = useState();
 
+  const canChange = nextStatus === 'PENDING' || nextStatus === 'WASHING_DONE' || nextStatus === 'PENDING'; 
   console.log(basket);
   function handleClose() {
     navigate(-1);

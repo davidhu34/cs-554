@@ -8,9 +8,9 @@ import {
   getPutClothesPath,
   getPutBasketPath,
   getPatchBasketStatusPath,
+  getPatchBasketClothesPath,
   SUBSCRIBE_GROUP_TOPIC,
   UNSUBSCRIBE_GROUP_TOPIC,
-  getClothesPath,
   getBasketPath,
 } from './endpoints';
 import { axiosDelete, axiosGet, axiosPost, axiosPut, axiosPatch } from './utils';
@@ -117,6 +117,9 @@ export const putBasket = (id, data) => {
 export const patchBasketStatus = (id, data) => {
   return axiosPatch(getPatchBasketStatusPath(id), data);
 };
+export const patchBasketClothes = (id, data) => {
+  return axiosPatch(getPatchBasketClothesPath(id), data);
+}
 export const deleteBasket = (id) => {
   return axiosDelete(getDeleteBasketPath(id));
 };
