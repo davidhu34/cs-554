@@ -54,6 +54,36 @@ router.get('/', async (req, res, next) => {
   }
 });
 
+router.get('/locations', async (req, res, next) => {
+  try {
+    const { _id: userId = '61b91631d36271f9dc9b9bc4', groupId = '61b91631d36271f9dc9b9bc7' } =
+      req.session.user || {};
+      const result = await clothesData.getClothesLocations();
+    if (!result) {
+      throw new HttpError(`Could not get cloth for group id:${groupId}`, 404);
+    }
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.patch('/locations', async (req, res, next) => {
+  try {
+    const { _id: userId = '61b91631d36271f9dc9b9bc4', groupId = '61b91631d36271f9dc9b9bc7' } =
+      req.session.user || {};
+    const { clothesIdList, basketId = '' } = req.body;
+    assertNonEmptyArray(clothesIdList);
+    const result = await clothesData.setClothesLocation(clothesIdList, basketId);
+    if (!result) {
+      throw new HttpError(`Could not get cloth for group id:${groupId}`, 404);
+    }
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
+});
+
 //get clothes by clothId
 router.get('/:id', async (req, res, next) => {
   try {

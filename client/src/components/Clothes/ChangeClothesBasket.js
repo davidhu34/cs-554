@@ -1,22 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { axiosGet } from '../../application/api/utils';
 
 import { updateBasketClothes } from '../../application/redux/actions/basket';
+import { fetchClothesLocations, removeClothesFromBaskets } from '../../application/redux/actions/clothesLocation';
+
 import DataModal from '../DataPage/DataModal';
 
-export default function AddClothesToBasket() {
+export default function ChangeClothesBasket() {
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [basketId, setBasketId] = useState('');
 
-  const clothesSearchParam =
-    new URLSearchParams(location.search).get('clothes') || '';
-  const clothesIdList = clothesSearchParam ? clothesSearchParam.split(',') : [];
+  const clothesIdList =
+    new URLSearchParams(location.search).getAll('clothes') || '';
   // const baskets = useActiveBaskets();
   const [baskets, setBaskets] = useState([]);
+
+  const {data: clothesLocaiton, loading: clothesLocaitonLoading, error: clothesLocaitonError} = useSelector(state => state.clothesLocation);
+  
+  const canClear = clothesIdList.some(id => id in clothesLocaiton);
 
   useEffect(() => {
     async function getPendingBaskets() {
@@ -35,16 +40,31 @@ export default function AddClothesToBasket() {
     navigate(-1);
   }
 
-  function handlePutClothesToBasket() {
+  async function handlePutClothesToBasket() {
     console.log(clothesIdList, basketId);
     if (clothesIdList.length > 0) {
-      dispatch(updateBasketClothes(basketId, clothesIdList));
+      await dispatch(updateBasketClothes(basketId, clothesIdList));
+      await dispatch(fetchClothesLocations());
     }
     handleClose();
   }
 
+  async function handleRemoveClothesFromBaskets() {
+    if (canClear) {
+      await Promise.all(
+        clothesIdList.map(
+          (id) =>
+            clothesLocaiton[id] &&
+            dispatch(updateBasketClothes(clothesLocaiton[id], [id], true))
+        )
+      );
+      await dispatch(fetchClothesLocations());
+    }
+  }
+
   return (
     <DataModal open onClose={handleClose}>
+      {canClear && <button onClick={handleRemoveClothesFromBaskets}>Remove selected clothes from all current baskets</button>}
       put {clothesIdList.length} piece of clothes into basket
       <select defaultValue={baskets[0]?._id} value={basketId} onChange={handleSelectBasket}>
         {baskets.map(({_id, name}) => (

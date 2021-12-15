@@ -13,6 +13,8 @@ const {
 const usersData = require('./user');
 const { getGroup } = require('./group');
 
+const { getAllClothesBasketLocations, setClothesBasketLocation } = require('../utils/redis');
+
 const getByObjectId = async (objectId) => {
   const collection = await getClothesCollection();
   let cloth = await collection.findOne(idQuery(objectId));
@@ -206,6 +208,21 @@ const deleteClothByGroupId = async (userId, groupId) => {
   return parseMongoData({ message });
 };
 
+
+const getClothesLocations = async () => {
+  return await getAllClothesBasketLocations();
+};
+
+const setClothesLocation = async (clothesIdList, basketId = '') => {
+  await setClothesBasketLocations(clothes, basketId);
+  return await getClothesLocations();
+};
+
+
+const clearClothesLocation = async (clothesIdList) => {
+  return await setClothesLocation(clothes, '');
+};
+
 module.exports = {
   getClothByGroupId,
   addCloth,
@@ -213,4 +230,7 @@ module.exports = {
   updateCloth,
   deleteCloth,
   deleteClothByGroupId,
+  getClothesLocations,
+  setClothesLocation,
+  clearClothesLocation,
 };

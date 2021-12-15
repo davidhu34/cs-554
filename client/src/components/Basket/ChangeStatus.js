@@ -5,6 +5,7 @@ import { getBasketDetailSelector } from '../../application/redux/selectors';
 
 import { updateBasketStatus } from '../../application/redux/actions';
 import DataModal from '../DataPage/DataModal';
+import { fetchClothesLocations } from '../../application/redux/actions/clothesLocation';
 
 const validNextStatus = {
   PENDING: 'WASHING',
@@ -36,14 +37,16 @@ export default function ChangeStatus() {
   function handleTaskTimeChange(e) {
     setTaskTime(e.target.value);
   }
-  function handleChangeStatus() {
-    dispatch(
+
+  async function handleChangeStatus() {
+    await dispatch(
       updateBasketStatus(id, {
         status: nextStatus,
         time: taskTime,
         lastUpdateId: basket.history[basket.history.length - 1]._id,
       })
     );
+    await dispatch(fetchClothesLocations());
     handleClose();
   }
 

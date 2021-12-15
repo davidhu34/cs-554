@@ -6,6 +6,7 @@ const {
   assertIsValuedString,
   assertRequiredNumber,
   assertObjectIdString,
+  assertNonEmptyArray,
 } = require('../utils/assertion');
 const { HttpError, ValidationError } = require('../utils/errors');
 
@@ -171,11 +172,12 @@ router.patch('/:id/clothes', async (req, res, next) => {
     const { id: basketId } = req.params;
     const { _id: userId = '61b91631d36271f9dc9b9bc4', groupId = '61b91631d36271f9dc9b9bc7' } =
       req.session.user || {};
-    const { clothesIdList = [] } = req.body;
+    const { clothesIdList = [], remove = false } = req.body;
+    assertNonEmptyArray(clothesIdList);
     assertObjectIdString(userId, 'User ID');
     assertObjectIdString(groupId, 'Group ID');
 
-    const result = await basketsData.updateBasketClothes(basketId, {userId, clothesIdList});
+    const result = await basketsData.updateBasketClothes(basketId, {userId, clothesIdList}, remove);
 
     if (!result) {
       throw new HttpError(`Could not update basket for basket id:${id}`, 400);

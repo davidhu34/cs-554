@@ -18,3 +18,6 @@ export const getBasketPath = (id) => `/baskets/${id}`;
 
 export const SUBSCRIBE_GROUP_TOPIC = '/messaging/subscribe';
 export const UNSUBSCRIBE_GROUP_TOPIC = '/messaging/unsubscribe';
+
+export const GET_CLOTHES_BASKET_LOCATIONS = '/clothes/locations';
+export const PATCH_CLOTHES_BASKET_LOCATIONS = '/clothes/locations';

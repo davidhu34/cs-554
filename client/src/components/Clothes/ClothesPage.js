@@ -13,7 +13,7 @@ import {
   getClothesDetailSelector,
 } from '../../application/redux/selectors';
 import DataPage from '../DataPage';
-import AddClothesToBasket from './AddClothesToBasket';
+import ChangeClothesBasket from './ChangeClothesBasket';
 
 const clothesColumns = [
   {
@@ -107,7 +107,7 @@ export default function ClothesPage() {
       customRoutes={[
         {
           path: '/add-to-basket',
-          element: <AddClothesToBasket />,
+          element: <ChangeClothesBasket />,
         },
       ]}
     />

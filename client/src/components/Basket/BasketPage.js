@@ -102,7 +102,7 @@ export default function BasketPage() {
           },
         // {
         //   path: '/add-clothes',
-        //   element: <AddClothesToBasket />,
+        //   element: <ChangeClothesBasket />,
         // },
       ]}
     />

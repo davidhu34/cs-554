@@ -30,9 +30,21 @@ const setClothesBasketLocation = async (clothes, basketId) => {
   try {
     await prepareClient();
     await Promise.all(
-      clothesIdList.map((id) => client.hSet(CLOTHES_BASKET_LOCATION_KEY, id, basketId))
+      basketId
+        ? clothesIdList.map((id) => client.hSet(CLOTHES_BASKET_LOCATION_KEY, id, basketId))
+        : clothesIdList.map((id) => client.hDel(CLOTHES_BASKET_LOCATION_KEY, id))
     );
     return basketId;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+const getAllClothesBasketLocations = async () => {
+  try {
+    await prepareClient();
+    return await client.hGetAll(CLOTHES_BASKET_LOCATION_KEY);
   } catch (error) {
     console.log(error);
     throw error;
@@ -44,4 +56,5 @@ module.exports = {
   prepareClient,
   getClothesBasketLocation,
   setClothesBasketLocation,
+  getAllClothesBasketLocations,
 };

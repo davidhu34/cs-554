@@ -5,13 +5,14 @@ import {
   deleteBasket as deleteBasketRequest,
   patchBasketStatus,
   patchBasketClothes,
+  getClothesBasketLocations,
 } from '../../api';
 import { DEFAULT_PAGINATION_LIMIT } from '../../constants';
 import {
   basketPaginationSelector,
   getBasketDetailSelector,
 } from '../selectors';
-import { basketActionTypes } from './actionTypes';
+import { basketActionTypes, clothesLocationActionTypes } from './actionTypes';
 
 export const getBasketList = (options) => async (dispatch, getState) => {
   try {
@@ -126,6 +127,11 @@ export const updateBasketStatus =
         id,
         data,
       });
+      const clothesLocations = await getClothesBasketLocations();
+      dispatch({
+        type: clothesLocationActionTypes.getClothesLocations,
+        data: clothesLocations,
+      });
     } catch (error) {
       dispatch({
         type: basketActionTypes.updateError,
@@ -142,7 +148,7 @@ export const updateBasketClothes =
         type: basketActionTypes.updateStart,
         id,
       });
-      const data = await patchBasketClothes(id, { clothesIdList });
+      const data = await patchBasketClothes(id, { clothesIdList, remove: isRemove });
       dispatch({
         type: basketActionTypes.updateSuccess,
         id,

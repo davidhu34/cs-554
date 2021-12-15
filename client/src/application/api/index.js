@@ -11,6 +11,8 @@ import {
   getPatchBasketClothesPath,
   SUBSCRIBE_GROUP_TOPIC,
   UNSUBSCRIBE_GROUP_TOPIC,
+  GET_CLOTHES_BASKET_LOCATIONS,
+  PATCH_CLOTHES_BASKET_LOCATIONS,
   getBasketPath,
 } from './endpoints';
 import { axiosDelete, axiosGet, axiosPost, axiosPut, axiosPatch } from './utils';
@@ -134,4 +136,12 @@ export const subscribeGroupTopic = ({ groupId, token }) => {
 
 export const unsubscribeGroupTopic = ({ groupId, token }) => {
   return axiosPost(UNSUBSCRIBE_GROUP_TOPIC, { groupId, token });
+};
+
+export const getClothesBasketLocations = () => {
+  return axiosGet(GET_CLOTHES_BASKET_LOCATIONS);
+};
+
+export const patchClothesBasketLocations = (data) => {
+  return axiosPatch(PATCH_CLOTHES_BASKET_LOCATIONS, data);
 };

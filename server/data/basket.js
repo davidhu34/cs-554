@@ -11,7 +11,7 @@ const {
   assertRequiredNumber,
   assertNonEmptyArray,
 } = require('../utils/assertion');
-const { setClothesBasketLocation, getClothesBasketLocation } = require('../utils/redis');
+const { setClothesBasketLocation, getClothesBasketLocation, getAllClothesBasketLocations } = require('../utils/redis');
 
 const nextStatus = {
   'PENDING': 'WASHING',
@@ -350,10 +350,21 @@ const updateBasketClothes = async (id, { clothesIdList, userId }, isRemove = fal
       updatedAt: currentTimestamp,
       updatedBy: new ObjectId(userId),
     },
-    [isRemove ? '$pull' : '$addToSet']: {
-      clothes: { $each: clothesIdList },
-    },
   };
+
+  if (isRemove) {
+    ops.$pull = {
+      clothes: {
+        $in: clothesIdList,
+      },
+    };
+  } else {
+    ops.$addToSet = {
+      clothes: {
+        $each: clothesIdList,
+      },
+    };
+  }
 
   const { value: updatedBasket, ok } = await collection.findOneAndUpdate(idQuery(id), ops, options);
 
@@ -361,7 +372,7 @@ const updateBasketClothes = async (id, { clothesIdList, userId }, isRemove = fal
     throw new QueryError(`Could not update basket with ID \`${id}\``);
   }
 
-  await setClothesBasketLocation(clothesIdList, id);
+  await setClothesBasketLocation(clothesIdList, isRemove ? '' : id);
   console.log(await getClothesBasketLocation(clothesIdList));
   return parseMongoData(updatedBasket);
 };
