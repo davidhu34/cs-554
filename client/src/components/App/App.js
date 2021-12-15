@@ -8,7 +8,7 @@ import BasketPage from '../Basket';
 import { SignUp, SignOut } from '../Users';
 import NavBar from './NavBar';
 import SideBar from './SideBar';
-import { useGroupTopic } from '../../application/hooks/messaging';
+import { useBasketMonitor } from '../../application/hooks/data';
 
 function onMessage(payload) {
   console.log('message payload', payload);
@@ -18,7 +18,8 @@ export default function App() {
   const matches = useMediaQuery(theme.breakpoints.up('sm'));
   
   // TODO: get group ID as message topic
-  useGroupTopic({ groupId: 'abc', onMessage });
+  // useGroupTopic({ groupId: 'abc', onMessage });
+  useBasketMonitor();
 
   return (
     <Box

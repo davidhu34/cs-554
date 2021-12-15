@@ -1,4 +1,5 @@
 const { Router } = require('express');
+const { messaging } = require('../config/firebaseAdmin');
 const router = Router();
 const basketsData = require('../data/basket');
 
@@ -8,6 +9,7 @@ const {
   assertObjectIdString,
   assertNonEmptyArray,
 } = require('../utils/assertion');
+const { getNextBasketStatus } = require('../utils/data');
 const { HttpError, ValidationError } = require('../utils/errors');
 
 //add basket
@@ -148,7 +150,9 @@ router.patch('/:id/status', async (req, res, next) => {
     const { id: basketId } = req.params;
     const { _id: userId = '61b91631d36271f9dc9b9bc4', groupId = '61b91631d36271f9dc9b9bc7' } =
       req.session.user || {};
-    const { lastUpdateId, status, time } = req.body;
+    const { lastUpdateId, status } = req.body;
+    const time = parseInt(req.body.time || 0);
+    assertRequiredNumber(time, 'Status Time');
     assertObjectIdString(userId, 'User ID');
     assertObjectIdString(groupId, 'Group ID');
     const result = await basketsData.updateBasketStatus(basketId, {
@@ -158,10 +162,38 @@ router.patch('/:id/status', async (req, res, next) => {
       time,
       lastUpdateId,
     });
-
     if (!result) {
       throw new HttpError(`Could not update basket for basket id:${id}`, 400);
     }
+  
+    const nextAutoStatus = getNextBasketStatus(result.status);
+
+    setTimeout(async () => {
+      try {
+
+        const autoResult = await basketsData.updateBasketStatus(basketId, {
+          userId,
+          groupId,
+          status: nextAutoStatus,
+          time: 0,
+          lastUpdateId: result.history[result.history.length - 1]._id,
+        });
+        const messageResponse = await messaging.send({
+          data: {
+            type: 'BASKET_STATUS',
+            basketId,
+            message: `Basket ${autoResult.name} updated to ${autoResult.status}`,
+            status: autoResult.status,
+          },
+          topic: 'abc',//groupId,
+        });
+        console.log('basket auto status messaging response:', messageResponse);
+      } catch(error) {
+        console.log(error);
+      }
+    }, time);
+
+
     res.status(200).json(result);
   } catch (error) {
     next(error);

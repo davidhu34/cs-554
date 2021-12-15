@@ -13,15 +13,9 @@ const {
 } = require('../utils/assertion');
 const { setClothesBasketLocation, getClothesBasketLocation, getAllClothesBasketLocations } = require('../utils/redis');
 
-const nextStatus = {
-  'PENDING': 'WASHING',
-  'WASHING': 'WASHING_DONE',
-  'WASHING_DONE': 'DRYING',
-  'DRYING': 'DRYING_DONE',
-  'DRYING_DONE': 'PENDING',
-};
 const usersData = require('./user');
 const { getGroup } = require('./group');
+const { getNextBasketStatus } = require('../utils/data');
 
 const assertStatus = (status) => {
   assertIsValuedString(status, 'Basket status');
@@ -283,8 +277,8 @@ const updateBasketStatus = async (id, data) => {
     throw new QueryError(`Basket with ID\`${id}\` has invalid status history.`);
   }
 
-  const validNextStatus = nextStatus[basket.status];
-  if (validNextStatus !== status) {
+  const validNextStatus = getNextBasketStatus(basket.status);
+  if (!validNextStatus || validNextStatus !== status) {
     throw new QueryError(
       `Invalid basket status update: ${basket.status} can only update to ${validNextStatus}`
     );

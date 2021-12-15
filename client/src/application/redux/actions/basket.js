@@ -13,6 +13,7 @@ import {
   basketPaginationSelector,
 } from '../selectors';
 import { basketActionTypes, clothesLocationActionTypes } from './actionTypes';
+import { fetchClothesLocations } from './clothesLocation';
 
 export const getBasketList = (options) => async (dispatch, getState) => {
   try {
@@ -147,11 +148,7 @@ export const updateBasketStatus =
         id,
         data,
       });
-      const clothesLocations = await getClothesBasketLocations();
-      dispatch({
-        type: clothesLocationActionTypes.getClothesLocations,
-        data: clothesLocations,
-      });
+      dispatch(fetchClothesLocations());
     } catch (error) {
       dispatch({
         type: basketActionTypes.updateError,

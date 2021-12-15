@@ -10,7 +10,9 @@ router.post('/subscribe', async (req, res, next) => {
     console.log('Successfully subscribed to topic:', subResponse);
     try {
       const messageResponse = await messaging.send({
-        data: {},
+        data: {
+          hello: 'world',
+        },
         topic: groupId,
       });
       console.log('Successfully sent message:', messageResponse);

@@ -23,9 +23,9 @@ const messaging = firebase.messaging();
 messaging.onBackgroundMessage((payload) => {
   console.log('[firebase-messaging-sw.js] Received background message ', payload);
   // Customize notification here
-  const notificationTitle = 'Background Message Title';
+  const notificationTitle = payload.title || 'WashTastic Update';
   const notificationOptions = {
-    body: 'Background Message body.',
+    body: payload.message || 'New updates available.',
     icon: '/firebase-logo.png'
   };
 
