@@ -24,12 +24,16 @@ router.post("/", async (req, res) => {
     const userPresent = await usersData.getUserByEmail(email);
 
     if (userPresent) {
+      console.log("User present:", userPresent);
+      req.session.user = userPresent;
+      console.log("USer present Session: ", req.session.user);
       return res.status(200).json(userPresent);
     }
 
     const newUser = await usersData.createUser(reqBody);
     console.log(newUser);
     req.session.user = newUser;
+    console.log("Session User => ", req.session.user);
     res.status(200).json(newUser);
   } catch (e) {
     console.log(e);
@@ -47,6 +51,14 @@ router.get("/all", async (req, res) => {
     res.status(400).json({ error: e });
   }
 });
+//logout
+router.delete("/logout", async (req, res) => {
+  console.log("Session User (Before Logout) => ", req.session?.user);
+  req.session.destroy();
+  console.log("Session User (After Logout) => ", req.session?.user);
+
+  return res.json({ message: "Log out successfully" });
+});
 //end get all users
 router.put("/:id", async (req, res) => {
   console.log(req.body);
@@ -56,6 +68,7 @@ router.put("/:id", async (req, res) => {
 router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
+
     assertObjectIdString(id, "Group ID");
     const result = await usersData.getUser(id);
 

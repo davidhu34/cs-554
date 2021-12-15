@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { Navigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import AppBar from '@mui/material/AppBar';
 import Badge from '@mui/material/Badge';
 import Toolbar from '@mui/material/Toolbar';
@@ -11,12 +11,21 @@ import MenuIcon from '@mui/icons-material/Menu';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import Box from '@mui/system/Box';
-import { AuthContext } from '../../../application/firebase/auth';
-import { doSignOut } from '../../../application/firebase/firebaseFunctions';
+import { AuthContext } from '../../../application/firebase/Auth';
+import { doSignOut } from '../../../application/firebase/FirebaseFunctions';
 const accountMenuId = 'account-menu';
 export default function NavBar() {
   //Dhruveel's Changes
-  const { currentUser } = useContext(AuthContext);
+  const { currentUser, setCurrentUser } = useContext(AuthContext);
+  const navigate = useNavigate();
+  function handleSignOut(e) {
+    e.preventDefault();
+    setCurrentUser(null);
+    console.log('in SIgnout handleSIgnout', currentUser);
+    doSignOut();
+    navigate('/login');
+    console.log(currentUser);
+  }
 
   // Dhruveel's Changes ends here
 
@@ -49,7 +58,7 @@ export default function NavBar() {
       onClose={handleMenuClose}
     >
       <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={doSignOut}>Sign Out</MenuItem>
+      <MenuItem onClick={handleSignOut}>Sign Out</MenuItem>
     </Menu>
   );
   return (

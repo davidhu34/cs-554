@@ -1,5 +1,5 @@
 import { useState, useEffect, createContext, useLayoutEffect } from 'react';
-import firebaseApp from './firebase';
+import firebaseApp from './Firebase';
 import Axios from 'axios';
 export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
@@ -29,12 +29,13 @@ export const AuthProvider = ({ children }) => {
   // post user into Database
   useEffect(() => {
     const fetchUserData = async () => {
-      if (user?.providerData[0]) {
+      if (user && user?.providerData[0]) {
+        console.log('user before calling API: ', user);
         const { data } = await Axios.post(
           'http://localhost:3001/user',
           user.providerData[0]
         );
-        console.log('data', data);
+        console.log('user After calling API:', data);
         setCurrentUser(data);
       }
     };
@@ -73,7 +74,8 @@ export const AuthProvider = ({ children }) => {
   //   };
   //   fetchUserData();
   // }, []);
-  console.log('current user', currentUser);
+  // console.log('current user', currentUser);
+  console.log('user before set into the context:', currentUser);
   if (loadingUser) {
     return (
       <div>

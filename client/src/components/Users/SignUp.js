@@ -1,13 +1,14 @@
 import { useContext, useState } from 'react';
-import { doSocialSignIn } from '../../application/firebase/firebaseFunctions';
-import { Navigate } from 'react-router-dom';
-import { AuthContext } from '../../application/firebase/auth';
+import { doSocialSignIn } from '../../application/firebase/FirebaseFunctions';
+import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../../application/firebase/Auth';
 import Axios from 'axios';
 import GoogleButton from 'react-google-button';
 
 const SignUp = () => {
   const [dummy, setDummy] = useState();
   const { currentUser } = useContext(AuthContext);
+  const navigate = useNavigate();
   // console.log('Current User Data:\n', currentUser?.providerData[0]);
   // const findUser = async () => {
   //   try {
@@ -45,8 +46,10 @@ const SignUp = () => {
   const socialSignOn = async (provider) => {
     try {
       await doSocialSignIn(provider);
+      console.log('Signon current user:', currentUser);
+      navigate('/');
     } catch (error) {
-      alert(error);
+      alert(JSON.stringify(error));
     }
   };
 

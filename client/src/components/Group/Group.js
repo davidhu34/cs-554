@@ -6,7 +6,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import GroupForm from './GroupForm';
-import { AuthContext } from '../../application/firebase/auth';
+import { AuthContext } from '../../application/firebase/Auth';
 // http://localhost:3001/group (GET)
 // http://localhost:3001/group (POST)
 
@@ -35,7 +35,7 @@ const Group = () => {
   return (
     <>
       <GroupForm />
-      <Box sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+      <Box sx={{ width: '100%', maxWidth: 360 }}>
         <nav aria-label="main">
           {groupList &&
             groupList.map((group) => (
