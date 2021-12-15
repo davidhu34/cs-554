@@ -16,7 +16,13 @@ import {
   getBasketPath,
   getClothesPath,
 } from './endpoints';
-import { axiosDelete, axiosGet, axiosPost, axiosPut, axiosPatch } from './utils';
+import {
+  axiosDelete,
+  axiosGet,
+  axiosPost,
+  axiosPut,
+  axiosPatch,
+} from './utils';
 import { DEFAULT_PAGINATION_LIMIT } from '../constants';
 import testClothes from './test-data/clothes.json';
 
@@ -106,6 +112,10 @@ export const getPaginatedBasket = (options) => {
   return axiosGet(GET_PAGINATED_BASKETS, { params: { skip, limit } });
 };
 
+export const getBasket = (id) => {
+  return axiosGet(getBasketPath(id));
+};
+
 export const postBasket = (data) => {
   const newBasket = {
     name: data.name,
@@ -122,13 +132,9 @@ export const patchBasketStatus = (id, data) => {
 };
 export const patchBasketClothes = (id, data) => {
   return axiosPatch(getPatchBasketClothesPath(id), data);
-}
+};
 export const deleteBasket = (id) => {
   return axiosDelete(getDeleteBasketPath(id));
-};
-
-export const getBasket = (id) => {
-  return axiosGet(getBasketPath(id));
 };
 
 export const subscribeGroupTopic = ({ groupId, token }) => {

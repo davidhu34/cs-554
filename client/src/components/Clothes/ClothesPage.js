@@ -14,11 +14,21 @@ import {
 } from '../../application/redux/selectors';
 import DataPage from '../DataPage';
 import ChangeClothesBasket from './ChangeClothesBasket';
+import { useClothesLocation } from '../../application/hooks/data';
+
+import ClothesStatusCell from './ClothesStatusCell';
 
 const clothesColumns = [
   {
     field: 'name',
     label: 'Name',
+  },
+  {
+    field: 'status',
+    label: 'Status',
+    render(_, data) {
+      return <ClothesStatusCell clothes={data} />;
+    },
   },
   {
     field: 'size',
@@ -69,6 +79,7 @@ const clothesFormConfigs = [
 ];
 
 export default function ClothesPage() {
+  useClothesLocation({ refresh: true });
   const navigate = useNavigate();
   function handleAddToBasket(selectedList) {
     navigate({

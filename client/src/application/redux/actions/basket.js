@@ -1,5 +1,6 @@
 import {
   getPaginatedBasket,
+  getBasket,
   postBasket,
   putBasket,
   deleteBasket as deleteBasketRequest,
@@ -10,7 +11,6 @@ import {
 import { DEFAULT_PAGINATION_LIMIT } from '../../constants';
 import {
   basketPaginationSelector,
-  getBasketDetailSelector,
 } from '../selectors';
 import { basketActionTypes, clothesLocationActionTypes } from './actionTypes';
 
@@ -48,6 +48,26 @@ export const getBasketList = (options) => async (dispatch, getState) => {
   } catch (error) {
     dispatch({
       type: basketActionTypes.fetchListError,
+      error,
+    });
+  }
+};
+
+export const getBasketDetail = (id) => async (dispatch, getState) => {
+  try {
+    dispatch({
+      type: basketActionTypes.fetchStart,
+      id,
+    });
+    const data = await getBasket(id);
+    dispatch({
+      type: basketActionTypes.fetchSuccess,
+      id: data._id,
+      data,
+    });
+  } catch (error) {
+    dispatch({
+      type: basketActionTypes.fetchError,
       error,
     });
   }
