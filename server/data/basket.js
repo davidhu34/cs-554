@@ -373,7 +373,6 @@ const updateBasketClothes = async (id, { clothesIdList, userId }, isRemove = fal
   }
 
   await setClothesBasketLocation(clothesIdList, isRemove ? '' : id);
-  console.log(await getClothesBasketLocation(clothesIdList));
   return parseMongoData(updatedBasket);
 };
 

@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { axiosGet } from '../../application/api/utils';
+import { useClothesLocation } from '../../application/hooks/data';
 
 import { updateBasketClothes } from '../../application/redux/actions/basket';
-import { fetchClothesLocations, removeClothesFromBaskets } from '../../application/redux/actions/clothesLocation';
+import { fetchClothesLocations } from '../../application/redux/actions/clothesLocation';
 
 import DataModal from '../DataPage/DataModal';
 
@@ -19,9 +20,13 @@ export default function ChangeClothesBasket() {
   // const baskets = useActiveBaskets();
   const [baskets, setBaskets] = useState([]);
 
-  const {data: clothesLocaiton, loading: clothesLocaitonLoading, error: clothesLocaitonError} = useSelector(state => state.clothesLocation);
-  
-  const canClear = clothesIdList.some(id => id in clothesLocaiton);
+  const {
+    data: clothesLocaiton,
+    loading: clothesLocaitonLoading,
+    error: clothesLocaitonError,
+  } = useClothesLocation();
+
+  const canClear = clothesIdList.some((id) => id in clothesLocaiton);
 
   useEffect(() => {
     async function getPendingBaskets() {
@@ -59,16 +64,27 @@ export default function ChangeClothesBasket() {
         )
       );
       await dispatch(fetchClothesLocations());
+      handleClose();
     }
   }
 
   return (
     <DataModal open onClose={handleClose}>
-      {canClear && <button onClick={handleRemoveClothesFromBaskets}>Remove selected clothes from all current baskets</button>}
+      {canClear && (
+        <button onClick={handleRemoveClothesFromBaskets}>
+          Remove selected clothes from all current baskets
+        </button>
+      )}
       put {clothesIdList.length} piece of clothes into basket
-      <select defaultValue={baskets[0]?._id} value={basketId} onChange={handleSelectBasket}>
-        {baskets.map(({_id, name}) => (
-          <option key={_id} value={_id}>{name}</option>
+      <select
+        defaultValue={baskets[0]?._id}
+        value={basketId}
+        onChange={handleSelectBasket}
+      >
+        {baskets.map(({ _id, name }) => (
+          <option key={_id} value={_id}>
+            {name}
+          </option>
         ))}
       </select>
       <button
