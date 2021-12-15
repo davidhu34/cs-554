@@ -18,7 +18,7 @@ export function useBasketMonitor(options = {}) {
 
   const onMessage = useCallback(
     async (payload) => {
-      const { data } = payload;
+      const { data = {} } = payload;
       const { type, message, basketId, status } = data;
       if (type === 'BASKET_STATUS' && basketId) {
         await dispatch(getBasketDetail(basketId));

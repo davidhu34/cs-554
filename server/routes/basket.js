@@ -189,7 +189,7 @@ router.patch('/:id/status', async (req, res, next) => {
         });
         console.log('basket auto status messaging response:', messageResponse);
       } catch(error) {
-        console.log(error);
+        console.error('basket auto status messaging error:', error);
       }
     }, time);
 

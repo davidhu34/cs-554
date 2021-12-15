@@ -52,7 +52,6 @@ export default function DataForm({
             defaultValue,
           }) => {
             const error = errors[name];
-            console.log(error);
             switch (type) {
               case 'select':
                 return (

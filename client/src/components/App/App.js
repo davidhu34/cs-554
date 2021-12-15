@@ -10,9 +10,6 @@ import NavBar from './NavBar';
 import SideBar from './SideBar';
 import { useBasketMonitor } from '../../application/hooks/data';
 
-function onMessage(payload) {
-  console.log('message payload', payload);
-}
 export default function App() {
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up('sm'));
