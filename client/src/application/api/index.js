@@ -14,6 +14,7 @@ import {
   GET_CLOTHES_BASKET_LOCATIONS,
   PATCH_CLOTHES_BASKET_LOCATIONS,
   getBasketPath,
+  getClothesPath,
 } from './endpoints';
 import { axiosDelete, axiosGet, axiosPost, axiosPut, axiosPatch } from './utils';
 import { DEFAULT_PAGINATION_LIMIT } from '../constants';
@@ -86,17 +87,17 @@ export const deleteClothes = (id) => {
   return axiosDelete(getDeleteClothesPath(id));
 };
 
-export const getClothes = (id) => {
-  let data = null;
-  let i = 0;
-  while (i < tempClothes.length && tempClothes[i].id !== id) {
-    i++;
-  }
-  if (i < tempClothes.length) {
-    data = tempClothes[i];
-  }
-  return delay({ data });
-  // return axiosGet(getClothesPath(id));
+export const getClothesDetail = (id) => {
+  // let data = null;
+  // let i = 0;
+  // while (i < tempClothes.length && tempClothes[i].id !== id) {
+  //   i++;
+  // }
+  // if (i < tempClothes.length) {
+  //   data = tempClothes[i];
+  // }
+  // return delay({ data });
+  return axiosGet(getClothesPath(id));
 };
 
 export const getPaginatedBasket = (options) => {

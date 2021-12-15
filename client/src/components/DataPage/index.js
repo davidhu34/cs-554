@@ -39,9 +39,12 @@ function DataRowItem({ id, selected = false, onClick, getDataSelector, columns }
         />
       </TableCell>
 
-      {columns.map(({ field, align }) => (
-        <TableCell align={align}>{data[field] || ''}</TableCell>
-      ))}
+      {columns.map(({ field, align, render }) => {
+        const item = data[field] || '';
+        return (
+          <TableCell align={align}>{render ? render(item, data) : item}</TableCell>
+        );
+      })}
     </TableRow>
   ) : null;
 }

@@ -1,4 +1,4 @@
-import { getPaginatedClothes, postClothes, putClothes, deleteClothes as deleteClothesRequest } from '../../api';
+import { getPaginatedClothes, getClothesDetail, postClothes, putClothes, deleteClothes as deleteClothesRequest } from '../../api';
 import { DEFAULT_PAGINATION_LIMIT } from '../../constants';
 import { clothesPaginationSelector } from '../selectors';
 import { clothesActionTypes } from './actionTypes';
@@ -37,6 +37,26 @@ export const getClothesList = (options) => async (dispatch, getState) => {
   } catch (error) {
     dispatch({
       type: clothesActionTypes.fetchListError,
+      error,
+    });
+  }
+};
+
+export const getClothes = (id) => async (dispatch, getState) => {
+  try {
+    dispatch({
+      type: clothesActionTypes.fetchStart,
+      id,
+    });
+    const data = await getClothesDetail(id);
+    dispatch({
+      type: clothesActionTypes.fetchSuccess,
+      data,
+      id,
+    });
+  } catch (error) {
+    dispatch({
+      type: clothesActionTypes.fetchError,
       error,
     });
   }

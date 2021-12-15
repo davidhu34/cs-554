@@ -88,7 +88,8 @@ router.patch('/locations', async (req, res, next) => {
 router.get('/:id', async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { _id: userId } = req.session.user;
+    const { _id: userId = '61b91631d36271f9dc9b9bc4', groupId = '61b91631d36271f9dc9b9bc7' } =
+      req.session.user || {};
     assertIsValuedString(id, 'Cloth Id');
     const user = await userData.getByObjectId(userId);
     if (!user) {

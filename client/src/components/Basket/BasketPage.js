@@ -14,6 +14,7 @@ import {
 } from '../../application/redux/selectors';
 import DataPage from '../DataPage';
 import ChangeStatus from './ChangeStatus';
+import BasketClothesCell from './BasketClothesCell';
 
 const basketColumns = [
   {
@@ -27,6 +28,13 @@ const basketColumns = [
   {
     field: 'size',
     label: 'Size',
+  },
+  {
+    field: 'clothes',
+    label: 'Clothes',
+    render(clothes, data) {
+      return <BasketClothesCell clothesIdList={clothes} />;
+    },
   },
   {
     field: '_id',
