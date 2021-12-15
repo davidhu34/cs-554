@@ -1,12 +1,28 @@
 import {
   getDeleteClothesPath,
+  getDeleteBasketPath,
   GET_PAGINATED_CLOTHES,
+  GET_PAGINATED_BASKETS,
   POST_CLOTHES,
+  POST_BASKET,
   getPutClothesPath,
+  getPutBasketPath,
+  getPatchBasketStatusPath,
+  getPatchBasketClothesPath,
   SUBSCRIBE_GROUP_TOPIC,
   UNSUBSCRIBE_GROUP_TOPIC,
+  GET_CLOTHES_BASKET_LOCATIONS,
+  PATCH_CLOTHES_BASKET_LOCATIONS,
+  getBasketPath,
+  getClothesPath,
 } from './endpoints';
-import { axiosDelete, axiosGet, axiosPost, axiosPut } from './utils';
+import {
+  axiosDelete,
+  axiosGet,
+  axiosPost,
+  axiosPut,
+  axiosPatch,
+} from './utils';
 import { DEFAULT_PAGINATION_LIMIT } from '../constants';
 import testClothes from './test-data/clothes.json';
 
@@ -24,7 +40,7 @@ export const getPaginatedClothes = (options) => {
   //   total: tempClothes.length,
   // };
   // return delay(testResult);
-  return axiosGet(GET_PAGINATED_CLOTHES, { params: {skip, limit} });
+  return axiosGet(GET_PAGINATED_CLOTHES, { params: { skip, limit } });
 };
 
 export const postClothes = (data) => {
@@ -39,7 +55,7 @@ export const postClothes = (data) => {
   // return delay({
   //   data: newClothes,
   // });
-  return axiosPost(POST_CLOTHES,  newClothes);
+  return axiosPost(POST_CLOTHES, newClothes);
 };
 
 export const putClothes = (id, data) => {
@@ -77,17 +93,48 @@ export const deleteClothes = (id) => {
   return axiosDelete(getDeleteClothesPath(id));
 };
 
-export const getClothes = (id) => {
-  let data = null;
-  let i = 0;
-  while (i < tempClothes.length && tempClothes[i].id !== id) {
-    i++;
-  }
-  if (i < tempClothes.length) {
-    data = tempClothes[i];
-  }
-  return delay({ data });
-  // return axiosGet(getClothesPath(id), data);
+export const getClothesDetail = (id) => {
+  // let data = null;
+  // let i = 0;
+  // while (i < tempClothes.length && tempClothes[i].id !== id) {
+  //   i++;
+  // }
+  // if (i < tempClothes.length) {
+  //   data = tempClothes[i];
+  // }
+  // return delay({ data });
+  return axiosGet(getClothesPath(id));
+};
+
+export const getPaginatedBasket = (options) => {
+  const { page = 0, limit = DEFAULT_PAGINATION_LIMIT } = options;
+  const skip = page * limit;
+  return axiosGet(GET_PAGINATED_BASKETS, { params: { skip, limit } });
+};
+
+export const getBasket = (id) => {
+  return axiosGet(getBasketPath(id));
+};
+
+export const postBasket = (data) => {
+  const newBasket = {
+    name: data.name,
+    size: data.size,
+  };
+  return axiosPost(POST_BASKET, newBasket);
+};
+
+export const putBasket = (id, data) => {
+  return axiosPut(getPutBasketPath(id), data);
+};
+export const patchBasketStatus = (id, data) => {
+  return axiosPatch(getPatchBasketStatusPath(id), data);
+};
+export const patchBasketClothes = (id, data) => {
+  return axiosPatch(getPatchBasketClothesPath(id), data);
+};
+export const deleteBasket = (id) => {
+  return axiosDelete(getDeleteBasketPath(id));
 };
 
 export const subscribeGroupTopic = ({ groupId, token }) => {
@@ -96,4 +143,12 @@ export const subscribeGroupTopic = ({ groupId, token }) => {
 
 export const unsubscribeGroupTopic = ({ groupId, token }) => {
   return axiosPost(UNSUBSCRIBE_GROUP_TOPIC, { groupId, token });
+};
+
+export const getClothesBasketLocations = () => {
+  return axiosGet(GET_CLOTHES_BASKET_LOCATIONS);
+};
+
+export const patchClothesBasketLocations = (data) => {
+  return axiosPatch(PATCH_CLOTHES_BASKET_LOCATIONS, data);
 };

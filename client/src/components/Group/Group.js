@@ -18,7 +18,7 @@ const Group = () => {
   useEffect(() => {
     async function fetchGroup() {
       try {
-        setLoading(true);
+        setLoading(false);
         const { data } = await Axios.get('http://localhost:3001/group');
         if (data) {
           setGroupList(data);
@@ -29,7 +29,7 @@ const Group = () => {
       }
     }
     fetchGroup();
-  }, []);
+  }, [groupList]);
 
   if (loading) return <h2>Loading Group..............</h2>;
   return (
@@ -40,7 +40,7 @@ const Group = () => {
           {groupList &&
             groupList.map((group) => (
               <List key={group._id}>
-                <ListItem disablePadding>
+                <ListItem>
                   <ListItemButton>
                     <ListItemText primary={group.name} />
                   </ListItemButton>

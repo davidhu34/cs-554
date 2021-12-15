@@ -12,7 +12,7 @@ const {
 const { QueryError, ValidationError, HttpError } = require("../utils/errors");
 
 //add clothes
-router.post("/", async (req, res) => {
+router.post('/', async (req, res, next) => {
   try {
     const { name, type } = req.body;
     console.log(req.session.user);
@@ -28,18 +28,15 @@ router.post("/", async (req, res) => {
       throw new HttpError(`Could not add cloth for id`, 404);
     }
     res.status(200).json(result);
-  } catch (e) {
-    console.log(e);
-    res.status(400).json({ error: e });
+  } catch (error) {
+    next(error);
   }
 });
 
-router.get("/", async (req, res) => {
+router.get('/', async (req, res, next) => {
   try {
-    const {
-      _id: userId = "61b12f933d2a722d43af730b",
-      groupId = "61b12f933d2a722d43af730f",
-    } = req.session.user || {};
+    const { _id: userId = '61b91631d36271f9dc9b9bc4', groupId = '61b91631d36271f9dc9b9bc7' } =
+      req.session.user || {};
     const { skip, limit } = req.query;
     assertIsValuedString(groupId, "Group Id");
     const result = await clothesData.getClothByGroupId({
@@ -52,18 +49,48 @@ router.get("/", async (req, res) => {
       throw new HttpError(`Could not get cloth for group id:${groupId}`, 404);
     }
     res.status(200).json(result);
-  } catch (e) {
-    console.log(e);
-    res.status(400).json({ error: e });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get('/locations', async (req, res, next) => {
+  try {
+    const { _id: userId = '61b91631d36271f9dc9b9bc4', groupId = '61b91631d36271f9dc9b9bc7' } =
+      req.session.user || {};
+      const result = await clothesData.getClothesLocations();
+    if (!result) {
+      throw new HttpError(`Could not get cloth for group id:${groupId}`, 404);
+    }
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.patch('/locations', async (req, res, next) => {
+  try {
+    const { _id: userId = '61b91631d36271f9dc9b9bc4', groupId = '61b91631d36271f9dc9b9bc7' } =
+      req.session.user || {};
+    const { clothesIdList, basketId = '' } = req.body;
+    assertNonEmptyArray(clothesIdList);
+    const result = await clothesData.setClothesLocation(clothesIdList, basketId);
+    if (!result) {
+      throw new HttpError(`Could not get cloth for group id:${groupId}`, 404);
+    }
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
   }
 });
 
 //get clothes by clothId
-router.get("/:id", async (req, res) => {
+router.get('/:id', async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { _id: userId } = req.session.user;
-    assertIsValuedString(id, "Cloth Id");
+    const { _id: userId = '61b91631d36271f9dc9b9bc4', groupId = '61b91631d36271f9dc9b9bc7' } =
+      req.session.user || {};
+    assertIsValuedString(id, 'Cloth Id');
     const user = await userData.getByObjectId(userId);
     if (!user) {
       throw new HttpError(`User not exist.`, 404);
@@ -73,32 +100,28 @@ router.get("/:id", async (req, res) => {
       throw new HttpError(`Could not get cloth for cloth id:${id}`, 404);
     }
     res.status(200).json(result);
-  } catch (e) {
-    console.log(e);
-    res.status(400).json({ error: e });
+  } catch (error) {
+    next(error);
   }
 });
 
 //delete clothes
-router.delete("/:id", async (req, res) => {
+router.delete('/:id', async (req, res, next) => {
   try {
     const { id } = req.params;
-    const {
-      _id: userId = "61b12f933d2a722d43af730b",
-      groupId = "61b12f933d2a722d43af730f",
-    } = req.session.user || {};
+    const { _id: userId = '61b91631d36271f9dc9b9bc4', groupId = '61b91631d36271f9dc9b9bc7' } =
+      req.session.user || {};
     const result = await clothesData.deleteCloth(userId, id);
     if (!result) {
       throw new HttpError(`Could not delete cloth for cloth id:${id}`, 404);
     }
     res.status(200).json(result);
-  } catch (e) {
-    console.log(e);
-    res.status(400).json({ error: e });
+  } catch (error) {
+    next(error);
   }
 });
 
-router.delete("/", async (req, res) => {
+router.delete('/', async (req, res, next) => {
   try {
     const { _id: userId, groupId } = req.session.user;
     const result = await clothesData.deleteClothByGroupId(userId, groupId);
@@ -107,20 +130,17 @@ router.delete("/", async (req, res) => {
       throw new HttpError(`Could not delete group for group id:${id}`, 404);
     }
     res.status(200).json(result);
-  } catch (e) {
-    console.log(e);
-    res.status(400).json({ error: e });
+  } catch (error) {
+    next(error);
   }
 });
 
 //update clothes
-router.put("/:id", async (req, res) => {
+router.put('/:id', async (req, res, next) => {
   try {
     const { id: clothId } = req.params;
-    const {
-      _id: userId = "61b12f933d2a722d43af730b",
-      groupId = "61b12f933d2a722d43af730f",
-    } = req.session.user || {};
+    const { _id: userId = '61b91631d36271f9dc9b9bc4', groupId = '61b91631d36271f9dc9b9bc7' } =
+      req.session.user || {};
     const { name, type } = req.body;
     assertIsValuedString(userId, "User Id");
     assertIsValuedString(groupId, "Group Id");
@@ -137,9 +157,8 @@ router.put("/:id", async (req, res) => {
       );
     }
     res.status(200).json(result);
-  } catch (e) {
-    console.log(e);
-    res.status(400).json({ error: e });
+  } catch (error) {
+    next(error);
   }
 });
 

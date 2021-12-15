@@ -4,7 +4,7 @@ import { AuthContext } from '../../application/firebase/Auth';
 const ProtectedRoute = ({ children }) => {
   const { currentUser } = useContext(AuthContext);
   console.log('Protected Route:', currentUser);
-  if (!currentUser) {
+  if (currentUser === null) {
     return <Navigate to="/login" />;
   }
   return children;

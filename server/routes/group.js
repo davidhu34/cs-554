@@ -19,10 +19,10 @@ router.post("/", async (req, res) => {
     const reqBody = req.body;
     console.log(req.body);
     assertRequiredObject(reqBody);
-
+    console.log(req.session.user);
     let { name, users } = reqBody;
-    assertRequiredString(name, "Group name");
-    assertNonEmptyArray(users, "Users");
+    assertIsValuedString(name, 'Group name');
+    assertNonEmptyArray(users, 'Users');
 
     const groupPresent = await groupsData.getGroupByName(name);
 
@@ -114,43 +114,44 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-// router.delete("/user/:id", async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const reqBody = req.body;
-//     assertRequiredObject(reqBody);
+router.delete("/user/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const reqBody = req.body;
+    assertRequiredObject(reqBody);
 
-//     let { user } = reqBody;
+    let { user } = reqBody;
 
-//     assertObjectIdString(id);
+    assertObjectIdString(id);
 
-//     const group = await groupsData.getGroup(id);
+    const group = await groupsData.getGroup(id);
 
-//     if (!group) {
-//       throw new HttpError(`Could not get group for group id: ${id}`, 404);
-//     }
+    if (!group) {
+      throw new HttpError(`Could not get group for group id: ${id}`, 404);
+    }
 
-//     const isUserPresent = await usersData.getByObjectId(user._id);
+    const isUserPresent = await usersData.getByObjectId(user._id);
 
-//     if (!isUserPresent) {
-//       throw new HttpError(`Could not get user for user id: ${user._id}`, 404);
-//     }
+    if (!isUserPresent) {
+      throw new HttpError(`Could not get user for user id: ${user._id}`, 404);
+    }
 
-//     user.groupId = null;
-//     usersData.updateUser(user._id, user);
+    user.groupId = null;
+    usersData.updateUser(user._id, user);
+
+    let users = group.users;
+    users = users.filter((el) => el._id !== user._id);
 
 //     let users = group.users;
 //     users = users.filter((el) => el._id !== user._id);
 
-//     group.users = users;
-
-//     const updatedGroup = await groupsData.updateGroup(id, group);
-//     console.log(updatedGroup);
-//     res.status(200).json(updatedGroup);
-//   } catch (e) {
-//     res.status(400).json({ error: e });
-//   }
-// });
+    const updatedGroup = await groupsData.updateGroup(id, group);
+    console.log(updatedGroup);
+    res.status(200).json(updatedGroup);
+  } catch (e) {
+    res.status(400).json({ error: e });
+  }
+});
 
 router.delete("/:id", async (req, res) => {
   try {

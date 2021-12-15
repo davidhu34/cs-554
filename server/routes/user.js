@@ -31,7 +31,6 @@ router.post("/", async (req, res) => {
     }
 
     const newUser = await usersData.createUser(reqBody);
-    console.log(newUser);
     req.session.user = newUser;
     console.log("Session User => ", req.session.user);
     res.status(200).json(newUser);

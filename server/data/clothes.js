@@ -13,6 +13,8 @@ const {
 const usersData = require('./user');
 const { getGroup } = require('./group');
 
+const { getAllClothesBasketLocations, setClothesBasketLocation } = require('../utils/redis');
+
 const getByObjectId = async (objectId) => {
   const collection = await getClothesCollection();
   let cloth = await collection.findOne(idQuery(objectId));
@@ -48,7 +50,7 @@ const getClothByGroupId = async ({ userId, groupId, skip, limit }) => {
   if (data == null) {
     throw new QueryError(`Could not get cloth for (${groupId})`);
   }
-  return { data, skip, limit, total };
+  return { data: parseMongoData(data), skip, limit, total };
 };
 
 const getCloth = async (userId, id) => {
@@ -106,9 +108,7 @@ const addCloth = async (data) => {
     throw new QueryError(`Could not add cloth for user ID(${userId})`);
   }
 
-  let cloth = await getByObjectId(insertedId);
-  console.log(cloth);
-  return cloth;
+  return await getByObjectId(insertedId);
 };
 
 const updateCloth = async (clothId, data) => {
@@ -154,8 +154,7 @@ const updateCloth = async (clothId, data) => {
   if (!modifiedCount && !matchedCount) {
     throw new QueryError(`Could not update cloth ID(${clothId})`);
   }
-  const updatedCloth = await getCloth(userId, clothId);
-  return updatedCloth;
+  return await getCloth(userId, clothId);
 };
 
 const deleteCloth = async (userId, id) => {
@@ -181,7 +180,6 @@ const deleteCloth = async (userId, id) => {
   if (deletedCount === 0) {
     throw new QueryError(`Could not delete cloth for (${id})`);
   }
-  deleteCloth.message = 'Successfully deleted';
   return deleteCloth;
 };
 
@@ -210,6 +208,21 @@ const deleteClothByGroupId = async (userId, groupId) => {
   return parseMongoData({ message });
 };
 
+
+const getClothesLocations = async () => {
+  return await getAllClothesBasketLocations();
+};
+
+const setClothesLocation = async (clothesIdList, basketId = '') => {
+  await setClothesBasketLocations(clothes, basketId);
+  return await getClothesLocations();
+};
+
+
+const clearClothesLocation = async (clothesIdList) => {
+  return await setClothesLocation(clothes, '');
+};
+
 module.exports = {
   getClothByGroupId,
   addCloth,
@@ -217,4 +230,7 @@ module.exports = {
   updateCloth,
   deleteCloth,
   deleteClothByGroupId,
+  getClothesLocations,
+  setClothesLocation,
+  clearClothesLocation,
 };

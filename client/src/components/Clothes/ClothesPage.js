@@ -13,7 +13,34 @@ import {
   getClothesDetailSelector,
 } from '../../application/redux/selectors';
 import DataPage from '../DataPage';
-import AddClothesToBasket from './AddClothesToBasket';
+import ChangeClothesBasket from './ChangeClothesBasket';
+import { useClothesLocation } from '../../application/hooks/data';
+
+import ClothesStatusCell from './ClothesStatusCell';
+
+const clothesColumns = [
+  {
+    field: 'name',
+    label: 'Name',
+  },
+  {
+    field: 'status',
+    label: 'Status',
+    render(_, data) {
+      return <ClothesStatusCell clothes={data} />;
+    },
+  },
+  {
+    field: 'size',
+    label: 'Size',
+    align: 'right',
+  },
+  {
+    field: '_id',
+    label: 'ID',
+    align: 'right',
+  },
+];
 
 const clothesFormConfigs = [
   {
@@ -52,6 +79,7 @@ const clothesFormConfigs = [
 ];
 
 export default function ClothesPage() {
+  useClothesLocation({ refresh: true });
   const navigate = useNavigate();
   function handleAddToBasket(selectedList) {
     navigate({
@@ -64,6 +92,7 @@ export default function ClothesPage() {
   return (
     <DataPage
       path="/clothes"
+      columns={clothesColumns}
       paginationSelector={clothesPaginationSelector}
       getDataSelector={getClothesDetailSelector}
       fetchPaginationAction={getClothesList}
@@ -89,7 +118,7 @@ export default function ClothesPage() {
       customRoutes={[
         {
           path: '/add-to-basket',
-          element: <AddClothesToBasket />,
+          element: <ChangeClothesBasket />,
         },
       ]}
     />

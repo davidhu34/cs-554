@@ -55,7 +55,7 @@ const createGroup = async (data) => {
 
   assertRequiredString(name, "Group name");
   assertNonEmptyArray(users, "Users");
-  console.log(users);
+
   const groupData = {
     _id: new ObjectId(),
     name: name,

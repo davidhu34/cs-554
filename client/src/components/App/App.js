@@ -5,6 +5,7 @@ import Box from '@mui/system/Box';
 import { useMediaQuery, useTheme } from '@mui/material';
 
 import ClothesPage from '../Clothes';
+import BasketPage from '../Basket';
 import { SignUp, SignOut } from '../Users';
 import { Group } from '../Group';
 import NavBar from './NavBar';
@@ -35,31 +36,10 @@ export default function App() {
       <Box sx={{ flexGrow: 1 }}>
         {currentUser && <NavBar />}
         <Routes>
-          <Route
-            path="/"
-            element={
-              <ProtectedRoute>
-                <Group />
-              </ProtectedRoute>
-            }
-          />
+          <Route path="/" element={<Group />} />
           {!currentUser && <Route path="/login" element={<SignUp />} />}
-          <Route
-            path="/logout"
-            element={
-              <ProtectedRoute>
-                <SignOut />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/clothes/*"
-            element={
-              <ProtectedRoute>
-                <ClothesPage />
-              </ProtectedRoute>
-            }
-          />
+          <Route path="/logout" element={<SignOut />} />
+          <Route path="/clothes/*" element={<ClothesPage />} />
 
           <Route>Unknown</Route>
         </Routes>

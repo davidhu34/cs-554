@@ -8,12 +8,14 @@ const GroupForm = (props) => {
 
   const handleFormSubmit = async (data) => {
     console.log('CUrrent User group list:', currentUser);
-    const res = await Axios.post('http://localhost:3001/group', {
-      name: data.groupName,
-      users: [currentUser],
-    });
-    console.log('Res Data: \n', res.data.users[0]);
-    setCurrentUser(res.data.users[0]);
+    if (currentUser) {
+      const res = await Axios.post('http://localhost:3001/group', {
+        name: data.groupName,
+        users: [currentUser],
+      });
+      console.log('Res Data: \n', res.data.users[0]);
+      setCurrentUser(res.data.users[0]);
+    }
     console.log('Current User:', [currentUser]);
   };
   return (

@@ -18,10 +18,17 @@ const seedBaskets = async (
     userId: user1._id,
     groupId: user1.groupId,
     users: [user1, user2],
-    clothes: [cloth1, cloth2],
-    status: false,
-    time: 2,
+    // clothes: [cloth1, cloth2],
+    clothes: [cloth1._id, cloth2._id],
+    status: 'PENDING',
+    time: null,
     createdAt: timestamp1,
+    history: [{
+      userId: user1._id,
+      time: null,
+      status: 'PENDING',
+      createdAt: timestamp1,
+    }],
   };
 
   const basket2 = {
@@ -30,10 +37,16 @@ const seedBaskets = async (
     userId: user3._id,
     groupId: user3.groupId,
     users: [user3, user4],
-    clothes: [cloth3, cloth4],
-    status: false,
-    time: 3,
+    clothes: [cloth3._id, cloth4._id],
+    status: 'PENDING',
+    time: null,
     createdAt: timestamp1,
+    history: [{
+      userId: user3._id,
+      time: null,
+      status: 'PENDING',
+      createdAt: timestamp1,
+    }],
   };
 
   const b1 = await addBasket(basket1);

@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { alpha } from '@mui/material/styles';
+import Button from '@mui/material/Button';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
@@ -48,21 +49,21 @@ export default function TableToolbar({
         </Tooltip>
       )}
 
-      {customActions.map((customAction) => {
+      {customActions.map((customAction, i) => {
         const { icon, title, hidden, onClick } = customAction;
-        console.log(typeof hidden === 'function'
-        ? hidden(selectedList)
-        : hidden);
         const showAction = !(typeof hidden === 'function'
           ? hidden(selectedList)
           : hidden);
         return (
           showAction && (
-            <Tooltip title={title}>
-              <IconButton onClick={(e) => onClick(e, selectedList)}>
-                {icon}
-              </IconButton>
-            </Tooltip>
+            // <Tooltip key={`custom_action-${title}-${i}`} title={title}>
+            //   <IconButton onClick={(e) => onClick(e, selectedList)}>
+            //     {icon}
+            //   </IconButton>
+            // </Tooltip>
+            <Button key={`custom_action-${title}-${i}`} startIcon={icon} onClick={(e) => onClick(e, selectedList)}>
+              {title}
+            </Button>
           )
         );
       })}

@@ -20,16 +20,23 @@ export const AuthProvider = ({ children }) => {
     createdAt: 1639362852591,
   };
   useEffect(() => {
-    firebaseApp.auth().onAuthStateChanged((user) => {
-      setUser(user);
-      setLoadingUser(false);
-    });
+    if (user === null) {
+      firebaseApp.auth().onAuthStateChanged((user) => {
+        console.log('user from google:', user);
+        setUser(user);
+        setLoadingUser(false);
+
+        async function fetchData() {
+          await Axios.get();
+        }
+      });
+    }
   }, []);
 
   // post user into Database
   useEffect(() => {
     const fetchUserData = async () => {
-      if (user && user?.providerData[0]) {
+      if (user && user?.providerData[0] && currentUser === null) {
         console.log('user before calling API: ', user);
         const { data } = await Axios.post(
           'http://localhost:3001/user',
@@ -37,44 +44,12 @@ export const AuthProvider = ({ children }) => {
         );
         console.log('user After calling API:', data);
         setCurrentUser(data);
+        setLoadingUser(false);
       }
     };
     fetchUserData();
   }, [user]);
-  // useEffect(() => {
-  //   const fetchUserData = async () => {
-  //     try {
-  //       const { data } = await Axios.get('http://localhost:3001/user/all');
-  //       console.log(data);
-  //       data.map((user) => {
-  //         if (
-  //           currentUser?.providerData[0] &&
-  //           user.email === currentUser?.providerData[0].email
-  //         ) {
-  //           setUserExist(true);
-  //           console.log(
-  //             'Email check: ',
-  //             currentUser?.providerData[0] &&
-  //               user.email === currentUser?.providerData[0].email
-  //           );
-  //           console.log(
-  //             user.email,
-  //             currentUser?.providerData[0].email,
-  //             userExist
-  //           );
-  //           return;
-  //         } else {
-  //           setUserExist(false);
-  //           console.log('Email check else: ', userExist);
-  //         }
-  //       });
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   };
-  //   fetchUserData();
-  // }, []);
-  // console.log('current user', currentUser);
+
   console.log('user before set into the context:', currentUser);
   if (loadingUser) {
     return (

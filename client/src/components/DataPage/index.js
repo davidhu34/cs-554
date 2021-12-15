@@ -16,7 +16,7 @@ import TableToolbar from './TableToolbar';
 import DataCreate from './DataCreate';
 import DataEdit from './DataEdit';
 
-function DataRowItem({ id, selected = false, onClick, getDataSelector }) {
+function DataRowItem({ id, selected = false, onClick, getDataSelector, columns }) {
   const { data, error, loading } = useSelector(getDataSelector(id));
   return data ? (
     <TableRow
@@ -38,11 +38,13 @@ function DataRowItem({ id, selected = false, onClick, getDataSelector }) {
           }}
         />
       </TableCell>
-      <TableCell id={id} component="th" scope="row">
-        {data.name}
-      </TableCell>
-      <TableCell align="right">{data.description}</TableCell>
-      <TableCell align="right">{id}</TableCell>
+
+      {columns.map(({ field, align, render }, i) => {
+        const item = data[field] || '';
+        return (
+          <TableCell key={`cell-${field}-${i}`} align={align}>{render ? render(item, data) : item}</TableCell>
+        );
+      })}
     </TableRow>
   ) : null;
 }
@@ -55,6 +57,7 @@ export default function DataList({
   deleteAction,
   updateAction,
   createAction,
+  columns,
   formConfigs,
   createFormTitle,
   editFormTitle,
@@ -86,7 +89,7 @@ export default function DataList({
 
   function handleChangeLimit(e) {
     const newLimit = parseInt(e.target.value, 10);
-    dispatch(fetchPaginationAction({ limit: newLimit }));
+    dispatch(fetchPaginationAction({ page: 0, limit: newLimit }));
   }
 
   function handleSelectItem(id) {
@@ -135,6 +138,7 @@ export default function DataList({
   }
 
   const numSelected = selectedList.length;
+  const maxSelected = Math.min(idList.length, limit);
   return (
     <>
       <TableToolbar
@@ -151,26 +155,30 @@ export default function DataList({
               <TableCell padding="checkbox">
                 <Checkbox
                   color="primary"
-                  indeterminate={numSelected > 0 && numSelected < limit}
-                  checked={total > 0 && numSelected === limit}
+                  indeterminate={numSelected > 0 && numSelected < maxSelected}
+                  checked={total > 0 && numSelected === maxSelected}
                   onChange={handleSelectAll}
                   inputProps={{
                     'aria-label': 'select all desserts',
                   }}
                 />
               </TableCell>
-              <TableCell>Name</TableCell>
-              <TableCell align="right">Description</TableCell>
-              <TableCell align="right">ID</TableCell>
+              {columns.map(({ field, label = field, align }) => (
+                <TableCell key={`header_cell-${field}`} align={align}>
+                  {label}
+                </TableCell>
+              ))}
             </TableRow>
           </TableHead>
           <TableBody>
             {idList.map((id) => (
               <DataRowItem
+                key={`data_row-${id}`}
                 id={id}
                 selected={selectedState[id]}
                 onClick={() => handleSelectItem(id)}
                 getDataSelector={getDataSelector}
+                columns={columns}
               />
             ))}
           </TableBody>
@@ -188,7 +196,12 @@ export default function DataList({
       />
 
       <Routes>
-        {customRoutes.map(customRouteProps => <Route {...customRouteProps} />)}
+        {customRoutes.map((customRouteProps) => (
+          <Route
+            key={`custom_route-${customRouteProps.path}`}
+            {...customRouteProps}
+          />
+        ))}
         <Route
           path="/create"
           element={
