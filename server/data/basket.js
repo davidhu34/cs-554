@@ -11,6 +11,7 @@ const {
   assertRequiredNumber,
   assertNonEmptyArray,
 } = require('../utils/assertion');
+const { setClothesBasketLocation, getClothesBasketLocation } = require('../utils/redis');
 
 const nextStatus = {
   'PENDING': 'WASHING',
@@ -329,22 +330,16 @@ const updateBasketStatus = async (id, data) => {
   return parseMongoData(updatedBasket);
 };
 
-const updateBasketClothes = async (id, {clothesIdList, userId}, isRemove = false) => {
+const updateBasketClothes = async (id, { clothesIdList, userId }, isRemove = false) => {
   assertNonEmptyArray(clothesIdList);
 
-
   let basket = await getByObjectId(id);
-  if (
-    !basket ||
-    !Array.isArray(basket.history) ||
-    basket.history.length === 0
-  ) {
+  if (!basket || !Array.isArray(basket.history) || basket.history.length === 0) {
     throw new QueryError(`Basket with ID\`${id}\` has invalid status history.`);
   }
 
   for (const clothesId of clothesIdList) {
     assertObjectIdString(clothesId);
-    //  assertClothes not in basket
   }
 
   const options = { returnOriginal: false };
@@ -360,16 +355,14 @@ const updateBasketClothes = async (id, {clothesIdList, userId}, isRemove = false
     },
   };
 
-  const { value: updatedBasket, ok } = await collection.findOneAndUpdate(
-    idQuery(id),
-    ops,
-    options
-  );
+  const { value: updatedBasket, ok } = await collection.findOneAndUpdate(idQuery(id), ops, options);
 
   if (!ok) {
     throw new QueryError(`Could not update basket with ID \`${id}\``);
   }
 
+  await setClothesBasketLocation(clothesIdList, id);
+  console.log(await getClothesBasketLocation(clothesIdList));
   return parseMongoData(updatedBasket);
 };
 

@@ -174,6 +174,7 @@ router.patch('/:id/clothes', async (req, res, next) => {
     const { clothesIdList = [] } = req.body;
     assertObjectIdString(userId, 'User ID');
     assertObjectIdString(groupId, 'Group ID');
+
     const result = await basketsData.updateBasketClothes(basketId, {userId, clothesIdList});
 
     if (!result) {
