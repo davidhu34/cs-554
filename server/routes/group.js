@@ -32,7 +32,7 @@ router.post("/", async (req, res) => {
     
     const userId = users[0]._id;
 
-    const user = usersData.getByObjectId(userId);
+    const user = await usersData.getByObjectId(userId);
 
     if (!user) {
       throw new HttpError(`No user found`, 404);
