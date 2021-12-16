@@ -8,12 +8,13 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import GroupForm from './GroupForm';
+import Button from '@mui/material/Button';
 import { AuthContext } from '../../application/firebase/auth';
 // http://localhost:3001/group (GET)
 // http://localhost:3001/group (POST)
 
 const Group = () => {
-  const { currentUser } = useContext(AuthContext);
+  const { currentUser, setCurrentUser } = useContext(AuthContext);
   const [groupList, setGroupList] = useState();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState();
@@ -53,22 +54,40 @@ const Group = () => {
       isUnmount = true;
     };
   }, [currentUser.groupId]);
+
+  function joinGroup({ grpId }) {
+    // e.preventDefault();
+    Axios.put(`http://localhost:3001/group/${grpId}`, currentUser)
+      .then((response) => {
+        console.log('user added into group', response);
+        let updated = response.users.filter((user) => {
+          return user._id === currentUser._id ? user : user;
+        });
+        setCurrentUser(updated);
+      })
+      .catch((error) => {
+        console.log('Join Group Error', error);
+      });
+  }
+
   if (loading) return <h2>Loading Group..............</h2>;
 
   if (group && group && currentUser.groupId !== null) {
     console.log(group);
     return (
-      <Box sx={{ width: '100%', maxWidth: 360 }}>
-        <ListItem>
-          <ListItemButton>
-            <ListItemText primary={group.name} />
-          </ListItemButton>
-        </ListItem>
-      </Box>
+      <>
+        <Box sx={{ width: '100%', maxWidth: 360 }}>
+          <ListItem>
+            <ListItemButton>
+              <ListItemText primary={group.name} />{' '}
+            </ListItemButton>
+          </ListItem>
+        </Box>
+      </>
     );
   }
 
-  if (currentUser && currentUser && currentUser.groupId === null)
+  if (currentUser && currentUser && currentUser.groupId === null) {
     return (
       <>
         {/* {currentUser.groupId !== null ? <></> : <GroupForm />} */}
@@ -81,7 +100,14 @@ const Group = () => {
                 <List key={group._id}>
                   <ListItem>
                     <ListItemButton>
-                      <ListItemText primary={group.name} />
+                      <ListItemText primary={group.name} />{' '}
+                      <Button
+                        varient="contained"
+                        color="success"
+                        onClick={joinGroup({ grpId: group._id })}
+                      >
+                        Join the Group
+                      </Button>
                     </ListItemButton>
                   </ListItem>
                 </List>
@@ -90,6 +116,7 @@ const Group = () => {
         </Box>
       </>
     );
+  }
 
   return <h2>No Group Available</h2>;
 };

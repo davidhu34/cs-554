@@ -1,5 +1,5 @@
-import React, { useContext } from 'react';
-import { Route, Routes } from 'react-router-dom';
+import React, { useContext, useEffect } from 'react';
+import { Route, Routes, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../application/firebase/auth';
 import Box from '@mui/system/Box';
 import { useMediaQuery, useTheme } from '@mui/material';
@@ -10,18 +10,23 @@ import { SignUp, SignOut } from '../Users';
 import { Group } from '../Group';
 import NavBar from './NavBar';
 import SideBar from './SideBar';
-import { useGroupTopic } from '../../application/hooks/messaging';
+import { useBasketMonitor } from '../../application/hooks/data';
 import ProtectedRoute from './ProtectedRoute';
-function onMessage(payload) {
-  console.log('message payload', payload);
-}
 export default function App() {
+  const navigate = useNavigate();
   const { currentUser } = useContext(AuthContext);
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up('sm'));
 
   // TODO: get group ID as message topic
-  useGroupTopic({ groupId: 'abc', onMessage });
+  // useGroupTopic({ groupId: 'abc', onMessage });
+  useBasketMonitor();
+
+  //   useEffect(() => {
+  //     if (!currentUser) {
+  //       navigate('/login');
+  //   }
+  // },[])
 
   return (
     <Box
