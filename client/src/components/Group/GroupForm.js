@@ -22,7 +22,7 @@ const GroupForm = (props) => {
         });
         console.log('Res Data: \n', res.data.users[0]);
 
-        // setCurrentUser(res.data.users[0]);
+        setCurrentUser(res.data.users[0]);
       }
       console.log('Counter:', i);
     } catch (e) {
