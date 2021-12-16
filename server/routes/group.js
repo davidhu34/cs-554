@@ -21,8 +21,8 @@ router.post("/", async (req, res) => {
     assertRequiredObject(reqBody);
     console.log(req.session.user);
     let { name, users } = reqBody;
-    assertIsValuedString(name, 'Group name');
-    assertNonEmptyArray(users, 'Users');
+    assertIsValuedString(name, "Group name");
+    assertNonEmptyArray(users, "Users");
 
     const groupPresent = await groupsData.getGroupByName(name);
 
@@ -33,7 +33,7 @@ router.post("/", async (req, res) => {
     //   user.groupId
     // })
     const newGroup = await groupsData.createGroup(reqBody);
-    console.log(newGroup);
+    console.log("new groups", newGroup);
     // req.session.user.groupId = newGroup._id;
     res.status(200).json(newGroup);
   } catch (e) {
@@ -55,15 +55,16 @@ router.get("/", async (req, res) => {
 
 // Get group by ID
 router.get("/:id", async (req, res) => {
+  const { id } = req.params;
+  console.log("group", id);
   try {
-    const { id } = req.params;
     assertObjectIdString(id, "Group ID");
     const result = await groupsData.getGroup(id);
 
     if (!result) {
       throw new HttpError(`Could not get group for group id:${id}`, 404);
     }
-
+    console.log("Group with ID: ", result);
     res.status(200).json(result);
   } catch (e) {
     console.log(e);
@@ -142,8 +143,8 @@ router.delete("/user/:id", async (req, res) => {
     let users = group.users;
     users = users.filter((el) => el._id !== user._id);
 
-//     let users = group.users;
-//     users = users.filter((el) => el._id !== user._id);
+    //     let users = group.users;
+    //     users = users.filter((el) => el._id !== user._id);
 
     const updatedGroup = await groupsData.updateGroup(id, group);
     console.log(updatedGroup);

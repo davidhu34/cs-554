@@ -1,18 +1,25 @@
 import { useContext } from 'react';
-import { doSignOut } from '../../application/firebase/FirebaseFunctions';
+import { doSignOut } from '../../application/firebase/firebaseFunctions';
 import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../../application/firebase/Auth';
+import { AuthContext } from '../../application/firebase/auth';
+import Axios from 'axios';
 
 const SignOut = () => {
   const { currentUser, setCurrentUser } = useContext(AuthContext);
   const navigate = useNavigate();
   function handleSignOut(e) {
+    console.log('Before Prevent');
     e.preventDefault();
     // currentUser.clear();
     console.log('in SIgnout handleSIgnout', currentUser);
+    Axios.get('http://localhost:3001/user/logout').then((response) => {
+      console.log(response);
+    });
+
     doSignOut();
+    setCurrentUser(null);
     navigate('/login');
-    console.log(currentUser);
+    // console.log(currentUser);
   }
   //   if (currentUser === null) {
   //     return <Navigate to="/login" />;

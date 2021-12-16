@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { Route, Routes } from 'react-router-dom';
-import { AuthContext } from '../../application/firebase/Auth';
+import { AuthContext } from '../../application/firebase/auth';
 import Box from '@mui/system/Box';
 import { useMediaQuery, useTheme } from '@mui/material';
 
@@ -36,10 +36,24 @@ export default function App() {
       <Box sx={{ flexGrow: 1 }}>
         {currentUser && <NavBar />}
         <Routes>
-          <Route path="/" element={<Group />} />
-          {!currentUser && <Route path="/login" element={<SignUp />} />}
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <Group />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/login" element={<SignUp />} />
           <Route path="/logout" element={<SignOut />} />
-          <Route path="/clothes/*" element={<ClothesPage />} />
+          <Route
+            path="/clothes/*"
+            element={
+              <ProtectedRoute>
+                <ClothesPage />
+              </ProtectedRoute>
+            }
+          />
 
           <Route>Unknown</Route>
         </Routes>

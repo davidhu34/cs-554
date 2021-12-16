@@ -1,5 +1,5 @@
-import { useState, useEffect, createContext, useLayoutEffect } from 'react';
-import firebaseApp from './Firebase';
+import { useState, useEffect, createContext } from 'react';
+import firebaseApp from './firebase';
 import Axios from 'axios';
 export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
@@ -25,10 +25,6 @@ export const AuthProvider = ({ children }) => {
         console.log('user from google:', user);
         setUser(user);
         setLoadingUser(false);
-
-        async function fetchData() {
-          await Axios.get();
-        }
       });
     }
   }, []);
@@ -37,7 +33,10 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const fetchUserData = async () => {
       if (user && user?.providerData[0] && currentUser === null) {
+        console.log('in AUth useEffect');
         console.log('user before calling API: ', user);
+        console.log('in AUth useEffect Before Calling Axios');
+
         const { data } = await Axios.post(
           'http://localhost:3001/user',
           user.providerData[0]

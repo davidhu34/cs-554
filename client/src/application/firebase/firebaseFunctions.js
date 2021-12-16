@@ -39,7 +39,7 @@ async function doPasswordUpdate(password) {
 }
 
 async function doSignOut() {
-  await Axios.delete('http://localhost:3001/user/logout');
+  // await Axios.delete('http://localhost:3001/user/logout');
   await firebase.auth().signOut();
 }
 

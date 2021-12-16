@@ -7,7 +7,7 @@ import ListItemText from '@mui/material/ListItemText';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import { useNavigate } from 'react-router';
-import { AuthContext } from '../../../application/firebase/Auth';
+import { AuthContext } from '../../../application/firebase/auth';
 import ProtectedRoute from '../ProtectedRoute';
 const navConfigs = [
   {
