@@ -46,6 +46,20 @@ router.post('/', async (req, res, next) => {
     if (!result) {
       throw new HttpError(`Could not add basket for id`, 400);
     }
+    try {
+      const messageResponse = await messaging.send({
+        data: {
+          type: 'BASKET_STATUS',
+          basketId,
+          message: `Basket ${autoResult.name} created.`,
+          status: autoResult.status,
+        },
+        topic: 'abc',//groupId,
+      });
+      console.log('basket created messaging response:', messageResponse);
+    } catch(error) {
+      console.error('basket created messaging error:', error);
+    }
     res.status(200).json(result);
   } catch (error) {
     next(error);
@@ -110,6 +124,19 @@ router.delete('/:id', async (req, res, next) => {
     const result = await basketsData.deleteBasket(userId, groupId, id);
     if (!result) {
       throw new HttpError(`Could not delete basket for basket id:${id}`, 400);
+    }
+    try {
+      const messageResponse = await messaging.send({
+        data: {
+          type: 'BASKET_DELETE',
+          basketId,
+          message: `Basket ${autoResult.name} deleted.`,
+        },
+        topic: 'abc',//groupId,
+      });
+      console.log('basket deleted messaging response:', messageResponse);
+    } catch(error) {
+      console.error('basket deleted messaging error:', error);
     }
     res.status(200).json(result);
   } catch (error) {
