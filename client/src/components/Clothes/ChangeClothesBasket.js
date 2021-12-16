@@ -26,8 +26,19 @@ export default function ChangeClothesBasket() {
     error: clothesLocaitonError,
   } = useClothesLocation();
 
-  const pendingBasketIdSet = new Set(baskets);
-  const clearableIdList = clothesIdList.filter((id) => pendingBasketIdSet.has(clothesLocaiton[id]));
+  const pendingBasketIdSet = new Set(baskets.map(b => b._id));
+  const clearableIdList = [];
+  const operableIdList = [];
+  for (const clothesId of clothesIdList) {
+    if (!clothesLocaiton[clothesId]) {
+      operableIdList.push(clothesId);
+    } else if (pendingBasketIdSet.has(clothesLocaiton[clothesId])) {
+      clearableIdList.push(clothesId);
+      operableIdList.push(clothesId);
+    }
+  }
+  const canClear = clearableIdList.length > 0;
+  const operable = operableIdList.length === clothesIdList.length;
 
   useEffect(() => {
     async function getPendingBaskets() {
@@ -47,15 +58,15 @@ export default function ChangeClothesBasket() {
   }
 
   async function handlePutClothesToBasket() {
-    if (clothesIdList.length > 0) {
-      await dispatch(updateBasketClothes(basketId, clothesIdList));
+    if (operable) {
+      await dispatch(updateBasketClothes(basketId, operableIdList));
       await dispatch(fetchClothesLocations());
     }
     handleClose();
   }
 
   async function handleRemoveClothesFromBaskets() {
-    if (clearableIdList.length > 0) {
+    if (canClear) {
       await Promise.all(
         clearableIdList.map((id) =>
           dispatch(updateBasketClothes(clothesLocaiton[id], [id], true))
@@ -68,31 +79,37 @@ export default function ChangeClothesBasket() {
 
   return (
     <DataModal open onClose={handleClose}>
-      {clearableIdList.length > 0 && (
+      {canClear && (
         <button onClick={handleRemoveClothesFromBaskets}>
           Remove selected clothes from current pending baskets
         </button>
       )}
-      put {clothesIdList.length} piece of clothes into pending basket
-      <select
-        defaultValue={baskets[0]?._id}
-        value={basketId}
-        onChange={handleSelectBasket}
-      >
-        {baskets.map(({ _id, name }) => (
-          <option key={_id} value={_id}>
-            {name}
-          </option>
-        ))}
-      </select>
-      <button
-        onClick={(e) => {
-          e.preventDefault();
-          handlePutClothesToBasket();
-        }}
-      >
-        ok
-      </button>
+      {operable ? (
+        <>
+          move {operableIdList.length} piece of clothes into pending basket
+          <select
+            defaultValue={baskets[0]?._id}
+            value={basketId}
+            onChange={handleSelectBasket}
+          >
+            {baskets.map(({ _id, name }) => (
+              <option key={_id} value={_id}>
+                {name}
+              </option>
+            ))}
+          </select>
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              handlePutClothesToBasket();
+            }}
+          >
+            ok
+          </button>
+        </>
+      ) : (
+        <>Some selected clothes are still in task(s)</>
+      )}
     </DataModal>
   );
 }
