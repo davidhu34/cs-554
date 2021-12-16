@@ -6,7 +6,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import GroupForm from './GroupForm';
-import { AuthContext } from '../../application/firebase/Auth';
+import { AuthContext } from '../../application/firebase/auth';
 // http://localhost:3001/group (GET)
 // http://localhost:3001/group (POST)
 

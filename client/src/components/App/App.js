@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { Route, Routes } from 'react-router-dom';
-import { AuthContext } from '../../application/firebase/Auth';
+import { AuthContext } from '../../application/firebase/auth';
 import Box from '@mui/system/Box';
 import { useMediaQuery, useTheme } from '@mui/material';
 
@@ -10,16 +10,8 @@ import { SignUp, SignOut } from '../Users';
 import { Group } from '../Group';
 import NavBar from './NavBar';
 import SideBar from './SideBar';
-<<<<<<< HEAD
 import { useBasketMonitor } from '../../application/hooks/data';
 
-=======
-import { useGroupTopic } from '../../application/hooks/messaging';
-import ProtectedRoute from './ProtectedRoute';
-function onMessage(payload) {
-  console.log('message payload', payload);
-}
->>>>>>> d5b47b49dbbfc914680c0029bba40e293c7cc6dc
 export default function App() {
   const { currentUser } = useContext(AuthContext);
   const theme = useTheme();

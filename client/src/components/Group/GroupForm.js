@@ -1,7 +1,7 @@
 import Axios from 'axios';
 import { useState, useContext } from 'react';
 import { useForm } from 'react-hook-form';
-import { AuthContext } from '../../application/firebase/Auth';
+import { AuthContext } from '../../application/firebase/auth';
 const GroupForm = (props) => {
   const { currentUser, setCurrentUser } = useContext(AuthContext);
   const { register, handleSubmit, error } = useForm();

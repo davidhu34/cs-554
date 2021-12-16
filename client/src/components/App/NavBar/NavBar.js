@@ -11,8 +11,8 @@ import MenuIcon from '@mui/icons-material/Menu';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import Box from '@mui/system/Box';
-import { AuthContext } from '../../../application/firebase/Auth';
-import { doSignOut } from '../../../application/firebase/FirebaseFunctions';
+import { AuthContext } from '../../../application/firebase/auth';
+import { doSignOut } from '../../../application/firebase/firebaseFunctions';
 const accountMenuId = 'account-menu';
 export default function NavBar() {
   //Dhruveel's Changes

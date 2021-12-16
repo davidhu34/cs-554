@@ -1,7 +1,7 @@
 import { useContext } from 'react';
-import { doSignOut } from '../../application/firebase/FirebaseFunctions';
+import { doSignOut } from '../../application/firebase/firebaseFunctions';
 import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../../application/firebase/Auth';
+import { AuthContext } from '../../application/firebase/auth';
 
 const SignOut = () => {
   const { currentUser, setCurrentUser } = useContext(AuthContext);
