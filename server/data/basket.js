@@ -103,11 +103,12 @@ const getBasketByName = async (name) => {
   return parseMongoData(basket);
 };
 
-const getBasketsByStatus = async (status) => {
-  assertStatus(status);
+const getGroupBasketsByStatus = async (groupId, status) => {
+  assertObjectIdString(groupId, 'Group ID');
+  assertStatus(status, 'Basket status');
 
   const collection = await getBasketsCollection();
-  const basket = await collection.find({ status }).toArray();
+  const basket = await collection.find({ groupId: new ObjectId(groupId), status }).toArray();
   return parseMongoData(basket);
 };
 
@@ -291,7 +292,7 @@ const updateBasketStatus = async (id, data) => {
   const currentTimestamp = new Date().getTime();
   const newUpdate = {
     _id: new ObjectId(),
-    userId,
+    userId: new ObjectId(userId),
     status,
     time,
     createdAt: currentTimestamp,
@@ -343,16 +344,18 @@ const updateBasketClothes = async (id, { clothesIdList, userId }, isRemove = fal
     },
   };
 
+  const clothesObjectIdList = clothesIdList.map(id => new ObjectId(id));
+
   if (isRemove) {
     ops.$pull = {
       clothes: {
-        $in: clothesIdList,
+        $in: clothesObjectIdList,
       },
     };
   } else {
     ops.$addToSet = {
       clothes: {
-        $each: clothesIdList,
+        $each: clothesObjectIdList,
       },
     };
   }
@@ -371,7 +374,7 @@ module.exports = {
   addBasket,
   getBasket,
   getBasketByGroupId,
-  getBasketsByStatus,
+  getGroupBasketsByStatus,
   deleteBasket,
   deleteBasketByGroupId,
   updateBasket,

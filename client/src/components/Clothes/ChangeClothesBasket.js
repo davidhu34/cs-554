@@ -26,13 +26,14 @@ export default function ChangeClothesBasket() {
     error: clothesLocaitonError,
   } = useClothesLocation();
 
-  const canClear = clothesIdList.some((id) => id in clothesLocaiton);
+  const pendingBasketIdSet = new Set(baskets);
+  const clearableIdList = clothesIdList.filter((id) => pendingBasketIdSet.has(clothesLocaiton[id]));
 
   useEffect(() => {
     async function getPendingBaskets() {
       const baskets = await axiosGet('/baskets/pending');
       setBaskets(baskets);
-      setBasketId(baskets[0]._id);
+      if (baskets.length > 0) setBasketId(baskets[0]._id);
     }
     getPendingBaskets();
   }, []);
@@ -54,12 +55,10 @@ export default function ChangeClothesBasket() {
   }
 
   async function handleRemoveClothesFromBaskets() {
-    if (canClear) {
+    if (clearableIdList.length > 0) {
       await Promise.all(
-        clothesIdList.map(
-          (id) =>
-            clothesLocaiton[id] &&
-            dispatch(updateBasketClothes(clothesLocaiton[id], [id], true))
+        clearableIdList.map((id) =>
+          dispatch(updateBasketClothes(clothesLocaiton[id], [id], true))
         )
       );
       await dispatch(fetchClothesLocations());
@@ -69,12 +68,12 @@ export default function ChangeClothesBasket() {
 
   return (
     <DataModal open onClose={handleClose}>
-      {canClear && (
+      {clearableIdList.length > 0 && (
         <button onClick={handleRemoveClothesFromBaskets}>
-          Remove selected clothes from all current baskets
+          Remove selected clothes from current pending baskets
         </button>
       )}
-      put {clothesIdList.length} piece of clothes into basket
+      put {clothesIdList.length} piece of clothes into pending basket
       <select
         defaultValue={baskets[0]?._id}
         value={basketId}

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import UpdateIcon from '@mui/icons-material/Update';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 
 import {
   createBasket,
@@ -12,8 +13,11 @@ import {
   basketPaginationSelector,
   getBasketDetailSelector,
 } from '../../application/redux/selectors';
+
 import DataPage from '../DataPage';
+
 import ChangeStatus from './ChangeStatus';
+import ClearBasket from './ClearBasket';
 import BasketClothesCell from './BasketClothesCell';
 
 const basketColumns = [
@@ -62,6 +66,11 @@ const basketFormConfigs = [
 
 export default function BasketPage() {
   const navigate = useNavigate();
+
+  function handleClearBasket(selectedList) {
+    navigate(`/baskets/${selectedList[0]}/clear`);
+  }
+
   function handleUpdateStatus(selectedList) {
     navigate(`/baskets/${selectedList[0]}/change-status`);
   }
@@ -80,6 +89,17 @@ export default function BasketPage() {
       createTitle="Add New Basket"
       editTitle="Edit Basket Info"
       customActions={[
+        {
+          icon: <DeleteOutlineIcon />,
+          title: 'Clear Basket',
+          hidden(selectedList) {
+            return selectedList.length !== 1;
+          },
+          onClick(e, selectedList) {
+            e.preventDefault();
+            handleClearBasket(selectedList);
+          },
+        },
         {
           icon: <UpdateIcon />,
           title: 'Update Task',
@@ -104,6 +124,10 @@ export default function BasketPage() {
         // },
       ]}
       customRoutes={[
+        {
+          path: '/:id/clear',
+          element: <ClearBasket />,
+        },
         {
             path: '/:id/change-status',
             element: <ChangeStatus />,

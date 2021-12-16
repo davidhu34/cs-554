@@ -91,7 +91,7 @@ router.get('/pending', async (req, res, next) => {
       req.session.user || {};
     assertIsValuedString(userId, 'User Id');
     assertIsValuedString(groupId, 'Group Id');
-    let result = await basketsData.getBasketsByStatus('PENDING');
+    let result = await basketsData.getGroupBasketsByStatus(groupId, 'PENDING');
     res.status(200).json(result);
   } catch (error) {
     next(error);
