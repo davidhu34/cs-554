@@ -67,7 +67,7 @@ export const createClothes = (clothesData) => async (dispatch, getState) => {
     dispatch({
       type: clothesActionTypes.createStart,
     });
-    const { data } = await postClothes(clothesData);
+    const data = await postClothes(clothesData);
     dispatch({
       type: clothesActionTypes.createSuccess,
       id: data._id,
@@ -87,7 +87,7 @@ export const deleteClothes = (id) => async (dispatch, getState) => {
       type: clothesActionTypes.deleteStart,
       id,
     });
-    const { data } = await deleteClothesRequest(id);
+    const data = await deleteClothesRequest(id);
     dispatch({
       type: clothesActionTypes.deleteSuccess,
       id,

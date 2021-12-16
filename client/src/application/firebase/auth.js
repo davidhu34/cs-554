@@ -1,5 +1,5 @@
 import { useState, useEffect, createContext, useLayoutEffect } from 'react';
-import firebaseApp from './Firebase';
+import firebaseApp from './firebase';
 import Axios from 'axios';
 export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {

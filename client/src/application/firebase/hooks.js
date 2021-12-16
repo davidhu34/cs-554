@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { getToken, onMessage as onFirebaseMessage } from 'firebase/messaging';
 
-import { messaging } from './Firebase';
+import { messaging } from './firebase';
 
 export function useMessaging({ onMessage }) {
   const [token, setToken] = useState('');
@@ -28,7 +28,7 @@ export function useMessaging({ onMessage }) {
           );
         }
       } catch (error) {
-        console.log('An error occurred while retrieving token. ', error);
+        console.error('An error occurred while retrieving token. ', error);
         setTokenError(error);
       }
     }
@@ -40,7 +40,7 @@ export function useMessaging({ onMessage }) {
       return;
     }
     return onFirebaseMessage(messaging, (payload) => {
-      console.log('Message received. ', payload);
+      console.log('Firebase Data message received. ', payload);
       onMessage(payload);
     });
   }, [token, onMessage]);
