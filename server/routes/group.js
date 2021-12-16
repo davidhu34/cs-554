@@ -151,9 +151,7 @@ router.delete("/user/:id", async (req, res) => {
 
     let users = group.users;
     users = users.filter((el) => el._id !== user._id);
-
-//     let users = group.users;
-//     users = users.filter((el) => el._id !== user._id);
+    group.users = users;
 
     const updatedGroup = await groupsData.updateGroup(id, group);
     console.log(updatedGroup);
