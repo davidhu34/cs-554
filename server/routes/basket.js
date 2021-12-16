@@ -165,12 +165,11 @@ router.patch('/:id/status', async (req, res, next) => {
     if (!result) {
       throw new HttpError(`Could not update basket for basket id:${id}`, 400);
     }
-  
+
     const nextAutoStatus = getNextBasketStatus(result.status);
 
     setTimeout(async () => {
       try {
-
         const autoResult = await basketsData.updateBasketStatus(basketId, {
           userId,
           groupId,
@@ -185,14 +184,13 @@ router.patch('/:id/status', async (req, res, next) => {
             message: `Basket ${autoResult.name} updated to ${autoResult.status}`,
             status: autoResult.status,
           },
-          topic: 'abc',//groupId,
+          topic: 'abc', //groupId,
         });
         console.log('basket auto status messaging response:', messageResponse);
-      } catch(error) {
+      } catch (error) {
         console.error('basket auto status messaging error:', error);
       }
     }, time);
-
 
     res.status(200).json(result);
   } catch (error) {
@@ -211,7 +209,11 @@ router.patch('/:id/clothes', async (req, res, next) => {
     assertObjectIdString(userId, 'User ID');
     assertObjectIdString(groupId, 'Group ID');
 
-    const result = await basketsData.updateBasketClothes(basketId, {userId, clothesIdList}, remove);
+    const result = await basketsData.updateBasketClothes(
+      basketId,
+      { userId, clothesIdList },
+      remove,
+    );
 
     if (!result) {
       throw new HttpError(`Could not update basket for basket id:${id}`, 400);

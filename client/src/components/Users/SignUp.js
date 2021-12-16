@@ -1,28 +1,34 @@
-import { useContext } from "react";
-import { doSocialSignIn } from "../../application/firebase/firebaseFunctions";
-import { Navigate } from "react-router-dom";
-import { AuthContext } from "../../application/firebase/auth";
+import { useContext, useState } from 'react';
+import { doSocialSignIn } from '../../application/firebase/FirebaseFunctions';
+import { useNavigate, Navigate } from 'react-router-dom';
+import { AuthContext } from '../../application/firebase/Auth';
+import Axios from 'axios';
+import GoogleButton from 'react-google-button';
 
 const SignUp = () => {
+  const [dummy, setDummy] = useState();
   const { currentUser } = useContext(AuthContext);
-
-  if (currentUser !== null) {
-    console.log("CurrentUser:", currentUser);
-    return <Navigate to="/logout" />;
-  }
+  const navigate = useNavigate();
+  console.log('CUrrent User in SignUp:', currentUser);
   const socialSignOn = async (provider) => {
     try {
       await doSocialSignIn(provider);
+      console.log('Signon current user:', currentUser);
+      navigate('/');
     } catch (error) {
-      alert(error);
+      alert(JSON.stringify(error));
     }
   };
+
   return (
     <div>
-      <img
-        onClick={() => socialSignOn("google")}
+      <GoogleButton
+        onClick={() => {
+          socialSignOn('google');
+        }}
         alt="google signin"
-        src="https://www.google.com/url?sa=i&url=https%3A%2F%2Fjavascript.plainenglish.io%2Fhow-to-set-up-google-oauth-in-react-with-react-google-login-9c6538389fde&psig=AOvVaw3b1T7oduCMyynPhnzpHaLf&ust=1638655102188000&source=images&cd=vfe&ved=0CAsQjRxqFwoTCPD5hpDQyPQCFQAAAAAdAAAAABAJ"
+        type="light"
+        style={{ margin: 10 }}
       />
     </div>
   );
