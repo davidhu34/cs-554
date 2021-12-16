@@ -29,12 +29,22 @@ router.post("/", async (req, res) => {
     if (groupPresent) {
       throw new ValidationError(`Group already exists.`);
     }
-    //     users.map(user => {
-    //   user.groupId
-    // })
+    
+    const userId = users[0]._id;
+
+    const user = usersData.getByObjectId(userId);
+
+    if (!user) {
+      throw new HttpError(`No user found`, 404);
+    }
+
+    if (user.groupId) {
+      throw new ValidationError(`User already in another group`, 400);
+    }
+
     const newGroup = await groupsData.createGroup(reqBody);
     console.log(newGroup);
-    // req.session.user.groupId = newGroup._id;
+    req.session.user.groupId = newGroup._id;
     res.status(200).json(newGroup);
   } catch (e) {
     console.log(e);
