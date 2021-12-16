@@ -11,7 +11,11 @@ const {
   assertRequiredNumber,
   assertNonEmptyArray,
 } = require('../utils/assertion');
-const { setClothesBasketLocation, getClothesBasketLocation, getAllClothesBasketLocations } = require('../utils/redis');
+const {
+  setClothesBasketLocation,
+  getClothesBasketLocation,
+  getAllClothesBasketLocations,
+} = require('../utils/redis');
 
 const usersData = require('./user');
 const { getGroup } = require('./group');
@@ -29,7 +33,7 @@ const assertStatus = (status) => {
   ) {
     throw new QueryError(`Please provide proper status`);
   }
-}
+};
 const getByObjectId = async (objectId) => {
   const collection = await getBasketsCollection();
   let basket = await collection.findOne(idQuery(objectId));
@@ -74,12 +78,14 @@ const addBasket = async (data) => {
     size,
     clothes,
     status,
-    history: [{
-      createdAt,
-      userId: userId,
-      status,
-      _id: new ObjectId(),
-    }],
+    history: [
+      {
+        createdAt,
+        userId: userId,
+        status,
+        _id: new ObjectId(),
+      },
+    ],
     time,
     createdAt,
     updatedAt: createdAt,
@@ -110,7 +116,6 @@ const getBasketsByStatus = async (status) => {
   const basket = await collection.find({ status }).toArray();
   return parseMongoData(basket);
 };
-
 
 const getBasket = async (userId, id) => {
   assertObjectIdString(id, 'Basket Id');
@@ -260,24 +265,19 @@ const updateBasket = async (id, data) => {
   return await getByObjectId(id);
 };
 
-
 const updateBasketStatus = async (id, data) => {
   assertRequiredObject(data);
   const { status, time = null, userId, groupId, lastUpdateId } = data;
 
   let basket = await getByObjectId(id);
-  if (
-    !basket ||
-    !Array.isArray(basket.history) ||
-    basket.history.length === 0
-  ) {
+  if (!basket || !Array.isArray(basket.history) || basket.history.length === 0) {
     throw new QueryError(`Basket with ID\`${id}\` has invalid status history.`);
   }
 
   const validNextStatus = getNextBasketStatus(basket.status);
   if (!validNextStatus || validNextStatus !== status) {
     throw new QueryError(
-      `Invalid basket status update: ${basket.status} can only update to ${validNextStatus}`
+      `Invalid basket status update: ${basket.status} can only update to ${validNextStatus}`,
     );
   }
 
@@ -308,17 +308,30 @@ const updateBasketStatus = async (id, data) => {
     },
   };
 
-  const { value: updatedBasket, ok } = await collection.findOneAndUpdate(
-    idQuery(id),
-    ops,
-    options
-  );
+  const { value: updatedBasket, ok } = await collection.findOneAndUpdate(idQuery(id), ops, options);
 
   if (!ok) {
     throw new QueryError(`Could not update basket with ID \`${id}\``);
   }
 
   return parseMongoData(updatedBasket);
+};
+
+const getClothFromBasketByUserId = async (userId) => {
+  assertObjectIdString(userId);
+  const user = await usersData.getByObjectId(userId);
+  const collection = await getBasketsCollection();
+  if (!user) {
+    throw new QueryError(`User not exist for user id (${userId})`);
+  }
+  const clothes = await collection
+    .aggregate([{ $unwind: '$clothes' }, { $match: { 'clothes.userId': userId } }])
+    .toArray();
+  if (clothes.length == 0) {
+    return false;
+  } else {
+    return true;
+  }
 };
 
 const updateBasketClothes = async (id, { clothesIdList, userId }, isRemove = false) => {
@@ -378,4 +391,5 @@ module.exports = {
   updateBasketStatus,
   updateBasketClothes,
   getBasketByName,
+  getClothFromBasketByUserId,
 };
