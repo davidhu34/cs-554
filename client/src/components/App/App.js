@@ -37,7 +37,7 @@ export default function App() {
         alignItems: 'stretch',
       }}
     >
-      {matches && currentUser && <SideBar />}
+      {matches && currentUser && currentUser.groupId && <SideBar />}
       <Box sx={{ flexGrow: 1 }}>
         {currentUser && <NavBar />}
         <Routes>

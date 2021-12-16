@@ -36,13 +36,8 @@ const Group = () => {
             setGroup(data);
             setLoading(false);
           }
-        }
-        if (currentUser.groupId === null) {
-          const { data } = await Axios.get('http://localhost:3001/group');
-          if (!isUnmount) {
-            setGroupList(data);
-            setLoading(false);
-          }
+        } else {
+          setLoading(false);
         }
       } catch (error) {
         console.log(error);
@@ -53,21 +48,48 @@ const Group = () => {
     return () => {
       isUnmount = true;
     };
+  }, [currentUser]);
+
+  useEffect(() => {
+    let isUnmount = false;
+    async function fetchGroup() {
+      try {
+        const { data } = await Axios.get('http://localhost:3001/group');
+        if (!isUnmount && data) {
+          setGroupList(data);
+          setLoading(false);
+        } else {
+          setLoading(false);
+        }
+      } catch (error) {
+        console.log('group Fetch Error', error);
+        setLoading(false);
+      }
+    }
+    fetchGroup();
+    return () => {
+      isUnmount = true;
+    };
   }, [currentUser.groupId]);
 
   function joinGroup({ grpId }) {
     // e.preventDefault();
+    setLoading(true);
     Axios.put(`http://localhost:3001/group/${grpId}`, currentUser)
       .then((response) => {
         console.log('user added into group', response);
-        let updated = response.users.filter((user) => {
+        let updated = response.data.users.filter((user) => {
           return user._id === currentUser._id ? user : user;
         });
-        setCurrentUser(updated);
+        console.log('updated', updated[0]);
+        setCurrentUser(updated[0]);
+        setLoading(false);
       })
       .catch((error) => {
         console.log('Join Group Error', error);
+        setLoading(false);
       });
+    setLoading(false);
   }
 
   if (loading) return <h2>Loading Group..............</h2>;
@@ -101,13 +123,15 @@ const Group = () => {
                   <ListItem>
                     <ListItemButton>
                       <ListItemText primary={group.name} />{' '}
-                      <Button
-                        varient="contained"
-                        color="success"
-                        onClick={joinGroup({ grpId: group._id })}
-                      >
-                        Join the Group
-                      </Button>
+                      {currentUser && currentUser.groupId === null && (
+                        <Button
+                          varient="contained"
+                          color="success"
+                          onClick={() => joinGroup({ grpId: group._id })}
+                        >
+                          Join the Group
+                        </Button>
+                      )}
                     </ListItemButton>
                   </ListItem>
                 </List>

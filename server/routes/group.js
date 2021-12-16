@@ -112,7 +112,7 @@ router.put("/:id", async (req, res) => {
     assertIsValuedString(user.name, "User name");
     assertEmailString(user.email, "Email");
 
-    if (user.groupId && user.groupId !== id) {
+    if (user.groupId) {
       throw new ValidationError(`User already in another group`, 404);
     }
 

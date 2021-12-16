@@ -21,7 +21,8 @@ const GroupForm = (props) => {
           users: [currentUser],
         });
         console.log('Res Data: \n', res.data.users[0]);
-        setCurrentUser(res.data.users[0]);
+
+        // setCurrentUser(res.data.users[0]);
       }
       console.log('Counter:', i);
     } catch (e) {
@@ -31,7 +32,7 @@ const GroupForm = (props) => {
   };
   return (
     <div>
-      {console.log('Current User:', [currentUser])}
+      {console.log('Current User:', currentUser)}
       <form onSubmit={handleSubmit(handleFormSubmit)}>
         <label>Enter Group Name: </label>
         <input {...register('groupName', { required: true })} />
