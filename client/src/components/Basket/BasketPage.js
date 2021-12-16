@@ -1,7 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import UpdateIcon from '@mui/icons-material/Update';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import LocalLaundryServiceIcon from '@mui/icons-material/LocalLaundryService';
 
 import {
   createBasket,
@@ -16,8 +15,7 @@ import {
 
 import DataPage from '../DataPage';
 
-import ChangeStatus from './ChangeStatus';
-import ClearBasket from './ClearBasket';
+import BasketOperation from './BasketOperation';
 import BasketClothesCell from './BasketClothesCell';
 
 const basketColumns = [
@@ -68,11 +66,7 @@ export default function BasketPage() {
   const navigate = useNavigate();
 
   function handleClearBasket(selectedList) {
-    navigate(`/baskets/${selectedList[0]}/clear`);
-  }
-
-  function handleUpdateStatus(selectedList) {
-    navigate(`/baskets/${selectedList[0]}/change-status`);
+    navigate(`/baskets/${selectedList[0]}/operate`);
   }
 
   return (
@@ -90,8 +84,8 @@ export default function BasketPage() {
       editTitle="Edit Basket Info"
       customActions={[
         {
-          icon: <DeleteOutlineIcon />,
-          title: 'Clear Basket',
+          icon: <LocalLaundryServiceIcon />,
+          title: 'Operate Basket',
           hidden(selectedList) {
             return selectedList.length !== 1;
           },
@@ -100,42 +94,12 @@ export default function BasketPage() {
             handleClearBasket(selectedList);
           },
         },
-        {
-          icon: <UpdateIcon />,
-          title: 'Update Task',
-          hidden(selectedList) {
-            return selectedList.length !== 1;
-          },
-          onClick(e, selectedList) {
-            e.preventDefault();
-            handleUpdateStatus(selectedList);
-          },
-        },
-        // {
-        //   icon: <ShoppingBasketIcon />,
-        //   title: 'Add Clothes',
-        //   hidden(selectedList) {
-        //     return selectedList.length !== 1;
-        //   },
-        //   onClick(e, selectedList) {
-        //     e.preventDefault();
-        //     handleAddClothes(selectedList);
-        //   },
-        // },
       ]}
       customRoutes={[
         {
-          path: '/:id/clear',
-          element: <ClearBasket />,
+          path: '/:id/operate',
+          element: <BasketOperation />,
         },
-        {
-            path: '/:id/change-status',
-            element: <ChangeStatus />,
-          },
-        // {
-        //   path: '/add-clothes',
-        //   element: <ChangeClothesBasket />,
-        // },
       ]}
     />
   );

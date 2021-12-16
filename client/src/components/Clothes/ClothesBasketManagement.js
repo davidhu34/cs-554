@@ -9,7 +9,7 @@ import { fetchClothesLocations } from '../../application/redux/actions/clothesLo
 
 import DataModal from '../DataPage/DataModal';
 
-export default function ChangeClothesBasket() {
+export default function ClothesBasketManagement() {
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -17,7 +17,6 @@ export default function ChangeClothesBasket() {
 
   const clothesIdList =
     new URLSearchParams(location.search).getAll('clothes') || '';
-  // const baskets = useActiveBaskets();
   const [baskets, setBaskets] = useState([]);
 
   const {
@@ -26,7 +25,7 @@ export default function ChangeClothesBasket() {
     error: clothesLocaitonError,
   } = useClothesLocation();
 
-  const pendingBasketIdSet = new Set(baskets.map(b => b._id));
+  const pendingBasketIdSet = new Set(baskets.map((b) => b._id));
   const clearableIdList = [];
   const operableIdList = [];
   for (const clothesId of clothesIdList) {
