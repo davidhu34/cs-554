@@ -63,8 +63,6 @@ const addBasket = async (data) => {
     throw new QueryError(`No. of clothes must be less than size of basket.`);
   }
 
-  data.basketId = new ObjectId().toHexString();
-
   const collection = await getBasketsCollection();
 
   const basketData = {
@@ -76,7 +74,7 @@ const addBasket = async (data) => {
     status,
     history: [{
       createdAt,
-      userId: userId,
+      userId: new ObjectId(userId),
       status,
       _id: new ObjectId(),
     }],
@@ -250,7 +248,7 @@ const updateBasket = async (id, data) => {
   delete basketData['_id'];
 
   const { modifiedCount, matchedCount } = await collection.updateOne(
-    { _id: new ObjectId(id), groupId: new ObjectId(groupId) },
+    { ...idQuery(id), groupId: new ObjectId(groupId) },
     { $set: basketData },
   );
 
@@ -264,7 +262,7 @@ const updateBasket = async (id, data) => {
 
 const updateBasketStatus = async (id, data) => {
   assertRequiredObject(data);
-  const { status, time = null, userId, groupId, lastUpdateId } = data;
+  const { status, time = null, userId, lastUpdateId } = data;
 
   let basket = await getByObjectId(id);
   if (

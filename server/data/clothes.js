@@ -173,7 +173,7 @@ const deleteCloth = async (userId, id) => {
 
   const collection = await getClothesCollection();
   let { deletedCount } = await collection.deleteOne({
-    _id: new ObjectId(id),
+    ...idQuery(id),
     userId: new ObjectId(userId),
   });
 
@@ -213,13 +213,13 @@ const getClothesLocations = async () => {
   return await getAllClothesBasketLocations();
 };
 
-const setClothesLocation = async (clothesIdList, basketId = '') => {
+const setClothesLocation = async (clothes, basketId = '') => {
   await setClothesBasketLocations(clothes, basketId);
   return await getClothesLocations();
 };
 
 
-const clearClothesLocation = async (clothesIdList) => {
+const clearClothesLocation = async (clothes) => {
   return await setClothesLocation(clothes, '');
 };
 
