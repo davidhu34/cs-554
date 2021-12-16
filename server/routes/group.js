@@ -73,12 +73,14 @@ router.get("/:id", async (req, res) => {
 });
 
 router.put("/:id", async (req, res) => {
+  const { id } = req.params;
+  const reqBody = req.body;
+  console.log("Request body", reqBody);
   try {
-    const { id } = req.params;
-    const reqBody = req.body;
     assertRequiredObject(reqBody);
 
-    let { user } = reqBody;
+    // let user = reqBody;
+    let user = req.session.user;
 
     const group = await groupsData.getGroup(id);
 
