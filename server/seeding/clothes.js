@@ -14,7 +14,7 @@ const seedClothes = async (
     userId: user1._id,
     groupId: group1._id,
     name: 'Tshirt1',
-    size: 'medium',
+    size: 1,
     type: 'Tshirt',
   };
 
@@ -22,7 +22,7 @@ const seedClothes = async (
     userId: user2._id,
     groupId: group1._id,
     name: 'Tshirt1',
-    size: 'medium',
+    size: 1,
     type: 'Tshirt',
   };
 
@@ -30,7 +30,7 @@ const seedClothes = async (
     userId: user3._id,
     groupId: group2._id,
     name: 'Tshirt1',
-    size: 'medium',
+    size: 1,
     type: 'Tshirt',
   };
 
@@ -38,7 +38,7 @@ const seedClothes = async (
     userId: user4._id,
     groupId: group2._id,
     name: 'Tshirt1',
-    size: 'medium',
+    size: 1,
     type: 'Tshirt',
   };
 
@@ -46,7 +46,7 @@ const seedClothes = async (
     userId: user1._id,
     groupId: group1._id,
     name: 'Tshirt1',
-    size: 'medium',
+    size: 1,
     type: 'Tshirt',
   };
 
@@ -54,7 +54,7 @@ const seedClothes = async (
     userId: user2._id,
     groupId: group1._id,
     name: 'Tshirt1',
-    size: 'medium',
+    size: 1,
     type: 'Tshirt',
   };
 
@@ -62,7 +62,7 @@ const seedClothes = async (
     userId: user3._id,
     groupId: group2._id,
     name: 'Tshirt1',
-    size: 'medium',
+    size: 1,
     type: 'Tshirt',
   };
 
@@ -70,7 +70,7 @@ const seedClothes = async (
     userId: user4._id,
     groupId: group2._id,
     name: 'Tshirt1',
-    size: 'medium',
+    size: 1,
     type: 'Tshirt',
   };
 
@@ -78,7 +78,7 @@ const seedClothes = async (
     userId: user1._id,
     groupId: group1._id,
     name: 'Tshirt1',
-    size: 'medium',
+    size: 1,
     type: 'Tshirt',
   };
 
@@ -86,7 +86,7 @@ const seedClothes = async (
     userId: user2._id,
     groupId: group1._id,
     name: 'Tshirt1',
-    size: 'medium',
+    size: 1,
     type: 'Tshirt',
   };
 
@@ -94,7 +94,7 @@ const seedClothes = async (
     userId: user3._id,
     groupId: group2._id,
     name: 'Tshirt1',
-    size: 'medium',
+    size: 1,
     type: 'Tshirt',
   };
 
@@ -102,7 +102,7 @@ const seedClothes = async (
     userId: user4._id,
     groupId: group2._id,
     name: 'Tshirt1',
-    size: 'medium',
+    size: 1,
     type: 'Tshirt',
   };
 
@@ -110,7 +110,7 @@ const seedClothes = async (
     userId: user1._id,
     groupId: group1._id,
     name: 'Tshirt1',
-    size: 'medium',
+    size: 1,
     type: 'Tshirt',
   };
 
@@ -118,7 +118,7 @@ const seedClothes = async (
     userId: user2._id,
     groupId: group1._id,
     name: 'Tshirt1',
-    size: 'medium',
+    size: 1,
     type: 'Tshirt',
   };
 
@@ -126,7 +126,7 @@ const seedClothes = async (
     userId: user3._id,
     groupId: group2._id,
     name: 'Tshirt1',
-    size: 'medium',
+    size: 1,
     type: 'Tshirt',
   };
 
@@ -134,7 +134,7 @@ const seedClothes = async (
     userId: user4._id,
     groupId: group2._id,
     name: 'Tshirt1',
-    size: 'medium',
+    size: 1,
     type: 'Tshirt',
   };
 
@@ -142,7 +142,7 @@ const seedClothes = async (
     userId: user1._id,
     groupId: group1._id,
     name: 'Tshirt1',
-    size: 'medium',
+    size: 1,
     type: 'Tshirt',
   };
 
@@ -150,7 +150,7 @@ const seedClothes = async (
     userId: user2._id,
     groupId: group1._id,
     name: 'Tshirt1',
-    size: 'medium',
+    size: 1,
     type: 'Tshirt',
   };
 
@@ -158,7 +158,7 @@ const seedClothes = async (
     userId: user3._id,
     groupId: group2._id,
     name: 'Tshirt1',
-    size: 'medium',
+    size: 1,
     type: 'Tshirt',
   };
 
@@ -166,7 +166,7 @@ const seedClothes = async (
     userId: user4._id,
     groupId: group2._id,
     name: 'Tshirt1',
-    size: 'medium',
+    size: 1,
     type: 'Tshirt',
   };
 
@@ -174,7 +174,7 @@ const seedClothes = async (
     userId: user1._id,
     groupId: group1._id,
     name: 'Tshirt1',
-    size: 'medium',
+    size: 1,
     type: 'Tshirt',
   };
 
@@ -182,7 +182,7 @@ const seedClothes = async (
     userId: user2._id,
     groupId: group1._id,
     name: 'Tshirt1',
-    size: 'medium',
+    size: 1,
     type: 'Tshirt',
   };
 
@@ -190,7 +190,7 @@ const seedClothes = async (
     userId: user3._id,
     groupId: group2._id,
     name: 'Tshirt1',
-    size: 'medium',
+    size: 1,
     type: 'Tshirt',
   };
 
@@ -198,14 +198,14 @@ const seedClothes = async (
     userId: user4._id,
     groupId: group2._id,
     name: 'Tshirt1',
-    size: 'medium',
+    size: 1,
     type: 'Tshirt',
   };
   const cloth25 = {
     userId: user1._id,
     groupId: group1._id,
     name: 'Tshirt1',
-    size: 'medium',
+    size: 1,
     type: 'Tshirt',
   };
 
@@ -213,7 +213,7 @@ const seedClothes = async (
     userId: user2._id,
     groupId: group1._id,
     name: 'Tshirt1',
-    size: 'medium',
+    size: 1,
     type: 'Tshirt',
   };
 
@@ -221,7 +221,7 @@ const seedClothes = async (
     userId: user3._id,
     groupId: group2._id,
     name: 'Tshirt1',
-    size: 'medium',
+    size: 1,
     type: 'Tshirt',
   };
 
@@ -229,7 +229,7 @@ const seedClothes = async (
     userId: user4._id,
     groupId: group2._id,
     name: 'Tshirt1',
-    size: 'medium',
+    size: 1,
     type: 'Tshirt',
   };
 

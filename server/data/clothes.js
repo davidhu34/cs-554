@@ -76,7 +76,7 @@ const addCloth = async (data) => {
   assertObjectIdString(userId, 'Cloth added by user ID');
   assertIsValuedString(name, 'Cloth name');
   assertIsValuedString(type, 'Cloth type');
-  assertIsValuedString(size, 'Size');
+  assertRequiredNumber(size, 'Size');
   assertIsValuedString(groupId, 'Group');
 
   const user = await usersData.getByObjectId(userId);
@@ -121,7 +121,7 @@ const updateCloth = async (clothId, data) => {
   assertObjectIdString(groupId, 'Group id');
   assertIsValuedString(name, 'Cloth name');
   assertIsValuedString(type, 'Cloth type');
-  assertIsValuedString(size, 'Size');
+  assertRequiredNumber(size, 'Size');
 
   const user = await usersData.getByObjectId(userId);
   if (!user) {
@@ -216,7 +216,7 @@ const getClothesLocations = async () => {
 };
 
 const setClothesLocation = async (clothesIdList, basketId = '') => {
-  await setClothesBasketLocations(clothes, basketId);
+  await setClothesBasketLocation(clothes, basketId);
   return await getClothesLocations();
 };
 
