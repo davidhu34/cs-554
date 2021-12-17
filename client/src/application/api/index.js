@@ -31,7 +31,7 @@ let tempClothes = [...testClothes];
 const delay = (data, time = 500) =>
   new Promise((resolve) => setTimeout(() => resolve(data), time));
 export const getPaginatedClothes = (options) => {
-  const { page = 0, limit = DEFAULT_PAGINATION_LIMIT } = options;
+  const { page = 0, limit = DEFAULT_PAGINATION_LIMIT, groupId, userId } = options;
   const skip = page * limit;
   // const testResult = {
   //   data: tempClothes.slice(start, start + limit),
@@ -40,7 +40,7 @@ export const getPaginatedClothes = (options) => {
   //   total: tempClothes.length,
   // };
   // return delay(testResult);
-  return axiosGet(GET_PAGINATED_CLOTHES, { params: { skip, limit } });
+  return axiosGet(GET_PAGINATED_CLOTHES, { params: { skip, limit, groupId, userId } });
 };
 
 export const postClothes = (data) => {
@@ -50,6 +50,8 @@ export const postClothes = (data) => {
     name: data.name,
     description: data.description,
     type: data.type,
+    userId: data.userId,
+    groupId: data.groupId,
   };
   // tempClothes.unshift(newClothes);
   // return delay({
@@ -77,7 +79,7 @@ export const putClothes = (id, data) => {
   return axiosPut(getPutClothesPath(id), data);
 };
 
-export const deleteClothes = (id) => {
+export const deleteClothes = (id, { userId, groupId }) => {
   // let deletedClothes = null;
   // let i = 0;
   // while (i < tempClothes.length && tempClothes[i].id !== id) {
@@ -90,10 +92,10 @@ export const deleteClothes = (id) => {
   // return delay({
   //   data: deletedClothes,
   // });
-  return axiosDelete(getDeleteClothesPath(id));
+  return axiosDelete(getDeleteClothesPath(id), { userId, groupId });
 };
 
-export const getClothesDetail = (id) => {
+export const getClothes = (id, { userId, groupId }) => {
   // let data = null;
   // let i = 0;
   // while (i < tempClothes.length && tempClothes[i].id !== id) {
@@ -103,23 +105,25 @@ export const getClothesDetail = (id) => {
   //   data = tempClothes[i];
   // }
   // return delay({ data });
-  return axiosGet(getClothesPath(id));
+  return axiosGet(getClothesPath(id), { params: { userId, groupId }});
 };
 
 export const getPaginatedBasket = (options) => {
-  const { page = 0, limit = DEFAULT_PAGINATION_LIMIT } = options;
+  const { page = 0, limit = DEFAULT_PAGINATION_LIMIT, groupId, userId } = options;
   const skip = page * limit;
-  return axiosGet(GET_PAGINATED_BASKETS, { params: { skip, limit } });
+  return axiosGet(GET_PAGINATED_BASKETS, { params: { skip, limit, groupId, userId } });
 };
 
-export const getBasket = (id) => {
-  return axiosGet(getBasketPath(id));
+export const getBasket = (id, { userId, groupId }) => {
+  return axiosGet(getBasketPath(id), { params: { userId, groupId }});
 };
 
 export const postBasket = (data) => {
   const newBasket = {
     name: data.name,
     size: data.size,
+    userId: data.userId,
+    groupId: data.groupId,
   };
   return axiosPost(POST_BASKET, newBasket);
 };
@@ -133,8 +137,8 @@ export const patchBasketStatus = (id, data) => {
 export const patchBasketClothes = (id, data) => {
   return axiosPatch(getPatchBasketClothesPath(id), data);
 };
-export const deleteBasket = (id) => {
-  return axiosDelete(getDeleteBasketPath(id));
+export const deleteBasket = (id, { userId, groupId }) => {
+  return axiosDelete(getDeleteBasketPath(id), { userId, groupId });
 };
 
 export const subscribeGroupTopic = ({ groupId, token }) => {
@@ -145,8 +149,8 @@ export const unsubscribeGroupTopic = ({ groupId, token }) => {
   return axiosPost(UNSUBSCRIBE_GROUP_TOPIC, { groupId, token });
 };
 
-export const getClothesBasketLocations = () => {
-  return axiosGet(GET_CLOTHES_BASKET_LOCATIONS);
+export const getClothesBasketLocations = ({ userId, groupId }) => {
+  return axiosGet(GET_CLOTHES_BASKET_LOCATIONS, { userId, groupId });
 };
 
 export const patchClothesBasketLocations = (data) => {

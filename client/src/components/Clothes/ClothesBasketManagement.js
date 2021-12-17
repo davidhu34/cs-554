@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
@@ -16,6 +16,7 @@ import { useClothesLocation } from '../../application/hooks/data';
 import { updateBasketClothes } from '../../application/redux/actions/basket';
 import { fetchClothesLocations } from '../../application/redux/actions/clothesLocation';
 import DataModal from '../DataPage/DataModal';
+import { userSelector } from '../../application/redux/selectors';
 
 export default function ClothesBasketManagement() {
   const location = useLocation();
@@ -47,14 +48,17 @@ export default function ClothesBasketManagement() {
   const canClear = clearableIdList.length > 0;
   const canOperate = operableIdList.length === clothesIdList.length;
 
+  const { _id: userId, groupId } = useSelector(userSelector);
   useEffect(() => {
     async function getPendingBaskets() {
-      const baskets = await axiosGet('/baskets/pending');
+      const baskets = await axiosGet('/baskets/pending', {
+        params: { userId, groupId },
+      });
       setBaskets(baskets);
       if (baskets.length > 0) setBasketId(baskets[0]._id);
     }
-    getPendingBaskets();
-  }, []);
+    if (userId && groupId) getPendingBaskets();
+  }, [userId, groupId]);
 
   function handleSelectBasket(e) {
     setBasketId(e.target.value);
@@ -158,7 +162,7 @@ export default function ClothesBasketManagement() {
       ) : (
         <Box>Some selected clothes are still in task(s)</Box>
       )}
-      <Box sx={{  display: 'flex', gap: 2, justifyContent: 'end' }}>
+      <Box sx={{ display: 'flex', gap: 2, justifyContent: 'end' }}>
         <Button onClick={() => handleClose()} variant="outlined">
           Close
         </Button>

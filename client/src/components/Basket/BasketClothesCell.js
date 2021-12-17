@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { getClothesDetailSelector } from '../../application/redux/selectors';
-import { getClothes } from '../../application/redux/actions/clothes';
+import { getClothesDetail } from '../../application/redux/actions/clothes';
 
 function BasketClothesPiece({ id }) {
   const dispatch = useDispatch();
@@ -13,7 +13,7 @@ function BasketClothesPiece({ id }) {
       !clothesData ||
       (!clothesData.data && !clothesData.loading && !clothesData.error)
     ) {
-      dispatch(getClothes(id));
+      dispatch(getClothesDetail(id));
     }
   }, [dispatch, id, clothesData]);
 

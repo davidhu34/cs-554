@@ -59,6 +59,14 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/baskets/*"
+            element={
+              <ProtectedRoute>
+                <BasketPage />
+              </ProtectedRoute>
+            }
+          />
 
           <Route>Unknown</Route>
         </Routes>

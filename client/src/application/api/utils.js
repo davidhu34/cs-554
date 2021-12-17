@@ -23,5 +23,6 @@ const getAxiosUpdateMethod =
 export const axiosPost = getAxiosUpdateMethod('post');
 export const axiosPut = getAxiosUpdateMethod('put');
 export const axiosPatch = getAxiosUpdateMethod('patch');
-export const axiosDelete = (url, config = {}) =>
-  axiosGet(url, { ...config, method: 'delete' });
+export const axiosDelete = getAxiosUpdateMethod('delete');
+// export const axiosDelete = (url, config = {}) =>
+//   axiosGet(url, { ...config, method: 'delete' });

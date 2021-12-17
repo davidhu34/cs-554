@@ -1,5 +1,8 @@
 import { useState, useEffect, useContext } from 'react';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import Axios from 'axios';
+
 import Box from '@mui/material/Box';
 import { Container, Typography } from '@mui/material';
 import Alert from '@mui/material/Alert';
@@ -10,8 +13,9 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import GroupForm from './GroupForm';
 import Button from '@mui/material/Button';
+
 import { AuthContext } from '../../application/firebase/auth';
-import { useNavigate } from 'react-router-dom';
+import { setUser } from '../../application/redux/actions/user';
 // http://localhost:3001/group (GET)
 // http://localhost:3001/group (POST)
 
@@ -22,6 +26,7 @@ const Group = () => {
   const [error, setError] = useState();
   const [group, setGroup] = useState(null);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     let isUnmount = false;
@@ -87,6 +92,7 @@ const Group = () => {
         });
         console.log('updated', updated[0]);
         setCurrentUser(updated[0]);
+        dispatch(setUser(updated[0]));
         setLoading(false);
       })
       .catch((error) => {
@@ -106,6 +112,7 @@ const Group = () => {
       );
       if (data) {
         setCurrentUser(() => (currentUser.groupId = null));
+        dispatch(setUser(null));
         setLoading(false);
         navigate('/');
       }

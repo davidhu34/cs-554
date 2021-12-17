@@ -1,11 +1,17 @@
 import { useState, useEffect, createContext } from 'react';
 import firebaseApp from './firebase';
 import Axios from 'axios';
+import { useDispatch } from 'react-redux';
+
+import { setUser as setUserAction } from '../../application/redux/actions/user';
+
+
 export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   let userExist;
   let response;
 
+  const dispatch = useDispatch();
   const [currentUser, setCurrentUser] = useState(null);
   const [user, setUser] = useState(null);
 
@@ -27,7 +33,7 @@ export const AuthProvider = ({ children }) => {
         setLoadingUser(false);
       });
     }
-  }, []);
+  }, [user]);
 
   // post user into Database
   useEffect(() => {
@@ -43,11 +49,17 @@ export const AuthProvider = ({ children }) => {
         );
         console.log('user After calling API:', data);
         setCurrentUser(data);
+        dispatch(setUserAction(data));
+        setLoadingUser(false);
+      }
+      if (!user) {
+        setCurrentUser(null);
+        dispatch(setUserAction(null));
         setLoadingUser(false);
       }
     };
     fetchUserData();
-  }, [user]);
+  }, [dispatch, currentUser, user]);
 
   console.log('user before set into the context:', currentUser);
   if (loadingUser) {
