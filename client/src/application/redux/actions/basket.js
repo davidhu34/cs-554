@@ -42,7 +42,7 @@ export const getBasketList = (options) => async (dispatch, getState) => {
       type: basketActionTypes.fetchListSuccess,
       data,
       limit,
-      page: skip * limit,
+      page: Math.floor(skip / limit),
       total,
     });
   } catch (error) {

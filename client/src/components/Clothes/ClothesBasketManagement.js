@@ -1,12 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
+
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import MenuItem from '@mui/material/MenuItem';
+import InputLabel from '@mui/material/InputLabel';
+import Select from '@mui/material/Select';
+import FormControl from '@mui/material/FormControl';
+import Typography from '@mui/material/Typography';
+import Divider from '@mui/material/Divider';
+
 import { axiosGet } from '../../application/api/utils';
 import { useClothesLocation } from '../../application/hooks/data';
-
 import { updateBasketClothes } from '../../application/redux/actions/basket';
 import { fetchClothesLocations } from '../../application/redux/actions/clothesLocation';
-
 import DataModal from '../DataPage/DataModal';
 
 export default function ClothesBasketManagement() {
@@ -37,7 +45,7 @@ export default function ClothesBasketManagement() {
     }
   }
   const canClear = clearableIdList.length > 0;
-  const operable = operableIdList.length === clothesIdList.length;
+  const canOperate = operableIdList.length === clothesIdList.length;
 
   useEffect(() => {
     async function getPendingBaskets() {
@@ -57,7 +65,7 @@ export default function ClothesBasketManagement() {
   }
 
   async function handlePutClothesToBasket() {
-    if (operable) {
+    if (canOperate) {
       await dispatch(updateBasketClothes(basketId, operableIdList));
       await dispatch(fetchClothesLocations());
     }
@@ -79,35 +87,74 @@ export default function ClothesBasketManagement() {
   return (
     <DataModal open onClose={handleClose}>
       {canClear && (
-        <button onClick={handleRemoveClothesFromBaskets}>
-          Remove selected clothes from current pending baskets
-        </button>
+        <Box sx={{ display: 'flex', flexDirection: 'row' }}>
+          <Box>
+            <Typography>
+              Remove selected clothes from current pending baskets
+            </Typography>
+          </Box>
+          <Box>
+            <Button
+              variant="contained"
+              onClick={(e) => {
+                e.preventDefault();
+                handleRemoveClothesFromBaskets();
+              }}
+            >
+              Remove from Basket(s)
+            </Button>
+          </Box>
+        </Box>
       )}
-      {operable ? (
-        <>
-          move {operableIdList.length} piece of clothes into pending basket
-          <select
-            defaultValue={baskets[0]?._id}
-            value={basketId}
-            onChange={handleSelectBasket}
-          >
-            {baskets.map(({ _id, name }) => (
-              <option key={_id} value={_id}>
-                {name}
-              </option>
-            ))}
-          </select>
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-              handlePutClothesToBasket();
+      {canClear && canOperate && <Divider />}
+      {canOperate ? (
+        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+          <Box sx={{ flexGrow: 1 }}>
+            <Typography>
+              move {operableIdList.length} piece of clothes into pending basket
+            </Typography>
+          </Box>
+          <Box
+            sx={{
+              marginTop: 2,
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
             }}
           >
-            ok
-          </button>
-        </>
+            <Box>
+              <FormControl>
+                <InputLabel id="pending-basket-select-label">Age</InputLabel>
+                <Select
+                  labelId="pending-basket-select-label"
+                  id="pending-basket-select"
+                  value={basketId}
+                  label="Pending Baskets"
+                  onChange={handleSelectBasket}
+                >
+                  {baskets.map(({ _id, name }) => (
+                    <MenuItem key={_id} value={_id}>
+                      {name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Box>
+            <Box>
+              <Button
+                variant="contained"
+                onClick={(e) => {
+                  e.preventDefault();
+                  handlePutClothesToBasket();
+                }}
+              >
+                Move to Basket
+              </Button>
+            </Box>
+          </Box>
+        </Box>
       ) : (
-        <>Some selected clothes are still in task(s)</>
+        <Box>Some selected clothes are still in task(s)</Box>
       )}
     </DataModal>
   );

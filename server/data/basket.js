@@ -328,9 +328,25 @@ const updateBasketClothes = async (id, { clothesIdList, userId }, isRemove = fal
     throw new QueryError(`Basket with ID\`${id}\` has invalid status history.`);
   }
 
-  for (const clothesId of clothesIdList) {
+  const clothesLocations = await getClothesBasketLocation(clothesIdList);
+  const basketToRemoveMap = {};
+  for (let i = 0; i < clothesIdList.length; i++) {
+    const clothesId = clothesIdList[i];
     assertObjectIdString(clothesId);
+    const basketId = clothesLocations[i];
+    if (!isRemove && basketId) {
+      if (!basketToRemoveMap[basketId]) {
+        basketToRemoveMap[basketId] = [];
+      }
+      basketToRemoveMap[basketId].push(clothesId);
+    }
   }
+  await Promise.all(
+    Object.entries(basketToRemoveMap).map(([basketId, clothesIdList]) =>
+      updateBasketClothes(basketId, { clothesIdList, userId }, true)
+    )
+  );
+
 
   const options = { returnOriginal: false };
   const collection = await getBasketsCollection();

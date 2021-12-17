@@ -31,7 +31,7 @@ export const getClothesList = (options) => async (dispatch, getState) => {
       type: clothesActionTypes.fetchListSuccess,
       data,
       limit,
-      page: skip * limit,
+      page: Math.floor(skip / limit),
       total,
     });
   } catch (error) {

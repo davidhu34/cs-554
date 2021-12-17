@@ -42,7 +42,17 @@ export default function DataModal({
             {description}
           </Typography>
         )}
-        {children}
+        <Box
+          sx={{
+            marginTop: 2,
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+            gap: 4,
+          }}
+        >
+          {children}
+        </Box>
       </Box>
     </Modal>
   );
