@@ -59,7 +59,7 @@ export const AuthProvider = ({ children }) => {
       }
     };
     fetchUserData();
-  }, [dispatch, currentUser, user]);
+  }, [dispatch, user]);
 
   console.log('user before set into the context:', currentUser);
   if (loadingUser) {

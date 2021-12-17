@@ -55,8 +55,9 @@ const clothesFormConfigs = [
     },
   },
   {
-    name: 'description',
-    label: 'Description',
+    name: 'size',
+    label: 'Size',
+    type: 'number',
   },
   {
     name: 'type',

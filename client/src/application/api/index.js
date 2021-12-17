@@ -44,20 +44,11 @@ export const getPaginatedClothes = (options) => {
 };
 
 export const postClothes = (data) => {
-  const newClothes = {
-    id: `clothes${tempClothes.length + 1}`,
-    // ownerId: 'me',
-    name: data.name,
-    description: data.description,
-    type: data.type,
-    userId: data.userId,
-    groupId: data.groupId,
-  };
   // tempClothes.unshift(newClothes);
   // return delay({
   //   data: newClothes,
   // });
-  return axiosPost(POST_CLOTHES, newClothes);
+  return axiosPost(POST_CLOTHES, data);
 };
 
 export const putClothes = (id, data) => {
