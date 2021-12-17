@@ -56,6 +56,7 @@ const basketFormConfigs = [
   {
     name: 'size',
     label: 'Size',
+    type: 'number',
     validation: {
       required: 'Size is Required',
     },

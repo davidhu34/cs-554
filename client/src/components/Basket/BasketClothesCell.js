@@ -35,7 +35,7 @@ function BasketClothesPiece({ id }) {
       {loading&& (
         <CircularProgress size="1rem" />
       )}
-      {!loading && !error && (
+      {!loading && !error && clothesItem && (
         <Chip size="small" label={clothesItem.name} />
       )}
     </>
