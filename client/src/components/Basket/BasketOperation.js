@@ -62,31 +62,45 @@ export default function BasketOperation() {
 
   async function handleBasketOperation() {
     if ((canOperate && validateTaskTime()) || canReset) {
-      await dispatch(
-        updateBasketStatus(id, {
-          status: nextStatus,
-          time: parseInt(taskTime),
-          lastUpdateId: basket.history[basket.history.length - 1]._id,
-        })
-      );
-      if (canReset) {
-        await dispatch(updateBasketClothes(id, basket.clothes, true));
+      try {
+        await dispatch(
+          updateBasketStatus(id, {
+            status: nextStatus,
+            time: parseInt(taskTime),
+            lastUpdateId: basket.history[basket.history.length - 1]._id,
+          })
+        );
+        if (canReset) {
+          await dispatch(updateBasketClothes(id, basket.clothes, true));
+        }
+        await dispatch(fetchClothesLocations());
+        handleClose();
+      } catch (error) {
+        console.log('error operating basket', error);
       }
-      await dispatch(fetchClothesLocations());
-      handleClose();
     }
   }
 
   async function handleClearBasket() {
     if (canClear) {
-      await dispatch(updateBasketClothes(id, basket.clothes, true));
-      await dispatch(fetchClothesLocations());
-      handleClose();
+      try {
+        await dispatch(updateBasketClothes(id, basket.clothes, true));
+        await dispatch(fetchClothesLocations());
+        handleClose();
+      } catch (error) {
+        console.log('error clearing basket', error);
+      }
     }
   }
 
   return (
-    <DataModal open title={`${name} (${status})`} onClose={handleClose}>
+    <DataModal
+      open
+      title={`${name} (${status})`}
+      onClose={handleClose}
+      loading={loading}
+      error={error?.message}
+    >
       {isEmpty && (
         <Box>
           <Typography>Basket is empty</Typography>
