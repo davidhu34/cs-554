@@ -3,7 +3,7 @@ import { Route, Routes, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../application/firebase/auth';
 import Box from '@mui/system/Box';
 import { useMediaQuery, useTheme } from '@mui/material';
-
+import NoPageFound from './NoPageFound';
 import ClothesPage from '../Clothes';
 import BasketPage from '../Basket';
 import { SignUp, SignOut } from '../Users';
@@ -60,7 +60,7 @@ export default function App() {
             }
           />
 
-          <Route>Unknown</Route>
+          <Route path="*" component={NoPageFound} />
         </Routes>
       </Box>
     </Box>

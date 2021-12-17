@@ -31,8 +31,15 @@ const Group = () => {
       try {
         setLoading(true);
         if (currentUser.groupId !== null) {
+          console.log(`groupID: ${currentUser.groupId}`);
           const { data } = await Axios.get(
             `http://localhost:3001/group/${currentUser.groupId}`
+            // {
+            //   withCredentials: true,
+            //   headers: {
+            //     'Content-Type': 'application/json',
+            //   },
+            // }
           );
           // console.log('group with the ID: ' + currentUser.groupId, data);
           if (!isUnmount) {
@@ -57,7 +64,13 @@ const Group = () => {
     let isUnmount = false;
     async function fetchGroup() {
       try {
-        const { data } = await Axios.get('http://localhost:3001/group');
+        const { data } = await Axios.get('http://localhost:3001/group/', {
+          /*withCredentials: true,
+          headers: {
+            'Content-Type': 'application/json',
+          },*/
+        });
+        console.log(data);
         if (!isUnmount && data) {
           setGroupList(data);
           setLoading(false);

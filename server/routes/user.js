@@ -44,7 +44,7 @@ router.post("/", async (req, res) => {
 router.get("/all", async (req, res) => {
   try {
     const allUsers = await usersData.getAllUsers();
-    console.log("ALl Users: \n", allUsers);
+    // console.log("ALl Users: \n", allUsers);
     return res.status(200).json(allUsers);
   } catch (e) {
     res.status(400).json({ error: e });
@@ -53,20 +53,20 @@ router.get("/all", async (req, res) => {
 //logout
 router.post("/logout", async (req, res) => {
   req.session.user = req.body;
-  console.log(res.session?.user);
+  // console.log(res.session?.user);
   if (req.session?.user) {
-    console.log("Session User (Before Logout) => ", req.session.user);
+    // console.log("Session User (Before Logout) => ", req.session.user);
     req.session.destroy();
-    console.log("Session User (After Logout) => ", req.session?.user);
+    // console.log("Session User (After Logout) => ", req.session?.user);
     return res.json({ message: "Log out successfully" });
   } else {
-    console.log(res.session);
+    // console.log(res.session);
     return res.status(400).json({ error: "No Session user available" });
   }
 });
 //end get all users
 router.put("/:id", async (req, res) => {
-  console.log(req.body);
+  // console.log(req.body);
 });
 
 // Get user by ID
@@ -83,7 +83,7 @@ router.get("/:id", async (req, res) => {
 
     res.status(200).json(result);
   } catch (e) {
-    console.log(e);
+    // console.log(e);
     res.status(400).json({ error: e });
   }
 });

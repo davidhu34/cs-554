@@ -26,13 +26,22 @@ const applyMiddleware = (app) =>
   app
     .use(express.json())
     .use(express.urlencoded({ extended: true }))
-    .use(cors())
+    .use(
+      cors({
+        origin: "http://localhost:3000",
+        methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD"],
+        credentials: true,
+      })
+    )
     .use(
       session({
         name: "AuthCookie",
         secret: "some secret string!",
         resave: false,
         saveUninitialized: true,
+        rolling: true,
+
+        cookie: { secure: true, httpOnly: false },
       })
     );
 // .use(authenticationGuard)
