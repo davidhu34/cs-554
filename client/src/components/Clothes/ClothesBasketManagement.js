@@ -49,7 +49,7 @@ export default function ClothesBasketManagement() {
   const canOperate =
     !clothesLocationError &&
     operableIdList.length === clothesIdList.length &&
-    baskets.length === 0;
+    baskets.length > 0;
 
   const { _id: userId, groupId } = useSelector(userSelector);
   useEffect(() => {
@@ -107,7 +107,7 @@ export default function ClothesBasketManagement() {
     <DataModal
       open
       onClose={handleClose}
-      title="Manage Selected Clothes(s)"
+      title="Manage Selected Clothes"
       loading={clothesLocationLoading}
       error={
         clothesLocationError
@@ -141,7 +141,7 @@ export default function ClothesBasketManagement() {
         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
           <Box sx={{ flexGrow: 1 }}>
             <Typography>
-              move ${operableIdList.length} pieces of clothes into pending
+              move {operableIdList.length} piece(s) of clothes into pending
               basket
             </Typography>
           </Box>
