@@ -2,12 +2,19 @@ import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
+
 import { updateBasketClothes } from '../../application/redux/actions/basket';
 import { fetchClothesLocations } from '../../application/redux/actions/clothesLocation';
 import { getBasketDetailSelector } from '../../application/redux/selectors';
 import { updateBasketStatus } from '../../application/redux/actions';
 
 import DataModal from '../DataPage/DataModal';
+import { Paper } from '@mui/material';
 
 const validNextStatus = {
   PENDING: 'WASHING',
@@ -27,16 +34,17 @@ export default function BasketOperation() {
     loading,
     error,
   } = useSelector(getBasketDetailSelector(id));
-  const nextStatus = validNextStatus[basket?.status];
-  const canChange =
-    nextStatus === 'PENDING' ||
-    nextStatus === 'WASHING_DONE' ||
-    nextStatus === 'PENDING';
-  const canClear = basket && basket.status === 'PENDING';
+  const { name = '', status = '' } = basket || {};
+  const nextStatus = validNextStatus[status];
+  const canOperate = status === 'PENDING' || status === 'WASHING_DONE';
+  const canReset = status === 'DRYING_DONE';
   const isEmpty = basket && basket.clothes && basket.clothes.length === 0;
+  const canClear = status === 'PENDING' && !isEmpty;
 
   const [taskTime, setTaskTime] = useState();
+  const [taskTimeError, setTaskTimeError] = useState();
   function handleTaskTimeChange(e) {
+    setTaskTimeError('');
     setTaskTime(e.target.value);
   }
 
@@ -44,20 +52,31 @@ export default function BasketOperation() {
     navigate(-1);
   }
 
+  function validateTaskTime() {
+    if (taskTime && Number.isNumber(taskTime)) {
+      return true;
+    } else {
+      setTaskTimeError('Task duration is required for this operation');
+      return false;
+    }
+  }
+
   async function handleBasketOperation() {
-    await dispatch(
-      updateBasketStatus(id, {
-        status: nextStatus,
-        time: taskTime,
-        lastUpdateId: basket.history[basket.history.length - 1]._id,
-      })
-    );
-    await dispatch(fetchClothesLocations());
-    handleClose();
+    if ((canOperate && validateTaskTime()) || canReset) {
+      await dispatch(
+        updateBasketStatus(id, {
+          status: nextStatus,
+          time: taskTime,
+          lastUpdateId: basket.history[basket.history.length - 1]._id,
+        })
+      );
+      await dispatch(fetchClothesLocations());
+      handleClose();
+    }
   }
 
   async function handleClearBasket() {
-    if (canClear && !isEmpty) {
+    if (canClear) {
       await dispatch(updateBasketClothes(id, basket.clothes, true));
       await dispatch(fetchClothesLocations());
       handleClose();
@@ -65,46 +84,110 @@ export default function BasketOperation() {
   }
 
   return (
-    <DataModal open onClose={handleClose}>
-      <>
-        <p>Current Status: {basket.status}</p>
-        <p>Next Status: {nextStatus}</p>
-
-        <div>
-          <label>Task Time</label>
-          <input
-            name="task-time"
-            type="number"
-            value={taskTime}
-            onChange={handleTaskTimeChange}
-          />
-          {/* {error?.message && <div>{error.message}</div>} */}
-        </div>
-        <button
-          onClick={(e) => {
-            e.preventDefault();
-            handleBasketOperation();
-          }}
-        >
-          ok
-        </button>
-      </>
-      {!isEmpty &&
-        (canClear ? (
-          <>
-            Remove all clothes from basket
-            <button
-              onClick={(e) => {
-                e.preventDefault();
-                handleClearBasket();
+    <DataModal open title={`${name} (${status})`} onClose={handleClose}>
+      <Box
+        sx={{
+          marginTop: 2,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          gap: 4,
+        }}
+      >
+        {(status === 'PENDING' || status === 'WASHING_DONE') && (
+          <Box>
+            <div>
+              {status === 'PENDING' && (
+                <Typography>Washing Task Ready</Typography>
+              )}
+              {status === 'WASHING_DONE' && (
+                <Typography>Drying Task Ready</Typography>
+              )}
+            </div>
+            <Box
+              sx={{
+          marginTop: 2,
+          display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'space-between',
               }}
             >
-              clear basket
-            </button>
-          </>
-        ) : (
-          <>Cannot clear basket while washing/drying</>
-        ))}
+              <Box>
+                <TextField
+                  m={4}
+                  error={!!taskTimeError}
+                  helperText={taskTimeError}
+                  label="Duration"
+                  id="basket-operation-duration-input"
+                  name="task-time"
+                  type="number"
+                  value={taskTime}
+                  onChange={handleTaskTimeChange}
+                />
+              </Box>
+              <Box>
+                <Button
+                  variant="contained"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleBasketOperation();
+                  }}
+                >
+                  Start{' '}
+                  {status === 'PENDING'
+                    ? 'Washing'
+                    : status === 'WASHING_DONE'
+                    ? 'Drying'
+                    : ''}
+                </Button>
+              </Box>
+            </Box>
+          </Box>
+        )}
+        {canReset && (
+          <Box sx={{ display: 'flex', flexDirection: 'row' }}>
+            <Box>
+              <Typography>Remove of all clothes and set to pending</Typography>
+            </Box>
+            <Box>
+              <Button
+                variant="contained"
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleBasketOperation();
+                }}
+              >
+                Reset Basket
+              </Button>
+            </Box>
+          </Box>
+        )}
+
+        {canClear && (
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+            }}
+          >
+            <Box>
+              <Typography>Remove all clothes from basket</Typography>
+            </Box>
+            <Box>
+              <Button
+                variant="contained"
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleClearBasket();
+                }}
+              >
+                Clear Basket
+              </Button>
+            </Box>
+          </Box>
+        )}
+      </Box>
     </DataModal>
   );
 }
