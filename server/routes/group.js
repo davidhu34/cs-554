@@ -2,6 +2,7 @@ const { Router } = require('express');
 const router = Router();
 const groupsData = require('../data/group');
 const usersData = require('../data/user');
+const basketsData = require('../data/basket');
 
 const {
   assertObjectIdString,
@@ -17,6 +18,7 @@ const { QueryError, ValidationError, HttpError } = require('../utils/errors');
 router.post('/', async (req, res) => {
   try {
     const reqBody = req.body;
+    console.log(req.body);
     assertRequiredObject(reqBody);
     console.log(req.session.user);
     let { name, users } = reqBody;
@@ -27,6 +29,18 @@ router.post('/', async (req, res) => {
 
     if (groupPresent) {
       throw new ValidationError(`Group already exists.`);
+    }
+
+    const userId = users[0]._id;
+
+    const user = await usersData.getByObjectId(userId);
+
+    if (!user) {
+      throw new HttpError(`No user found`, 404);
+    }
+
+    if (user.groupId) {
+      throw new ValidationError(`User already in another group`, 400);
     }
 
     const newGroup = await groupsData.createGroup(reqBody);
@@ -114,10 +128,7 @@ router.put('/:id', async (req, res) => {
 router.delete('/user/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const reqBody = req.body;
-    assertRequiredObject(reqBody);
-
-    let { user } = reqBody;
+    let user = req.session.user;
 
     assertObjectIdString(id);
 
@@ -127,10 +138,15 @@ router.delete('/user/:id', async (req, res) => {
       throw new HttpError(`Could not get group for group id: ${id}`, 404);
     }
 
-    const isUserPresent = await usersData.getByObjectId(user._id);
+    let isUserPresent = await usersData.getByObjectId(user._id);
 
     if (!isUserPresent) {
       throw new HttpError(`Could not get user for user id: ${user._id}`, 404);
+    }
+
+    const isClothPresent = await basketsData.getClothFromBasketByUserId(user._id);
+    if (isClothPresent) {
+      throw new HttpError(`Please remove all the clothes from basket to exit out from the group`);
     }
 
     user.groupId = null;
@@ -138,13 +154,13 @@ router.delete('/user/:id', async (req, res) => {
 
     let users = group.users;
     users = users.filter((el) => el._id !== user._id);
-
     group.users = users;
 
     const updatedGroup = await groupsData.updateGroup(id, group);
     console.log(updatedGroup);
     res.status(200).json(updatedGroup);
   } catch (e) {
+    console.log(e);
     res.status(400).json({ error: e });
   }
 });

@@ -1,14 +1,14 @@
-const { users: getUserCollection } = require('../config/mongoCollections');
-let { ObjectId } = require('mongodb');
+const { users: getUserCollection } = require("../config/mongoCollections");
+let { ObjectId } = require("mongodb");
 
-const { QueryError, ValidationError } = require('../utils/errors');
-const { idQuery, parseMongoData } = require('../utils/mongodb');
+const { QueryError, ValidationError } = require("../utils/errors");
+const { idQuery, parseMongoData } = require("../utils/mongodb");
 const {
   assertIsValuedString,
   assertRequiredObject,
   assertEmailString,
   assertObjectIdString,
-} = require('../utils/assertion');
+} = require("../utils/assertion");
 
 const getByObjectId = async (objectId) => {
   const collection = await getUserCollection();
@@ -21,7 +21,7 @@ const getAllUsers = async () => {
 
   let userList = {};
   userList = await collection.find({}).toArray();
-
+  console.log("userList: \n", userList);
   return parseMongoData(userList);
 };
 
@@ -38,7 +38,7 @@ const getUserByEmail = async (email) => {
 };
 
 const getUsersByGroup = async (groupId) => {
-  assertIsValuedString(groupId, 'Group ID');
+  assertIsValuedString(groupId, "Group ID");
 
   const collection = await getUserCollection();
   const user = await collection.find({ groupId }).toArray();
@@ -50,9 +50,9 @@ const createUser = async (data) => {
 
   let { uid, displayName, email, createdAt = new Date().getTime() } = data;
 
-  assertIsValuedString(uid, 'Firebase user ID');
-  assertIsValuedString(displayName, 'Display name');
-  assertEmailString(email, 'Email Address');
+  assertIsValuedString(uid, "Firebase user ID");
+  assertIsValuedString(displayName, "Display name");
+  assertEmailString(email, "Email Address");
 
   const userData = {
     uid: uid,
@@ -63,7 +63,9 @@ const createUser = async (data) => {
   };
 
   const collection = await getUserCollection();
-  const { result, insertedCount, insertedId } = await collection.insertOne(userData);
+  const { result, insertedCount, insertedId } = await collection.insertOne(
+    userData
+  );
 
   if (!result.ok || insertedCount !== 1) {
     throw new QueryError(`Could not create user`);
@@ -74,13 +76,13 @@ const createUser = async (data) => {
 
 const updateUser = async (id, updates) => {
   assertObjectIdString(id);
-  assertRequiredObject(updates, 'User updates data');
+  assertRequiredObject(updates, "User updates data");
 
   let { uid, name, email, groupId } = updates;
 
-  assertIsValuedString(uid, 'User ID');
-  assertIsValuedString(name, 'User name');
-  assertEmailString(email, 'Email');
+  assertIsValuedString(uid, "User ID");
+  assertIsValuedString(name, "User name");
+  assertEmailString(email, "Email");
   email = email.toLowerCase();
   if (groupId)
     assertObjectIdString(groupId);
@@ -105,7 +107,11 @@ const updateUser = async (id, updates) => {
     $set: newUpdate,
   };
 
-  const { value: updatedUser, ok } = await collection.findOneAndUpdate(idQuery(id), ops, options);
+  const { value: updatedUser, ok } = await collection.findOneAndUpdate(
+    idQuery(id),
+    ops,
+    options
+  );
 
   if (!ok) {
     throw new QueryError(`Could not update user with ID \`${id}\``);

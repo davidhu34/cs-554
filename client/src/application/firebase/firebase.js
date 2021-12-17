@@ -1,6 +1,7 @@
-import { getMessaging } from "@firebase/messaging";
-import firebase from "firebase/compat/app";
-import "firebase/compat/auth";
+import { getMessaging } from '@firebase/messaging';
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+import { getAuth } from 'firebase/auth';
 const firebaseApp = firebase.initializeApp({
   apiKey: process.env.REACT_APP_FIREBASE_KEY,
   authDomain: process.env.REACT_APP_FIREBASE_DOMAIN,
@@ -12,5 +13,5 @@ const firebaseApp = firebase.initializeApp({
 });
 
 export default firebaseApp;
-
+export const auth = getAuth(firebaseApp);
 export const messaging = getMessaging(firebaseApp);

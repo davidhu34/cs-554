@@ -14,7 +14,7 @@ const { QueryError, ValidationError, HttpError } = require('../utils/errors');
 //add clothes
 router.post('/', async (req, res, next) => {
   try {
-    const { name, type } = req.body;
+    const { name, type, size } = req.body;
     const { _id: userId = '61b91631d36271f9dc9b9bc4', groupId = '61b91631d36271f9dc9b9bc7' } =
       req.session.user || {};
 
@@ -22,8 +22,9 @@ router.post('/', async (req, res, next) => {
     assertIsValuedString(groupId, 'Group Id');
     assertIsValuedString(name, 'Cloth name');
     assertIsValuedString(type, 'Type');
+    assertIsValuedString(size, 'Size');
 
-    const result = await clothesData.addCloth({ name, type, userId, groupId });
+    const result = await clothesData.addCloth({ name, type, size, userId, groupId });
     if (!result) {
       throw new HttpError(`Could not add cloth for id`, 404);
     }
@@ -58,7 +59,7 @@ router.get('/locations', async (req, res, next) => {
   try {
     const { _id: userId = '61b91631d36271f9dc9b9bc4', groupId = '61b91631d36271f9dc9b9bc7' } =
       req.session.user || {};
-      const result = await clothesData.getClothesLocations();
+    const result = await clothesData.getClothesLocations();
     if (!result) {
       throw new HttpError(`Could not get cloth for group id:${groupId}`, 404);
     }
@@ -141,10 +142,16 @@ router.put('/:id', async (req, res, next) => {
     const { id: clothId } = req.params;
     const { _id: userId = '61b91631d36271f9dc9b9bc4', groupId = '61b91631d36271f9dc9b9bc7' } =
       req.session.user || {};
-    const { name, type } = req.body;
+    const { name, type, size } = req.body;
     assertIsValuedString(userId, 'User Id');
     assertIsValuedString(groupId, 'Group Id');
-    const result = await clothesData.updateCloth(clothId, { userId, groupId, name, type });
+    const result = await clothesData.updateCloth(clothId, {
+      userId,
+      groupId,
+      name,
+      type,
+      size,
+    });
     if (!result) {
       throw new HttpError(`Could not update cloth for cloth id:${clothId}`, 404);
     }

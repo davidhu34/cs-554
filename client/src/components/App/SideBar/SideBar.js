@@ -1,4 +1,4 @@
-import React from 'react';
+import { useContext } from 'react';
 import Icon from '@mui/material/Icon';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -7,7 +7,8 @@ import ListItemText from '@mui/material/ListItemText';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import { useNavigate } from 'react-router';
-
+import { AuthContext } from '../../../application/firebase/auth';
+import ProtectedRoute from '../ProtectedRoute';
 const navConfigs = [
   {
     key: 'clothes',
@@ -30,15 +31,16 @@ const navConfigs = [
 ];
 
 export default function SideBar() {
+  const { currentUser } = useContext(AuthContext);
   const navigate = useNavigate();
+
   return (
-    <Paper square variant="outlined">
-      <Typography variant="h6">
-        WashTastic
-      </Typography>
+    <Paper Paper square variant="outlined">
+      <Typography variant="h6">WashTastic</Typography>
       <List>
         {navConfigs.map(({ key, icon, text, to }) => {
           return (
+            // <ProtectedRoute>
             <ListItemButton
               key={key}
               onClick={() => {
@@ -50,6 +52,7 @@ export default function SideBar() {
               </ListItemIcon>
               <ListItemText>{text}</ListItemText>
             </ListItemButton>
+            // </ProtectedRoute>
           );
         })}
       </List>

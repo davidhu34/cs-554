@@ -192,7 +192,7 @@ router.patch('/:id/status', async (req, res, next) => {
     if (!result) {
       throw new HttpError(`Could not update basket for basket id:${id}`, 400);
     }
-  
+
     const nextAutoStatus = getNextBasketStatus(result.status);
 
     if (nextAutoStatus === 'WASHING_DONE' || nextAutoStatus === 'DRYING_DONE') {
@@ -221,7 +221,6 @@ router.patch('/:id/status', async (req, res, next) => {
       }, time);
     }
 
-
     res.status(200).json(result);
   } catch (error) {
     next(error);
@@ -239,7 +238,11 @@ router.patch('/:id/clothes', async (req, res, next) => {
     assertObjectIdString(userId, 'User ID');
     assertObjectIdString(groupId, 'Group ID');
 
-    const result = await basketsData.updateBasketClothes(basketId, {userId, clothesIdList}, remove);
+    const result = await basketsData.updateBasketClothes(
+      basketId,
+      { userId, clothesIdList },
+      remove,
+    );
 
     if (!result) {
       throw new HttpError(`Could not update basket for basket id:${id}`, 400);

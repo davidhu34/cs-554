@@ -22,7 +22,7 @@ const seedUsers = async ({
   const user3 = {
     uid: "123654987897456253143",
     displayName: "Dhruveel Doshi",
-    email: "ddoshi@gmail.com",
+    email: "dhruveeldoshi@gmail.com",
     createdAt: timestamp2,
   };
 
