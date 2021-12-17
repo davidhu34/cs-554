@@ -24,6 +24,10 @@ const clothesColumns = [
     label: 'Name',
   },
   {
+    field: 'type',
+    label: 'Type',
+  },
+  {
     field: 'status',
     label: 'Status',
     render(_, data) {

@@ -124,7 +124,9 @@ export default function ClothesBasketManagement() {
           >
             <Box>
               <FormControl>
-                <InputLabel id="pending-basket-select-label">Age</InputLabel>
+                <InputLabel id="pending-basket-select-label">
+                  Pending Baskets
+                </InputLabel>
                 <Select
                   labelId="pending-basket-select-label"
                   id="pending-basket-select"
@@ -156,6 +158,11 @@ export default function ClothesBasketManagement() {
       ) : (
         <Box>Some selected clothes are still in task(s)</Box>
       )}
+      <Box sx={{  display: 'flex', gap: 2, justifyContent: 'end' }}>
+        <Button onClick={() => handleClose()} variant="outlined">
+          Close
+        </Button>
+      </Box>
     </DataModal>
   );
 }
