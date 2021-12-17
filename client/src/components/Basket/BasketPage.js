@@ -70,6 +70,14 @@ export default function BasketPage() {
     navigate(`/baskets/${selectedList[0]}/operate`);
   }
 
+  function getDisabledMessage(basketData) {
+    return !basketData
+      ? 'No basket data'
+      : basketData?.clothes?.length > 0
+      ? 'Cannot edit when basket is not empty.'
+      : '';
+  }
+
   return (
     <DataPage
       title="Clothes"
@@ -84,6 +92,7 @@ export default function BasketPage() {
       formConfigs={basketFormConfigs}
       createTitle="Add New Basket"
       editTitle="Edit Basket Info"
+      getDisabledMessage={getDisabledMessage}
       customActions={[
         {
           icon: <LocalLaundryServiceIcon />,

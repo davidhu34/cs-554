@@ -57,7 +57,7 @@ export default function DataModal({
             }}
           >
             <Typography color="error">
-              {error?.message || 'Error fetching table data'}
+              {error?.message || (typeof error === 'string' ? error : 'Error fetching data')}
             </Typography>
           </Box>
         )}
