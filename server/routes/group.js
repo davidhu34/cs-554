@@ -1,8 +1,8 @@
-const { Router } = require('express');
+const { Router } = require("express");
 const router = Router();
-const groupsData = require('../data/group');
-const usersData = require('../data/user');
-const basketsData = require('../data/basket');
+const groupsData = require("../data/group");
+const usersData = require("../data/user");
+const basketsData = require("../data/basket");
 
 const {
   assertObjectIdString,
@@ -11,22 +11,25 @@ const {
   assertRequiredObject,
   assertEmailString,
   assertNonEmptyArray,
-} = require('../utils/assertion');
-const { QueryError, ValidationError, HttpError } = require('../utils/errors');
+} = require("../utils/assertion");
+const { QueryError, ValidationError, HttpError } = require("../utils/errors");
 
 //add group
-router.post('/', async (req, res) => {
+router.post("/", async (req, res) => {
+  let i = 0;
   try {
     const reqBody = req.body;
     console.log(req.body);
     assertRequiredObject(reqBody);
     console.log(req.session.user);
     let { name, users } = reqBody;
-    assertIsValuedString(name, 'Group name');
-    assertNonEmptyArray(users, 'Users');
+    assertIsValuedString(name, "Group name");
+    assertNonEmptyArray(users, "Users");
 
     const groupPresent = await groupsData.getGroupByName(name);
-
+    console.log("GROUP PResent", groupPresent);
+    i++;
+    console.log("Counter:", i);
     if (groupPresent) {
       throw new ValidationError(`Group already exists.`);
     }
@@ -34,7 +37,6 @@ router.post('/', async (req, res) => {
     const userId = users[0]._id;
 
     const user = await usersData.getByObjectId(userId);
-
     if (!user) {
       throw new HttpError(`No user found`, 404);
     }
@@ -45,6 +47,7 @@ router.post('/', async (req, res) => {
 
     const newGroup = await groupsData.createGroup(reqBody);
     console.log(newGroup);
+    req.session.user = users[0];
     req.session.user.groupId = newGroup._id;
     res.status(200).json(newGroup);
   } catch (e) {
@@ -54,7 +57,7 @@ router.post('/', async (req, res) => {
 });
 
 //Get all groups
-router.get('/', async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const allGroups = await groupsData.getAllGroups();
 
@@ -65,16 +68,17 @@ router.get('/', async (req, res) => {
 });
 
 // Get group by ID
-router.get('/:id', async (req, res) => {
+router.get("/:id", async (req, res) => {
+  const { id } = req.params;
+  console.log("group", id);
   try {
-    const { id } = req.params;
-    assertObjectIdString(id, 'Group ID');
+    assertObjectIdString(id, "Group ID");
     const result = await groupsData.getGroup(id);
 
     if (!result) {
       throw new HttpError(`Could not get group for group id:${id}`, 404);
     }
-
+    console.log("Group with ID: ", result);
     res.status(200).json(result);
   } catch (e) {
     console.log(e);
@@ -82,13 +86,15 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-router.put('/:id', async (req, res) => {
+router.put("/:id", async (req, res) => {
+  req.session.user = req.body;
+  let id = req.params.id;
+  let user = req.session.user;
+  console.log("session User in group's PUT req:", user);
   try {
-    const { id } = req.params;
-    const reqBody = req.body;
-    assertRequiredObject(reqBody);
-
-    let { user } = reqBody;
+    // below Lines Commented by Dhruveel
+    // assertRequiredObject(reqBody);
+    // let user = reqBody;
 
     const group = await groupsData.getGroup(id);
 
@@ -102,11 +108,11 @@ router.put('/:id', async (req, res) => {
       throw new HttpError(`Could not get user for user id: ${user._id}`, 404);
     }
 
-    assertIsValuedString(user.uid, 'User ID');
-    assertIsValuedString(user.name, 'User name');
-    assertEmailString(user.email, 'Email');
+    assertIsValuedString(user.uid, "User ID");
+    assertIsValuedString(user.name, "User name");
+    assertEmailString(user.email, "Email");
 
-    if (user.groupId && user.groupId !== id) {
+    if (user.groupId) {
       throw new ValidationError(`User already in another group`, 404);
     }
 
@@ -125,10 +131,14 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-router.delete('/user/:id', async (req, res) => {
+router.post("/user/:id", async (req, res) => {
   try {
     const { id } = req.params;
+    console.log(req.body);
+    req.session.user = req.body;
+
     let user = req.session.user;
+    console.log(user);
 
     assertObjectIdString(id);
 
@@ -144,18 +154,22 @@ router.delete('/user/:id', async (req, res) => {
       throw new HttpError(`Could not get user for user id: ${user._id}`, 404);
     }
 
-    const isClothPresent = await basketsData.getClothFromBasketByUserId(user._id);
+    const isClothPresent = await basketsData.getClothFromBasketByUserId(
+      user._id
+    );
     if (isClothPresent) {
-      throw new HttpError(`Please remove all the clothes from basket to exit out from the group`);
+      throw new HttpError(
+        `Please remove all the clothes from basket to exit out from the group`
+      );
     }
 
     user.groupId = null;
-    usersData.updateUser(user._id, user);
+    await usersData.updateUser(user._id, user);
 
     let users = group.users;
     users = users.filter((el) => el._id !== user._id);
     group.users = users;
-
+    req.session.user = user;
     const updatedGroup = await groupsData.updateGroup(id, group);
     console.log(updatedGroup);
     res.status(200).json(updatedGroup);
@@ -165,7 +179,7 @@ router.delete('/user/:id', async (req, res) => {
   }
 });
 
-router.delete('/:id', async (req, res) => {
+router.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;
     assertObjectIdString(id);

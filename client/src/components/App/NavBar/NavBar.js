@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AppBar from '@mui/material/AppBar';
+import Axios from 'axios';
 import Badge from '@mui/material/Badge';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
@@ -19,7 +20,15 @@ export default function NavBar() {
   const { currentUser, setCurrentUser } = useContext(AuthContext);
   const navigate = useNavigate();
   function handleSignOut(e) {
+    console.log('Before Prevent');
     e.preventDefault();
+    // currentUser.clear();
+
+    Axios.post('http://localhost:3001/user/logout', currentUser).then(
+      (response) => {
+        console.log(response);
+      }
+    );
     setCurrentUser(null);
     console.log('in SIgnout handleSIgnout', currentUser);
     doSignOut();
