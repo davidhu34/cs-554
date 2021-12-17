@@ -15,12 +15,12 @@ const seedBaskets = async (
     groupId: user1.groupId,
     clothes: [],
     status: 'PENDING',
-    time: 2,
+    time: 0,
     createdAt: timestamp1,
     history: [
       {
         userId: user1._id,
-        time: 2,
+        time: 0,
         status: 'PENDING',
         createdAt: timestamp1,
       },
@@ -29,17 +29,55 @@ const seedBaskets = async (
 
   const basket2 = {
     name: 'Basket 2',
+    size: 10,
+    userId: user1._id,
+    groupId: user1.groupId,
+    clothes: [],
+    status: 'PENDING',
+    time: 0,
+    createdAt: timestamp1,
+    history: [
+      {
+        userId: user1._id,
+        time: 0,
+        status: 'PENDING',
+        createdAt: timestamp1,
+      },
+    ],
+  };
+
+  const basketA = {
+    name: 'Basket A',
     size: 33,
     userId: user3._id,
     groupId: user3.groupId,
     clothes: [],
     status: 'PENDING',
-    time: 20,
+    time: 0,
     createdAt: timestamp1,
     history: [
       {
         userId: user3._id,
-        time: 20,
+        time: 0,
+        status: 'PENDING',
+        createdAt: timestamp1,
+      },
+    ],
+  };
+
+  const basketB = {
+    name: 'Basket B',
+    size: 15,
+    userId: user3._id,
+    groupId: user3.groupId,
+    clothes: [],
+    status: 'PENDING',
+    time: 0,
+    createdAt: timestamp1,
+    history: [
+      {
+        userId: user3._id,
+        time: 0,
         status: 'PENDING',
         createdAt: timestamp1,
       },
