@@ -72,6 +72,7 @@ export default function BasketPage() {
 
   return (
     <DataPage
+      title="Clothes"
       path="/baskets"
       columns={basketColumns}
       paginationSelector={basketPaginationSelector}

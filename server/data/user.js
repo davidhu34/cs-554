@@ -1,5 +1,4 @@
 const { users: getUserCollection } = require('../config/mongoCollections');
-let { ObjectId } = require('mongodb');
 
 const { QueryError, ValidationError } = require('../utils/errors');
 const { idQuery, parseMongoData } = require('../utils/mongodb');
@@ -9,7 +8,6 @@ const {
   assertEmailString,
   assertObjectIdString,
 } = require('../utils/assertion');
-const { getClothesByUserId, isClothesEditable } = require('./clothes');
 
 const getByObjectId = async (objectId) => {
   const collection = await getUserCollection();
@@ -114,14 +112,6 @@ const updateUser = async (id, updates) => {
   return parseMongoData(updatedUser);
 };
 
-const isUserOperating = async (userId) => {
-  assertObjectIdString(userId, 'User ID');
-  const clothes = await getClothesByUserId(userId);
-  return (await Promise.all(clothes.map(({ _id }) => isClothesEditable(_id)))).some(
-    (editable) => !editable
-  );
-};
-
 module.exports = {
   createUser,
   getUser,
@@ -130,5 +120,4 @@ module.exports = {
   updateUser,
   getByObjectId,
   getUserByEmail,
-  isUserOperating,
 };

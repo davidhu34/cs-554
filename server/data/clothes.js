@@ -246,6 +246,14 @@ const isClothesEditable = async (clothesId) => {
   return !(await getClothesBasketLocation(clothesId));
 };
 
+const isUserOperating = async (userId) => {
+  assertObjectIdString(userId, 'User ID');
+  const clothes = await getClothesByUserId(userId);
+  return (await Promise.all(clothes.map(({ _id }) => isClothesEditable(_id)))).some(
+    (editable) => !editable
+  );
+};
+
 module.exports = {
   getClothByGroupId,
   addCloth,
@@ -258,4 +266,5 @@ module.exports = {
   setClothesLocation,
   clearClothesLocation,
   isClothesEditable,
+  isUserOperating,
 };
