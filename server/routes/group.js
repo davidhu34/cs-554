@@ -131,10 +131,14 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-router.delete("/user/:id", async (req, res) => {
+router.post("/user/:id", async (req, res) => {
   try {
     const { id } = req.params;
+    console.log(req.body);
+    req.session.user = req.body;
+
     let user = req.session.user;
+    console.log(user);
 
     assertObjectIdString(id);
 
@@ -160,12 +164,12 @@ router.delete("/user/:id", async (req, res) => {
     }
 
     user.groupId = null;
-    usersData.updateUser(user._id, user);
+    await usersData.updateUser(user._id, user);
 
     let users = group.users;
     users = users.filter((el) => el._id !== user._id);
     group.users = users;
-
+    req.session.user = user;
     const updatedGroup = await groupsData.updateGroup(id, group);
     console.log(updatedGroup);
     res.status(200).json(updatedGroup);

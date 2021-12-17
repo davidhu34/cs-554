@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext } from 'react';
 import Axios from 'axios';
 import Box from '@mui/material/Box';
+import { Container, Typography } from '@mui/material';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import List from '@mui/material/List';
@@ -10,6 +11,7 @@ import ListItemText from '@mui/material/ListItemText';
 import GroupForm from './GroupForm';
 import Button from '@mui/material/Button';
 import { AuthContext } from '../../application/firebase/auth';
+import { useNavigate } from 'react-router-dom';
 // http://localhost:3001/group (GET)
 // http://localhost:3001/group (POST)
 
@@ -19,6 +21,7 @@ const Group = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState();
   const [group, setGroup] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     let isUnmount = false;
@@ -72,6 +75,7 @@ const Group = () => {
     };
   }, [currentUser.groupId]);
 
+  //Join Group Function
   function joinGroup({ grpId }) {
     // e.preventDefault();
     setLoading(true);
@@ -92,19 +96,67 @@ const Group = () => {
     setLoading(false);
   }
 
+  // Leave Group Function
+  async function leaveGroup(grpId) {
+    // alert(JSON.stringify(currentUser));
+    try {
+      const { data } = await Axios.post(
+        `http://localhost:3001/group/user/${grpId}`,
+        currentUser
+      );
+      if (data) {
+        setCurrentUser(() => (currentUser.groupId = null));
+        setLoading(false);
+        navigate('/');
+      }
+      setLoading(false);
+      console.log('Data after user leave the group', data);
+    } catch (error) {
+      setError('Error While Leaving Group');
+      setLoading(false);
+    }
+  }
+
   if (loading) return <h2>Loading Group..............</h2>;
 
   if (group && group && currentUser.groupId !== null) {
     console.log(group);
     return (
       <>
-        <Box sx={{ width: '100%', maxWidth: 360 }}>
-          <ListItem>
-            <ListItemButton>
-              <ListItemText primary={group.name} />{' '}
-            </ListItemButton>
-          </ListItem>
-        </Box>
+        <Container fixed>
+          <Box sx={{ width: '100%', maxWidth: 500 }}>
+            {error && error ? (
+              <Alert variant="outlined" severity="error">
+                <AlertTitle>Error</AlertTitle>
+                {error}
+              </Alert>
+            ) : (
+              <></>
+            )}
+            <Typography variant="h1" component="div" gutterBottom>
+              {group.name.toUpperCase()}
+            </Typography>
+            <Typography variant="h2" component="div">
+              Group Members
+            </Typography>
+            <hr />
+            {group.users.map((user) => (
+              <Container key={user._id}>
+                <Typography variant="h4" component="h3">
+                  {user.name}
+                </Typography>
+              </Container>
+            ))}
+            <hr />
+            <Button
+              variant="contained"
+              color="error"
+              onClick={() => leaveGroup(group._id)}
+            >
+              Leave Group - {group.name}
+            </Button>
+          </Box>
+        </Container>
       </>
     );
   }
