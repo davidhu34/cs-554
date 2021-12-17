@@ -1,10 +1,17 @@
-import { getPaginatedClothes, getClothesDetail, postClothes, putClothes, deleteClothes as deleteClothesRequest } from '../../api';
+import {
+  getPaginatedClothes,
+  getClothes,
+  postClothes,
+  putClothes,
+  deleteClothes as deleteClothesRequest,
+} from '../../api';
 import { DEFAULT_PAGINATION_LIMIT } from '../../constants';
-import { clothesPaginationSelector } from '../selectors';
+import { clothesPaginationSelector, userSelector } from '../selectors';
 import { clothesActionTypes } from './actionTypes';
 
 export const getClothesList = (options) => async (dispatch, getState) => {
   try {
+    const { _id: userId, groupId } = userSelector(getState());
     const currentPagination = clothesPaginationSelector(getState());
     if (currentPagination.loading) {
       return;
@@ -16,6 +23,8 @@ export const getClothesList = (options) => async (dispatch, getState) => {
     if (options.limit !== undefined) {
       newPagination.limit = options.limit;
     }
+    options.groupId = groupId;
+    options.userId = userId;
     dispatch({
       type: clothesActionTypes.fetchListStart,
       page: newPagination.page,
@@ -31,7 +40,7 @@ export const getClothesList = (options) => async (dispatch, getState) => {
       type: clothesActionTypes.fetchListSuccess,
       data,
       limit,
-      page: skip * limit,
+      page: Math.floor(skip / limit),
       total,
     });
   } catch (error) {
@@ -42,13 +51,14 @@ export const getClothesList = (options) => async (dispatch, getState) => {
   }
 };
 
-export const getClothes = (id) => async (dispatch, getState) => {
+export const getClothesDetail = (id) => async (dispatch, getState) => {
   try {
     dispatch({
       type: clothesActionTypes.fetchStart,
       id,
     });
-    const data = await getClothesDetail(id);
+    const { _id: userId, groupId } = userSelector(getState());
+    const data = await getClothes(id, { userId, groupId });
     dispatch({
       type: clothesActionTypes.fetchSuccess,
       data,
@@ -67,7 +77,8 @@ export const createClothes = (clothesData) => async (dispatch, getState) => {
     dispatch({
       type: clothesActionTypes.createStart,
     });
-    const data = await postClothes(clothesData);
+    const { _id: userId, groupId } = userSelector(getState());
+    const data = await postClothes({ ...clothesData, userId, groupId });
     dispatch({
       type: clothesActionTypes.createSuccess,
       id: data._id,
@@ -87,7 +98,8 @@ export const deleteClothes = (id) => async (dispatch, getState) => {
       type: clothesActionTypes.deleteStart,
       id,
     });
-    const data = await deleteClothesRequest(id);
+    const { _id: userId, groupId } = userSelector(getState());
+    const data = await deleteClothesRequest(id, { userId, groupId });
     dispatch({
       type: clothesActionTypes.deleteSuccess,
       id,
@@ -101,23 +113,25 @@ export const deleteClothes = (id) => async (dispatch, getState) => {
   }
 };
 
-export const updateClothes = (id, clothesData) => async (dispatch, getState) => {
-  try {
-    dispatch({
-      type: clothesActionTypes.updateStart,
-      id,
-      data: clothesData,
-    });
-    const data = await putClothes(id, clothesData);
-    dispatch({
-      type: clothesActionTypes.updateSuccess,
-      id,
-      data,
-    });
-  } catch (error) {
-    dispatch({
-      type: clothesActionTypes.updateError,
-      error,
-    });
-  }
-};
+export const updateClothes =
+  (id, clothesData) => async (dispatch, getState) => {
+    try {
+      dispatch({
+        type: clothesActionTypes.updateStart,
+        id,
+        data: clothesData,
+      });
+      const { _id: userId, groupId } = userSelector(getState());
+      const data = await putClothes(id, { ...clothesData, userId, groupId });
+      dispatch({
+        type: clothesActionTypes.updateSuccess,
+        id,
+        data,
+      });
+    } catch (error) {
+      dispatch({
+        type: clothesActionTypes.updateError,
+        error,
+      });
+    }
+  };

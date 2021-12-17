@@ -13,7 +13,7 @@ import {
   getClothesDetailSelector,
 } from '../../application/redux/selectors';
 import DataPage from '../DataPage';
-import ChangeClothesBasket from './ChangeClothesBasket';
+import ClothesBasketManagement from './ClothesBasketManagement';
 import { useClothesLocation } from '../../application/hooks/data';
 
 import ClothesStatusCell from './ClothesStatusCell';
@@ -22,6 +22,10 @@ const clothesColumns = [
   {
     field: 'name',
     label: 'Name',
+  },
+  {
+    field: 'type',
+    label: 'Type',
   },
   {
     field: 'status',
@@ -83,7 +87,7 @@ export default function ClothesPage() {
   const navigate = useNavigate();
   function handleAddToBasket(selectedList) {
     navigate({
-      pathname: '/clothes/add-to-basket',
+      pathname: '/clothes/manage-basket',
       search: `?${createSearchParams({
         clothes: selectedList,
       })}`,
@@ -105,7 +109,7 @@ export default function ClothesPage() {
       customActions={[
         {
           icon: <ShoppingBasketIcon />,
-          title: 'Add To Basket',
+          title: 'Manage Baskets',
           hidden(selectedList) {
             return selectedList.length < 1;
           },
@@ -117,8 +121,8 @@ export default function ClothesPage() {
       ]}
       customRoutes={[
         {
-          path: '/add-to-basket',
-          element: <ChangeClothesBasket />,
+          path: '/manage-basket',
+          element: <ClothesBasketManagement />,
         },
       ]}
     />

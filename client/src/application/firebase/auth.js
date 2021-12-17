@@ -1,11 +1,17 @@
-import { useState, useEffect, createContext, useLayoutEffect } from 'react';
+import { useState, useEffect, createContext } from 'react';
 import firebaseApp from './firebase';
 import Axios from 'axios';
+import { useDispatch } from 'react-redux';
+
+import { setUser as setUserAction } from '../../application/redux/actions/user';
+
+
 export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   let userExist;
   let response;
 
+  const dispatch = useDispatch();
   const [currentUser, setCurrentUser] = useState(null);
   const [user, setUser] = useState(null);
 
@@ -25,30 +31,35 @@ export const AuthProvider = ({ children }) => {
         console.log('user from google:', user);
         setUser(user);
         setLoadingUser(false);
-
-        async function fetchData() {
-          await Axios.get();
-        }
       });
     }
-  }, []);
+  }, [user]);
 
   // post user into Database
   useEffect(() => {
     const fetchUserData = async () => {
       if (user && user?.providerData[0] && currentUser === null) {
+        console.log('in AUth useEffect');
         console.log('user before calling API: ', user);
+        console.log('in AUth useEffect Before Calling Axios');
+
         const { data } = await Axios.post(
           'http://localhost:3001/user',
           user.providerData[0]
         );
         console.log('user After calling API:', data);
         setCurrentUser(data);
+        dispatch(setUserAction(data));
+        setLoadingUser(false);
+      }
+      if (!user) {
+        setCurrentUser(null);
+        dispatch(setUserAction(null));
         setLoadingUser(false);
       }
     };
     fetchUserData();
-  }, [user]);
+  }, [dispatch, currentUser, user]);
 
   console.log('user before set into the context:', currentUser);
   if (loadingUser) {

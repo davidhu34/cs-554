@@ -36,7 +36,9 @@ export default function SideBar() {
 
   return (
     <Paper Paper square variant="outlined">
-      <Typography variant="h6">WashTastic</Typography>
+      <Typography variant="h6" component="h1" p={2}>
+        WashTastic
+      </Typography>
       <List>
         {navConfigs.map(({ key, icon, text, to }) => {
           return (

@@ -1,3 +1,3 @@
 export * from './routing';
 
-export const DEFAULT_PAGINATION_LIMIT = 1;
+export const DEFAULT_PAGINATION_LIMIT = 3;

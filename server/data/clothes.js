@@ -70,12 +70,13 @@ const getCloth = async (userId, id) => {
 
 const addCloth = async (data) => {
   assertRequiredObject(data);
-  const { userId, groupId, name, type } = data;
+  const { userId, groupId, name, type, size } = data;
   const createdAt = new Date().getTime();
 
   assertObjectIdString(userId, 'Cloth added by user ID');
   assertIsValuedString(name, 'Cloth name');
   assertIsValuedString(type, 'Cloth type');
+  assertRequiredNumber(size, 'Size');
   assertIsValuedString(groupId, 'Group');
 
   const user = await usersData.getByObjectId(userId);
@@ -98,6 +99,7 @@ const addCloth = async (data) => {
     groupId: new ObjectId(groupId),
     name,
     type,
+    size,
     createdAt,
     updatedAt: createdAt,
     createdBy: new ObjectId(userId),
@@ -113,12 +115,13 @@ const addCloth = async (data) => {
 
 const updateCloth = async (clothId, data) => {
   assertRequiredObject(data);
-  const { userId, groupId, name, type } = data;
+  const { userId, groupId, name, type, size } = data;
   assertObjectIdString(clothId, 'Cloth id');
   assertObjectIdString(userId, 'Cloth added by user ID');
   assertObjectIdString(groupId, 'Group id');
   assertIsValuedString(name, 'Cloth name');
   assertIsValuedString(type, 'Cloth type');
+  assertRequiredNumber(size, 'Size');
 
   const user = await usersData.getByObjectId(userId);
   if (!user) {
@@ -141,15 +144,15 @@ const updateCloth = async (clothId, data) => {
     groupId: new ObjectId(groupId),
     name,
     type,
+    size,
     updatedAt: new Date().getTime(),
     updatedBy: new ObjectId(userId),
   };
 
   const collection = await getClothesCollection();
-  const { modifiedCount, matchedCount } = await collection.updateOne(
-    idQuery(clothId),
-    { $set: newUpdate },
-  );
+  const { modifiedCount, matchedCount } = await collection.updateOne(idQuery(clothId), {
+    $set: newUpdate,
+  });
 
   if (!modifiedCount && !matchedCount) {
     throw new QueryError(`Could not update cloth ID(${clothId})`);
@@ -173,7 +176,7 @@ const deleteCloth = async (userId, id) => {
 
   const collection = await getClothesCollection();
   let { deletedCount } = await collection.deleteOne({
-    _id: new ObjectId(id),
+    ...idQuery(id),
     userId: new ObjectId(userId),
   });
 
@@ -208,18 +211,16 @@ const deleteClothByGroupId = async (userId, groupId) => {
   return parseMongoData({ message });
 };
 
-
 const getClothesLocations = async () => {
   return await getAllClothesBasketLocations();
 };
 
-const setClothesLocation = async (clothesIdList, basketId = '') => {
-  await setClothesBasketLocations(clothes, basketId);
+const setClothesLocation = async (clothes, basketId = '') => {
+  await setClothesBasketLocation(clothes, basketId);
   return await getClothesLocations();
 };
 
-
-const clearClothesLocation = async (clothesIdList) => {
+const clearClothesLocation = async (clothes) => {
   return await setClothesLocation(clothes, '');
 };
 

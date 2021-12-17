@@ -15,10 +15,11 @@ const { HttpError, ValidationError } = require('../utils/errors');
 //add basket
 router.post('/', async (req, res, next) => {
   try {
-    const { name, users, clothes = [], status = 'PENDING', time = 0 } = req.body;
+    // const { _id: userId = '61b91631d36271f9dc9b9bc4', groupId = '61b91631d36271f9dc9b9bc7' } =
+    //   req.session.user || {};
+    // const { name, users, clothes = [], status = 'PENDING', time = 0 } = req.body;
+    const { name, users, clothes = [], status = 'PENDING', time = 0, userId, groupId } = req.body;
     const size = parseInt(req.body.size);
-    const { _id: userId = '61b91631d36271f9dc9b9bc4', groupId = '61b91631d36271f9dc9b9bc7' } =
-      req.session.user || {};
 
     assertIsValuedString(userId, 'User Id');
     assertIsValuedString(name, 'Basket name');
@@ -46,6 +47,20 @@ router.post('/', async (req, res, next) => {
     if (!result) {
       throw new HttpError(`Could not add basket for id`, 400);
     }
+    try {
+      const messageResponse = await messaging.send({
+        data: {
+          type: 'BASKET_STATUS',
+          basketId,
+          message: `Basket ${autoResult.name} created.`,
+          status: autoResult.status,
+        },
+        topic: 'abc', //groupId,
+      });
+      console.log('basket created messaging response:', messageResponse);
+    } catch (error) {
+      console.error('basket created messaging error:', error);
+    }
     res.status(200).json(result);
   } catch (error) {
     next(error);
@@ -54,8 +69,9 @@ router.post('/', async (req, res, next) => {
 
 router.get('/', async (req, res, next) => {
   try {
-    const { _id: userId = '61b91631d36271f9dc9b9bc4', groupId = '61b91631d36271f9dc9b9bc7' } =
-      req.session.user || {};
+    // const { _id: userId = '61b91631d36271f9dc9b9bc4', groupId = '61b91631d36271f9dc9b9bc7' } =
+    //   req.session.user || {};
+    const { userId, groupId } = req.query;
     assertIsValuedString(userId, 'User Id');
     assertIsValuedString(groupId, 'Group Id');
     const { skip, limit } = req.query;
@@ -73,11 +89,12 @@ router.get('/', async (req, res, next) => {
 
 router.get('/pending', async (req, res, next) => {
   try {
-    const { _id: userId = '61b91631d36271f9dc9b9bc4', groupId = '61b91631d36271f9dc9b9bc7' } =
-      req.session.user || {};
+    // const { _id: userId = '61b91631d36271f9dc9b9bc4', groupId = '61b91631d36271f9dc9b9bc7' } =
+    //   req.session.user || {};
+    const { userId, groupId } = req.query;
     assertIsValuedString(userId, 'User Id');
     assertIsValuedString(groupId, 'Group Id');
-    let result = await basketsData.getBasketsByStatus('PENDING');
+    let result = await basketsData.getGroupBasketsByStatus(groupId, 'PENDING');
     res.status(200).json(result);
   } catch (error) {
     next(error);
@@ -87,8 +104,9 @@ router.get('/pending', async (req, res, next) => {
 //get basket by basketId
 router.get('/:id', async (req, res, next) => {
   try {
-    const { _id: userId = '61b91631d36271f9dc9b9bc4', groupId = '61b91631d36271f9dc9b9bc7' } =
-      req.session.user || {};
+    // const { _id: userId = '61b91631d36271f9dc9b9bc4', groupId = '61b91631d36271f9dc9b9bc7' } =
+    //   req.session.user || {};
+    const { userId, groupId } = req.query;
     const { id } = req.params;
     assertIsValuedString(id, 'basket Id');
     const result = await basketsData.getBasket(userId, id);
@@ -105,11 +123,25 @@ router.get('/:id', async (req, res, next) => {
 router.delete('/:id', async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { _id: userId = '61b91631d36271f9dc9b9bc4', groupId = '61b91631d36271f9dc9b9bc7' } =
-      req.session.user || {};
+    // const { _id: userId = '61b91631d36271f9dc9b9bc4', groupId = '61b91631d36271f9dc9b9bc7' } =
+    //   req.session.user || {};
+    const { userId, groupId } = req.body;
     const result = await basketsData.deleteBasket(userId, groupId, id);
     if (!result) {
       throw new HttpError(`Could not delete basket for basket id:${id}`, 400);
+    }
+    try {
+      const messageResponse = await messaging.send({
+        data: {
+          type: 'BASKET_DELETE',
+          basketId,
+          message: `Basket ${autoResult.name} deleted.`,
+        },
+        topic: 'abc', //groupId,
+      });
+      console.log('basket deleted messaging response:', messageResponse);
+    } catch (error) {
+      console.error('basket deleted messaging error:', error);
     }
     res.status(200).json(result);
   } catch (error) {
@@ -121,9 +153,10 @@ router.delete('/:id', async (req, res, next) => {
 router.put('/:id', async (req, res, next) => {
   try {
     const { id: basketId } = req.params;
-    const { _id: userId = '61b91631d36271f9dc9b9bc4', groupId = '61b91631d36271f9dc9b9bc7' } =
-      req.session.user || {};
-    const { name, size, users, clothes, status, time } = req.body;
+    // const { _id: userId = '61b91631d36271f9dc9b9bc4', groupId = '61b91631d36271f9dc9b9bc7' } =
+    //   req.session.user || {};
+    // const { name, size, users, clothes, status, time } = req.body;
+    const { name, size, users, clothes, status, time, userId, groupId } = req.body;
     assertIsValuedString(userId, 'User Id');
     const result = await basketsData.updateBasket(basketId, {
       name,
@@ -148,9 +181,11 @@ router.put('/:id', async (req, res, next) => {
 router.patch('/:id/status', async (req, res, next) => {
   try {
     const { id: basketId } = req.params;
-    const { _id: userId = '61b91631d36271f9dc9b9bc4', groupId = '61b91631d36271f9dc9b9bc7' } =
-      req.session.user || {};
-    const { lastUpdateId, status } = req.body;
+    // const { _id: userId = '61b91631d36271f9dc9b9bc4', groupId = '61b91631d36271f9dc9b9bc7' } =
+    //   req.session.user || {};
+    // const { lastUpdateId, status } = req.body;
+    const { lastUpdateId, status, userId, groupId } = req.body;
+
     const time = parseInt(req.body.time || 0);
     assertRequiredNumber(time, 'Status Time');
     assertObjectIdString(userId, 'User ID');
@@ -168,29 +203,31 @@ router.patch('/:id/status', async (req, res, next) => {
 
     const nextAutoStatus = getNextBasketStatus(result.status);
 
-    setTimeout(async () => {
-      try {
-        const autoResult = await basketsData.updateBasketStatus(basketId, {
-          userId,
-          groupId,
-          status: nextAutoStatus,
-          time: 0,
-          lastUpdateId: result.history[result.history.length - 1]._id,
-        });
-        const messageResponse = await messaging.send({
-          data: {
-            type: 'BASKET_STATUS',
-            basketId,
-            message: `Basket ${autoResult.name} updated to ${autoResult.status}`,
-            status: autoResult.status,
-          },
-          topic: 'abc', //groupId,
-        });
-        console.log('basket auto status messaging response:', messageResponse);
-      } catch (error) {
-        console.error('basket auto status messaging error:', error);
-      }
-    }, time);
+    if (nextAutoStatus === 'WASHING_DONE' || nextAutoStatus === 'DRYING_DONE') {
+      setTimeout(async () => {
+        try {
+          const autoResult = await basketsData.updateBasketStatus(basketId, {
+            userId,
+            groupId,
+            status: nextAutoStatus,
+            time: 0,
+            lastUpdateId: result.history[result.history.length - 1]._id,
+          });
+          const messageResponse = await messaging.send({
+            data: {
+              type: 'BASKET_STATUS',
+              basketId,
+              message: `Basket ${autoResult.name} updated to ${autoResult.status}`,
+              status: autoResult.status,
+            },
+            topic: 'abc', //groupId,
+          });
+          console.log('basket auto status messaging response:', messageResponse);
+        } catch (error) {
+          console.error('basket auto status messaging error:', error);
+        }
+      }, time);
+    }
 
     res.status(200).json(result);
   } catch (error) {
@@ -202,9 +239,10 @@ router.patch('/:id/status', async (req, res, next) => {
 router.patch('/:id/clothes', async (req, res, next) => {
   try {
     const { id: basketId } = req.params;
-    const { _id: userId = '61b91631d36271f9dc9b9bc4', groupId = '61b91631d36271f9dc9b9bc7' } =
-      req.session.user || {};
-    const { clothesIdList = [], remove = false } = req.body;
+    // const { _id: userId = '61b91631d36271f9dc9b9bc4', groupId = '61b91631d36271f9dc9b9bc7' } =
+    //   req.session.user || {};
+    // const { clothesIdList = [], remove = false } = req.body;
+    const { clothesIdList = [], remove = false, userId, groupId } = req.body;
     assertNonEmptyArray(clothesIdList);
     assertObjectIdString(userId, 'User ID');
     assertObjectIdString(groupId, 'Group ID');
@@ -212,7 +250,7 @@ router.patch('/:id/clothes', async (req, res, next) => {
     const result = await basketsData.updateBasketClothes(
       basketId,
       { userId, clothesIdList },
-      remove,
+      remove
     );
 
     if (!result) {

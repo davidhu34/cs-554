@@ -1,10 +1,15 @@
-const express = require('express');
-const session = require('express-session');
-const cors = require('cors');
+const express = require("express");
+const session = require("express-session");
+const cors = require("cors");
 
-const { AxiosError, HttpError, QueryError, ValidationError } = require('../utils/errors');
+const {
+  AxiosError,
+  HttpError,
+  QueryError,
+  ValidationError,
+} = require("../utils/errors");
 
-const LOGIN_PATH = '/user/login';
+const LOGIN_PATH = "/user/login";
 const authenticationGuard = (req, res, next) => {
   if (req.path.startsWith(LOGIN_PATH) || req.path.startsWith(`/user/logout`)) {
     return next();
@@ -24,11 +29,11 @@ const applyMiddleware = (app) =>
     .use(cors())
     .use(
       session({
-        name: 'AuthCookie',
-        secret: 'some secret string!',
+        name: "AuthCookie",
+        secret: "some secret string!",
         resave: false,
         saveUninitialized: true,
-      }),
+      })
     );
 // .use(authenticationGuard)
 // .engine("handlebars", exphbs({ defaultLayout: "main" }))

@@ -51,12 +51,18 @@ router.get("/all", async (req, res) => {
   }
 });
 //logout
-router.delete("/logout", async (req, res) => {
-  console.log("Session User (Before Logout) => ", req.session?.user);
-  req.session.destroy();
-  console.log("Session User (After Logout) => ", req.session?.user);
-
-  return res.json({ message: "Log out successfully" });
+router.post("/logout", async (req, res) => {
+  req.session.user = req.body;
+  console.log(res.session?.user);
+  if (req.session?.user) {
+    console.log("Session User (Before Logout) => ", req.session.user);
+    req.session.destroy();
+    console.log("Session User (After Logout) => ", req.session?.user);
+    return res.json({ message: "Log out successfully" });
+  } else {
+    console.log(res.session);
+    return res.status(400).json({ error: "No Session user available" });
+  }
 });
 //end get all users
 router.put("/:id", async (req, res) => {
