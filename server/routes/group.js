@@ -118,6 +118,7 @@ router.put('/:id', async (req, res) => {
     group.users = users;
 
     const updatedGroup = await groupsData.updateGroup(id, group);
+    req.session.user.groupId = updatedGroup._id;
     console.log(updatedGroup);
     res.status(200).json(updatedGroup);
   } catch (e) {
