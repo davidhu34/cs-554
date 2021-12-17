@@ -58,6 +58,9 @@ const clothesFormConfigs = [
     name: 'size',
     label: 'Size',
     type: 'number',
+    validation: {
+      required: 'Size is Required',
+    },
   },
   {
     name: 'type',
@@ -78,7 +81,7 @@ const clothesFormConfigs = [
       },
     ],
     validation: {
-      required: true,
+      required: 'Type of clothes is Required',
     },
   },
 ];
