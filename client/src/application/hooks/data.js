@@ -28,5 +28,5 @@ export function useBasketMonitor(options = {}) {
     [dispatch]
   );
 
-  useGroupTopic({ groupId: 'abc', onMessage });
+  useGroupTopic({ onMessage });
 }

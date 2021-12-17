@@ -33,10 +33,11 @@ export default function BasketOperation() {
     error,
   } = useSelector(getBasketDetailSelector(id));
   const { name = '', status = '' } = basket || {};
-  const nextStatus = validNextStatus[status];
-  const canOperate = status === 'PENDING' || status === 'WASHING_DONE';
-  const canReset = status === 'DRYING_DONE';
   const isEmpty = basket && basket.clothes && basket.clothes.length === 0;
+  const nextStatus = validNextStatus[status];
+  const canOperate =
+    !isEmpty && (status === 'PENDING' || status === 'WASHING_DONE');
+  const canReset = status === 'DRYING_DONE';
   const canClear = status === 'PENDING' && !isEmpty;
 
   const [taskTime, setTaskTime] = useState();
@@ -86,7 +87,12 @@ export default function BasketOperation() {
 
   return (
     <DataModal open title={`${name} (${status})`} onClose={handleClose}>
-      {(status === 'PENDING' || status === 'WASHING_DONE') && (
+      {isEmpty && (
+        <Box>
+          <Typography>Basket is empty</Typography>
+        </Box>
+      )}
+      {canOperate && (
         <Box>
           <div>
             {status === 'PENDING' && (

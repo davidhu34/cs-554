@@ -220,7 +220,7 @@ router.patch('/:id/status', async (req, res, next) => {
               message: `Basket ${autoResult.name} updated to ${autoResult.status}`,
               status: autoResult.status,
             },
-            topic: 'abc', //groupId,
+            topic: groupId
           });
           console.log('basket auto status messaging response:', messageResponse);
         } catch (error) {
