@@ -195,30 +195,31 @@ router.patch('/:id/status', async (req, res, next) => {
   
     const nextAutoStatus = getNextBasketStatus(result.status);
 
-    setTimeout(async () => {
-      try {
-
-        const autoResult = await basketsData.updateBasketStatus(basketId, {
-          userId,
-          groupId,
-          status: nextAutoStatus,
-          time: 0,
-          lastUpdateId: result.history[result.history.length - 1]._id,
-        });
-        const messageResponse = await messaging.send({
-          data: {
-            type: 'BASKET_STATUS',
-            basketId,
-            message: `Basket ${autoResult.name} updated to ${autoResult.status}`,
-            status: autoResult.status,
-          },
-          topic: 'abc',//groupId,
-        });
-        console.log('basket auto status messaging response:', messageResponse);
-      } catch(error) {
-        console.error('basket auto status messaging error:', error);
-      }
-    }, time);
+    if (nextAutoStatus === 'WASHING_DONE' || nextAutoStatus === 'DRYING_DONE') {
+      setTimeout(async () => {
+        try {
+          const autoResult = await basketsData.updateBasketStatus(basketId, {
+            userId,
+            groupId,
+            status: nextAutoStatus,
+            time: 0,
+            lastUpdateId: result.history[result.history.length - 1]._id,
+          });
+          const messageResponse = await messaging.send({
+            data: {
+              type: 'BASKET_STATUS',
+              basketId,
+              message: `Basket ${autoResult.name} updated to ${autoResult.status}`,
+              status: autoResult.status,
+            },
+            topic: 'abc',//groupId,
+          });
+          console.log('basket auto status messaging response:', messageResponse);
+        } catch(error) {
+          console.error('basket auto status messaging error:', error);
+        }
+      }, time);
+    }
 
 
     res.status(200).json(result);

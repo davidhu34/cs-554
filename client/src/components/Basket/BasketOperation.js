@@ -51,7 +51,7 @@ export default function BasketOperation() {
   }
 
   function validateTaskTime() {
-    if (taskTime && Number.isNumber(taskTime)) {
+    if (taskTime && Number.isInteger(parseInt(taskTime))) {
       return true;
     } else {
       setTaskTimeError('Task duration is required for this operation');
@@ -64,10 +64,13 @@ export default function BasketOperation() {
       await dispatch(
         updateBasketStatus(id, {
           status: nextStatus,
-          time: taskTime,
+          time: parseInt(taskTime),
           lastUpdateId: basket.history[basket.history.length - 1]._id,
         })
       );
+      if (canReset) {
+        await dispatch(updateBasketClothes(id, basket.clothes, true));
+      }
       await dispatch(fetchClothesLocations());
       handleClose();
     }
