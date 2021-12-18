@@ -88,13 +88,13 @@ const getCloth = async (userId, id) => {
 
 const addCloth = async (data) => {
   assertRequiredObject(data);
-  const { userId, groupId, name, type, size } = data;
+  const { userId, groupId, name, type, weight } = data;
   const createdAt = new Date().getTime();
 
   assertObjectIdString(userId, 'Cloth added by user ID');
   assertIsValuedString(name, 'Cloth name');
   assertIsValuedString(type, 'Cloth type');
-  assertRequiredNumber(size, 'Size');
+  assertRequiredNumber(weight, 'Weight');
   assertIsValuedString(groupId, 'Group');
 
   const user = await usersData.getByObjectId(userId);
@@ -117,7 +117,7 @@ const addCloth = async (data) => {
     groupId: new ObjectId(groupId),
     name,
     type,
-    size,
+    weight,
     createdAt,
     updatedAt: createdAt,
     createdBy: new ObjectId(userId),
@@ -146,13 +146,13 @@ const getOwnedCloth = async (userId, clothId) => {
 
 const updateCloth = async (clothId, data) => {
   assertRequiredObject(data);
-  const { userId, groupId, name, type, size } = data;
+  const { userId, groupId, name, type, weight } = data;
   assertObjectIdString(clothId, 'Cloth id');
   assertObjectIdString(userId, 'Cloth added by user ID');
   assertObjectIdString(groupId, 'Group id');
   assertIsValuedString(name, 'Cloth name');
   assertIsValuedString(type, 'Cloth type');
-  assertRequiredNumber(size, 'Size');
+  assertRequiredNumber(weight, 'Weight');
 
   const group = await getGroup(groupId);
   if (!group) {
@@ -167,7 +167,7 @@ const updateCloth = async (clothId, data) => {
     groupId: new ObjectId(groupId),
     name,
     type,
-    size,
+    weight,
     updatedAt: new Date().getTime(),
     updatedBy: new ObjectId(userId),
   };

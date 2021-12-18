@@ -19,49 +19,49 @@ const seedClothes = async (
       userId: u._id,
       groupId: u.groupId,
       name: u.name + '\'s Tshirt 1',
-      size: 2,
+      weight: 2,
       type: 'tshirt',
     });
     clothesData.push({
       userId: u._id,
       groupId: u.groupId,
       name: u.name + '\'s Tshirt 2',
-      size: 3,
+      weight: 3,
       type: 'tshirt',
     });
     clothesData.push({
       userId: u._id,
       groupId: u.groupId,
       name: u.name + '\'s Jeans',
-      size: 4,
+      weight: 4,
       type: 'pants',
     });
     clothesData.push({
       userId: u._id,
       groupId: u.groupId,
       name: u.name + '\'s Shorts',
-      size: 3,
+      weight: 3,
       type: 'pants',
     });
     clothesData.push({
       userId: u._id,
       groupId: u.groupId,
       name: u.name + '\'s Socks Red',
-      size: 1,
+      weight: 1,
       type: 'socks',
     });
     clothesData.push({
       userId: u._id,
       groupId: u.groupId,
       name: u.name + '\'s Socks White',
-      size: 1,
+      weight: 1,
       type: 'socks',
     });
     clothesData.push({
       userId: u._id,
       groupId: u.groupId,
       name: u.name + '\'s Socks Blue',
-      size: 1,
+      weight: 1,
       type: 'socks',
     });
   }

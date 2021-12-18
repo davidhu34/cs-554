@@ -31,17 +31,6 @@ const basketColumns = [
     label: 'Status',
   },
   {
-    field: 'size',
-    label: 'Size',
-  },
-  {
-    field: 'clothes',
-    label: 'Clothes',
-    render(clothes, data) {
-      return <BasketClothesCell clothesIdList={clothes} />;
-    },
-  },
-  {
     field: 'time',
     label: 'Task time',
     render(_, data) {
@@ -50,9 +39,18 @@ const basketColumns = [
     }
   },
   {
-    field: '_id',
-    label: 'ID',
-    align: 'right',
+    field: 'weight',
+    label: 'Weight',
+    render(weight, data) {
+      return `${data.currentWeight} / ${weight}`;
+    }, 
+  },
+  {
+    field: 'clothes',
+    label: 'Clothes',
+    render(clothes, data) {
+      return <BasketClothesCell clothesIdList={clothes} />;
+    },
   },
 ];
 
@@ -65,11 +63,11 @@ const basketFormConfigs = [
     },
   },
   {
-    name: 'size',
-    label: 'Size',
+    name: 'weight',
+    label: 'Max Weight',
     type: 'number',
     validation: {
-      required: 'Size is Required',
+      required: 'Max weight is Required',
     },
   },
 ];

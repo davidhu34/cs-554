@@ -22,6 +22,9 @@ export default function ClothesBasketManagement() {
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [basketId, setBasketId] = useState('');
 
   const clothesIdList =
@@ -76,20 +79,27 @@ export default function ClothesBasketManagement() {
   }
 
   async function handlePutClothesToBasket() {
-    if (canOperate) {
+    if (canOperate && !loading) {
       try {
+        setError(null);
+        setLoading(true);
         await dispatch(updateBasketClothes(basketId, operableIdList));
         await dispatch(fetchClothesLocations());
+        handleClose();
       } catch (error) {
+        setError(error);
         console.log('error putting clothes to basket:', error);
+      } finally {
+        setLoading(false);
       }
     }
-    handleClose();
   }
 
   async function handleRemoveClothesFromBaskets() {
-    if (canClear) {
+    if (canClear && !loading) {
       try {
+        setError(null);
+        setLoading(true);
         await Promise.all(
           clearableIdList.map((id) =>
             dispatch(updateBasketClothes(clothesLocation[id], [id], true))
@@ -98,7 +108,10 @@ export default function ClothesBasketManagement() {
         await dispatch(fetchClothesLocations());
         handleClose();
       } catch (error) {
+        setError(error);
         console.log('error removing clothes from baskets:', error);
+      } finally {
+        setLoading(false);
       }
     }
   }
@@ -108,12 +121,13 @@ export default function ClothesBasketManagement() {
       open
       onClose={handleClose}
       title="Manage Selected Clothes"
-      loading={clothesLocationLoading}
+      loading={clothesLocationLoading || loading}
       error={
-        clothesLocationError
+        (error ? error?.message || 'Error managing clothes' : '') ||
+        (clothesLocationError
           ? clothesLocationError?.message ||
             'Error getting clothes location cache'
-          : ''
+          : '')
       }
     >
       {canClear && (

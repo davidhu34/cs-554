@@ -28,21 +28,16 @@ const clothesColumns = [
     label: 'Type',
   },
   {
+    field: 'weight',
+    label: 'Weight',
+    align: 'right',
+  },
+  {
     field: 'status',
     label: 'Status',
     render(_, data) {
       return <ClothesStatusCell clothes={data} />;
     },
-  },
-  {
-    field: 'size',
-    label: 'Size',
-    align: 'right',
-  },
-  {
-    field: '_id',
-    label: 'ID',
-    align: 'right',
   },
 ];
 
@@ -55,11 +50,11 @@ const clothesFormConfigs = [
     },
   },
   {
-    name: 'size',
-    label: 'Size',
+    name: 'weight',
+    label: 'Weight',
     type: 'number',
     validation: {
-      required: 'Size is Required',
+      required: 'Weight is Required',
     },
   },
   {
