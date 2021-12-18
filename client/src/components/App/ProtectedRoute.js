@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, Outlet } from 'react-router-dom';
 import { AuthContext } from '../../application/firebase/auth';
 const ProtectedRoute = ({ children }) => {
   const { currentUser } = useContext(AuthContext);
@@ -7,7 +7,8 @@ const ProtectedRoute = ({ children }) => {
 
   if (currentUser === null) {
     return <Navigate to="/login" />;
-  } else if (currentUser) {
+  } else {
+    // return children;
     return children;
   }
 };

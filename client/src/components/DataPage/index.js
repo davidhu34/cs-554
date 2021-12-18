@@ -150,7 +150,6 @@ export default function DataList({
     []
   );
 
-
   function handleDelete() {
     navigate({
       pathname: `${path}/delete`,
@@ -172,7 +171,7 @@ export default function DataList({
   const maxSelected = Math.min(idList.length, limit);
   return (
     <Container width="100%">
-      <Typography variant="h6" component="h1"  p={2} >
+      <Typography variant="h6" component="h1" p={2}>
         {title}
       </Typography>
       <TableToolbar
@@ -273,7 +272,7 @@ export default function DataList({
             />
           }
         />
-        <Route
+        <Routes
           path="/:id/edit"
           element={
             <DataEdit
@@ -286,7 +285,6 @@ export default function DataList({
             />
           }
         />
-        
       </Routes>
     </Container>
   );

@@ -3,7 +3,7 @@ import { Route, Routes, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../application/firebase/auth';
 import Box from '@mui/system/Box';
 import { useMediaQuery, useTheme } from '@mui/material';
-
+import NoPageFound from './NoPageFound';
 import ClothesPage from '../Clothes';
 import BasketPage from '../Basket';
 import { SignUp, SignOut } from '../Users';
@@ -40,9 +40,10 @@ export default function App() {
       {matches && currentUser && currentUser.groupId && <SideBar />}
       <Box sx={{ flexGrow: 1 }}>
         {currentUser && <NavBar />}
+        {/* <NavBar /> */}
         <Routes>
           <Route
-            path="/"
+            path="/group"
             element={
               <ProtectedRoute>
                 <Group />
@@ -50,7 +51,7 @@ export default function App() {
             }
           />
           <Route path="/login" element={<SignUp />} />
-          <Route path="/logout" element={<SignOut />} />
+          {/* <Route path="/logout" element={<SignOut />} /> */}
           <Route
             path="/clothes/*"
             element={
@@ -68,7 +69,7 @@ export default function App() {
             }
           />
 
-          <Route path="*" element={<>404: Path Not found.</>} />
+          <Route path="*" element={<NoPageFound />} />
         </Routes>
       </Box>
     </Box>
