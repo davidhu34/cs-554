@@ -67,8 +67,6 @@ const addBasket = async (data) => {
     throw new QueryError(`No. of clothes must be less than size of basket.`);
   }
 
-  data.basketId = new ObjectId().toHexString();
-
   const collection = await getBasketsCollection();
 
   const basketData = {
@@ -78,14 +76,12 @@ const addBasket = async (data) => {
     size,
     clothes,
     status,
-    history: [
-      {
-        createdAt,
-        userId: userId,
-        status,
-        _id: new ObjectId(),
-      },
-    ],
+    history: [{
+      createdAt,
+      userId: new ObjectId(userId),
+      status,
+      _id: new ObjectId(),
+    }],
     time,
     createdAt,
     updatedAt: createdAt,
@@ -109,11 +105,12 @@ const getBasketByName = async (name) => {
   return parseMongoData(basket);
 };
 
-const getBasketsByStatus = async (status) => {
-  assertStatus(status);
+const getGroupBasketsByStatus = async (groupId, status) => {
+  assertObjectIdString(groupId, 'Group ID');
+  assertStatus(status, 'Basket status');
 
   const collection = await getBasketsCollection();
-  const basket = await collection.find({ status }).toArray();
+  const basket = await collection.find({ groupId: new ObjectId(groupId), status }).toArray();
   return parseMongoData(basket);
 };
 
@@ -246,6 +243,7 @@ const updateBasket = async (id, data) => {
 
   const basketData = {
     ...previousBasket,
+    groupId: new ObjectId(groupId),
     name,
     size,
     updatedAt,
@@ -254,7 +252,7 @@ const updateBasket = async (id, data) => {
   delete basketData['_id'];
 
   const { modifiedCount, matchedCount } = await collection.updateOne(
-    { _id: new ObjectId(id), groupId: new ObjectId(groupId) },
+    { ...idQuery(id), groupId: new ObjectId(groupId) },
     { $set: basketData },
   );
 
@@ -267,7 +265,7 @@ const updateBasket = async (id, data) => {
 
 const updateBasketStatus = async (id, data) => {
   assertRequiredObject(data);
-  const { status, time = null, userId, groupId, lastUpdateId } = data;
+  const { status, time = null, userId, lastUpdateId } = data;
 
   let basket = await getByObjectId(id);
   if (!basket || !Array.isArray(basket.history) || basket.history.length === 0) {
@@ -291,7 +289,7 @@ const updateBasketStatus = async (id, data) => {
   const currentTimestamp = new Date().getTime();
   const newUpdate = {
     _id: new ObjectId(),
-    userId,
+    userId: new ObjectId(userId),
     status,
     time,
     createdAt: currentTimestamp,
@@ -342,9 +340,25 @@ const updateBasketClothes = async (id, { clothesIdList, userId }, isRemove = fal
     throw new QueryError(`Basket with ID\`${id}\` has invalid status history.`);
   }
 
-  for (const clothesId of clothesIdList) {
+  const clothesLocations = await getClothesBasketLocation(clothesIdList);
+  const basketToRemoveMap = {};
+  for (let i = 0; i < clothesIdList.length; i++) {
+    const clothesId = clothesIdList[i];
     assertObjectIdString(clothesId);
+    const basketId = clothesLocations[i];
+    if (!isRemove && basketId) {
+      if (!basketToRemoveMap[basketId]) {
+        basketToRemoveMap[basketId] = [];
+      }
+      basketToRemoveMap[basketId].push(clothesId);
+    }
   }
+  await Promise.all(
+    Object.entries(basketToRemoveMap).map(([basketId, clothesIdList]) =>
+      updateBasketClothes(basketId, { clothesIdList, userId }, true)
+    )
+  );
+
 
   const options = { returnOriginal: false };
   const collection = await getBasketsCollection();
@@ -356,16 +370,18 @@ const updateBasketClothes = async (id, { clothesIdList, userId }, isRemove = fal
     },
   };
 
+  const clothesObjectIdList = clothesIdList.map(id => new ObjectId(id));
+
   if (isRemove) {
     ops.$pull = {
       clothes: {
-        $in: clothesIdList,
+        $in: clothesObjectIdList,
       },
     };
   } else {
     ops.$addToSet = {
       clothes: {
-        $each: clothesIdList,
+        $each: clothesObjectIdList,
       },
     };
   }
@@ -380,11 +396,16 @@ const updateBasketClothes = async (id, { clothesIdList, userId }, isRemove = fal
   return parseMongoData(updatedBasket);
 };
 
+const isBasketEditable = async (basketId) => {
+  const basket = await getByObjectId(basketId);
+  return basket.clothes.length === 0;
+};
+
 module.exports = {
   addBasket,
   getBasket,
   getBasketByGroupId,
-  getBasketsByStatus,
+  getGroupBasketsByStatus,
   deleteBasket,
   deleteBasketByGroupId,
   updateBasket,
@@ -392,4 +413,5 @@ module.exports = {
   updateBasketClothes,
   getBasketByName,
   getClothFromBasketByUserId,
+  isBasketEditable,
 };

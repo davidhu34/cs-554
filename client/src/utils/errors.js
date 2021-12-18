@@ -15,7 +15,8 @@ export class AxiosError extends Error {
     if (!error || typeof error !== 'object' || !error.isAxiosError) {
       super(error);
     } else {
-      const { message = '', request = {}, response = {} } = error;
+      const { request = {}, response = {} } = error;
+      const message = response.data?.message || error.message || '';
       super(message);
       this.error = error;
       this.data = response.data;

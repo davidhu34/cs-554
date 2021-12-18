@@ -18,7 +18,7 @@ const getClothesBasketLocation = async (clothes) => {
     const basketIdList = await Promise.all(
       clothesIdList.map((id) => client.hGet(CLOTHES_BASKET_LOCATION_KEY, id))
     );
-    return basketIdList;
+    return Array.isArray(clothes) ? basketIdList : basketIdList[0];
   } catch (error) {
     console.log(error);
     throw error;

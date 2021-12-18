@@ -13,7 +13,7 @@ import {
   getClothesDetailSelector,
 } from '../../application/redux/selectors';
 import DataPage from '../DataPage';
-import ChangeClothesBasket from './ChangeClothesBasket';
+import ClothesBasketManagement from './ClothesBasketManagement';
 import { useClothesLocation } from '../../application/hooks/data';
 
 import ClothesStatusCell from './ClothesStatusCell';
@@ -22,6 +22,10 @@ const clothesColumns = [
   {
     field: 'name',
     label: 'Name',
+  },
+  {
+    field: 'type',
+    label: 'Type',
   },
   {
     field: 'status',
@@ -51,8 +55,12 @@ const clothesFormConfigs = [
     },
   },
   {
-    name: 'description',
-    label: 'Description',
+    name: 'size',
+    label: 'Size',
+    type: 'number',
+    validation: {
+      required: 'Size is Required',
+    },
   },
   {
     name: 'type',
@@ -73,7 +81,7 @@ const clothesFormConfigs = [
       },
     ],
     validation: {
-      required: true,
+      required: 'Type of clothes is Required',
     },
   },
 ];
@@ -83,7 +91,7 @@ export default function ClothesPage() {
   const navigate = useNavigate();
   function handleAddToBasket(selectedList) {
     navigate({
-      pathname: '/clothes/add-to-basket',
+      pathname: '/clothes/manage-basket',
       search: `?${createSearchParams({
         clothes: selectedList,
       })}`,
@@ -91,6 +99,7 @@ export default function ClothesPage() {
   }
   return (
     <DataPage
+      title="Clothes"
       path="/clothes"
       columns={clothesColumns}
       paginationSelector={clothesPaginationSelector}
@@ -105,7 +114,7 @@ export default function ClothesPage() {
       customActions={[
         {
           icon: <ShoppingBasketIcon />,
-          title: 'Add To Basket',
+          title: 'Manage Baskets',
           hidden(selectedList) {
             return selectedList.length < 1;
           },
@@ -117,8 +126,8 @@ export default function ClothesPage() {
       ]}
       customRoutes={[
         {
-          path: '/add-to-basket',
-          element: <ChangeClothesBasket />,
+          path: '/manage-basket',
+          element: <ClothesBasketManagement />,
         },
       ]}
     />

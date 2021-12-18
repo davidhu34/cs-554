@@ -26,3 +26,5 @@ export const getClothesDetailSelector =
 
 export const getBasketDetailSelector =
   genGetDetailSelector(basketStateSelector);
+
+export const userSelector = (state) => state.user;

@@ -10,40 +10,63 @@ const seedClothes = async (
   group2,
   { timestamp1 = new Date().getTime(), timestamp2 = new Date().getTime() } = {},
 ) => {
-  const cloth1 = {
-    userId: user1._id,
-    groupId: group1._id,
-    name: 'Tshirt1',
-    type: 'Tshirt',
-  };
 
-  const cloth2 = {
-    userId: user2._id,
-    groupId: group1._id,
-    name: 'Tshirt1',
-    type: 'Tshirt',
-  };
-
-  const cloth3 = {
-    userId: user3._id,
-    groupId: group2._id,
-    name: 'Tshirt1',
-    type: 'Tshirt',
-  };
-
-  const cloth4 = {
-    userId: user4._id,
-    groupId: group2._id,
-    name: 'Tshirt1',
-    type: 'Tshirt',
-  };
-
-  const c1 = await addCloth(cloth1);
-  const c2 = await addCloth(cloth2);
-  const c3 = await addCloth(cloth3);
-  const c4 = await addCloth(cloth4);
-
-  return { c1, c2, c3, c4 };
+  // assume users have groups already
+  const clothesData = [];
+  const users = [user1, user2, user3, user4];
+  for (const u of users) {
+    clothesData.push({
+      userId: u._id,
+      groupId: u.groupId,
+      name: u.name + '\'s Tshirt 1',
+      size: 2,
+      type: 'tshirt',
+    });
+    clothesData.push({
+      userId: u._id,
+      groupId: u.groupId,
+      name: u.name + '\'s Tshirt 2',
+      size: 3,
+      type: 'tshirt',
+    });
+    clothesData.push({
+      userId: u._id,
+      groupId: u.groupId,
+      name: u.name + '\'s Jeans',
+      size: 4,
+      type: 'pants',
+    });
+    clothesData.push({
+      userId: u._id,
+      groupId: u.groupId,
+      name: u.name + '\'s Shorts',
+      size: 3,
+      type: 'pants',
+    });
+    clothesData.push({
+      userId: u._id,
+      groupId: u.groupId,
+      name: u.name + '\'s Socks Red',
+      size: 1,
+      type: 'socks',
+    });
+    clothesData.push({
+      userId: u._id,
+      groupId: u.groupId,
+      name: u.name + '\'s Socks White',
+      size: 1,
+      type: 'socks',
+    });
+    clothesData.push({
+      userId: u._id,
+      groupId: u.groupId,
+      name: u.name + '\'s Socks Blue',
+      size: 1,
+      type: 'socks',
+    });
+  }
+  
+  return await Promise.all(clothesData.map(addCloth));
 };
 
 module.exports = { seedClothes };

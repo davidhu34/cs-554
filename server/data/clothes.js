@@ -13,7 +13,7 @@ const {
 const usersData = require('./user');
 const { getGroup } = require('./group');
 
-const { getAllClothesBasketLocations, setClothesBasketLocation } = require('../utils/redis');
+const { getAllClothesBasketLocations, setClothesBasketLocation, getClothesBasketLocation } = require('../utils/redis');
 
 const getByObjectId = async (objectId) => {
   const collection = await getClothesCollection();
@@ -53,6 +53,24 @@ const getClothByGroupId = async ({ userId, groupId, skip, limit }) => {
   return { data: parseMongoData(data), skip, limit, total };
 };
 
+const getClothesByUserId = async ({ userId }) => {
+  assertObjectIdString(userId, 'User Id');
+
+  const user = await usersData.getByObjectId(userId);
+  if (!user) {
+    throw new QueryError(`Could not get user for (${userId})`);
+  }
+
+  const collection = await getClothesCollection();
+  const data = await collection.find({ userId: new ObjectId(userId) }).toArray();
+
+  if (data == null) {
+    throw new QueryError(`Could not get cloth for (${userId})`);
+  }
+
+  return parseMongoData(data);
+};
+
 const getCloth = async (userId, id) => {
   assertObjectIdString(id, 'Cloth Id');
   assertObjectIdString(userId, 'User Id');
@@ -70,12 +88,13 @@ const getCloth = async (userId, id) => {
 
 const addCloth = async (data) => {
   assertRequiredObject(data);
-  const { userId, groupId, name, type } = data;
+  const { userId, groupId, name, type, size } = data;
   const createdAt = new Date().getTime();
 
   assertObjectIdString(userId, 'Cloth added by user ID');
   assertIsValuedString(name, 'Cloth name');
   assertIsValuedString(type, 'Cloth type');
+  assertRequiredNumber(size, 'Size');
   assertIsValuedString(groupId, 'Group');
 
   const user = await usersData.getByObjectId(userId);
@@ -98,6 +117,7 @@ const addCloth = async (data) => {
     groupId: new ObjectId(groupId),
     name,
     type,
+    size,
     createdAt,
     updatedAt: createdAt,
     createdBy: new ObjectId(userId),
@@ -113,12 +133,13 @@ const addCloth = async (data) => {
 
 const updateCloth = async (clothId, data) => {
   assertRequiredObject(data);
-  const { userId, groupId, name, type } = data;
+  const { userId, groupId, name, type, size } = data;
   assertObjectIdString(clothId, 'Cloth id');
   assertObjectIdString(userId, 'Cloth added by user ID');
   assertObjectIdString(groupId, 'Group id');
   assertIsValuedString(name, 'Cloth name');
   assertIsValuedString(type, 'Cloth type');
+  assertRequiredNumber(size, 'Size');
 
   const user = await usersData.getByObjectId(userId);
   if (!user) {
@@ -141,15 +162,15 @@ const updateCloth = async (clothId, data) => {
     groupId: new ObjectId(groupId),
     name,
     type,
+    size,
     updatedAt: new Date().getTime(),
     updatedBy: new ObjectId(userId),
   };
 
   const collection = await getClothesCollection();
-  const { modifiedCount, matchedCount } = await collection.updateOne(
-    idQuery(clothId),
-    { $set: newUpdate },
-  );
+  const { modifiedCount, matchedCount } = await collection.updateOne(idQuery(clothId), {
+    $set: newUpdate,
+  });
 
   if (!modifiedCount && !matchedCount) {
     throw new QueryError(`Could not update cloth ID(${clothId})`);
@@ -173,7 +194,7 @@ const deleteCloth = async (userId, id) => {
 
   const collection = await getClothesCollection();
   let { deletedCount } = await collection.deleteOne({
-    _id: new ObjectId(id),
+    ...idQuery(id),
     userId: new ObjectId(userId),
   });
 
@@ -208,29 +229,42 @@ const deleteClothByGroupId = async (userId, groupId) => {
   return parseMongoData({ message });
 };
 
-
 const getClothesLocations = async () => {
   return await getAllClothesBasketLocations();
 };
 
-const setClothesLocation = async (clothesIdList, basketId = '') => {
-  await setClothesBasketLocations(clothes, basketId);
+const setClothesLocation = async (clothes, basketId = '') => {
+  await setClothesBasketLocation(clothes, basketId);
   return await getClothesLocations();
 };
 
-
-const clearClothesLocation = async (clothesIdList) => {
+const clearClothesLocation = async (clothes) => {
   return await setClothesLocation(clothes, '');
+};
+
+const isClothesEditable = async (clothesId) => {
+  return !(await getClothesBasketLocation(clothesId));
+};
+
+const isUserOperating = async (userId) => {
+  assertObjectIdString(userId, 'User ID');
+  const clothes = await getClothesByUserId(userId);
+  return (await Promise.all(clothes.map(({ _id }) => isClothesEditable(_id)))).some(
+    (editable) => !editable
+  );
 };
 
 module.exports = {
   getClothByGroupId,
   addCloth,
   getCloth,
+  getClothesByUserId,
   updateCloth,
   deleteCloth,
   deleteClothByGroupId,
   getClothesLocations,
   setClothesLocation,
   clearClothesLocation,
+  isClothesEditable,
+  isUserOperating,
 };

@@ -84,7 +84,6 @@ export default function NavBar() {
             <MenuIcon />
           </IconButton>
           <Typography
-            variant="h6"
             sx={{ display: { xs: 'block', sm: 'none' } }}
           >
             WashTastic

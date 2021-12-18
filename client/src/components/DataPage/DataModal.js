@@ -1,7 +1,9 @@
 import React from 'react';
+
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
+import CircularProgress from '@mui/material/CircularProgress';
 
 const style = {
   position: 'absolute',
@@ -10,8 +12,8 @@ const style = {
   transform: 'translate(-50%, -50%)',
   width: 400,
   bgcolor: 'background.paper',
-  border: '2px solid #000',
   boxShadow: 24,
+  borderRadius: 1,
   p: 4,
 };
 
@@ -21,6 +23,8 @@ export default function DataModal({
   description,
   children,
   onClose,
+  error,
+  loading = false,
 }) {
   return (
     <Modal
@@ -35,12 +39,44 @@ export default function DataModal({
             {title}
           </Typography>
         )}
+        {loading && (
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+            }}
+          >
+            <CircularProgress />
+          </Box>
+        )}
+        {error && (
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+            }}
+          >
+            <Typography color="error">
+              {error?.message || 'Error fetching table data'}
+            </Typography>
+          </Box>
+        )}
         {description && (
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
             {description}
           </Typography>
         )}
-        {children}
+        <Box
+          sx={{
+            marginTop: 2,
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+            gap: 4,
+          }}
+        >
+          {children}
+        </Box>
       </Box>
     </Modal>
   );

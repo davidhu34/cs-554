@@ -4,10 +4,13 @@ import { useForm } from 'react-hook-form';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import { AuthContext } from '../../application/firebase/auth';
+import { setUser } from '../../application/redux/actions/user';
+import { useDispatch } from 'react-redux';
 const GroupForm = (props) => {
   const [errorDB, setErrorDB] = useState();
   const { currentUser, setCurrentUser } = useContext(AuthContext);
   const { register, handleSubmit, error } = useForm();
+  const dispatch = useDispatch();
   let i = 0;
   const handleFormSubmit = async (data) => {
     console.log('CUrrent User group list:', currentUser);
@@ -23,6 +26,7 @@ const GroupForm = (props) => {
         console.log('Res Data: \n', res.data.users[0]);
 
         setCurrentUser(res.data.users[0]);
+        dispatch(setUser(res.data.users[0]));
       }
       console.log('Counter:', i);
     } catch (e) {

@@ -11,12 +11,22 @@ import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Checkbox from '@mui/material/Checkbox';
+import CircularProgress from '@mui/material/CircularProgress';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Container from '@mui/material/Container';
 
 import TableToolbar from './TableToolbar';
 import DataCreate from './DataCreate';
 import DataEdit from './DataEdit';
 
-function DataRowItem({ id, selected = false, onClick, getDataSelector, columns }) {
+function DataRowItem({
+  id,
+  selected = false,
+  onClick,
+  getDataSelector,
+  columns,
+}) {
   const { data, error, loading } = useSelector(getDataSelector(id));
   return data ? (
     <TableRow
@@ -42,14 +52,27 @@ function DataRowItem({ id, selected = false, onClick, getDataSelector, columns }
       {columns.map(({ field, align, render }, i) => {
         const item = data[field] || '';
         return (
-          <TableCell key={`cell-${field}-${i}`} align={align}>{render ? render(item, data) : item}</TableCell>
+          <TableCell key={`cell-${field}-${i}`} align={align}>
+            {render ? render(item, data) : item}
+          </TableCell>
         );
       })}
     </TableRow>
   ) : null;
 }
 
+function TableSubHeader({ children }) {
+  return (
+    <TableRow>
+      <TableCell colSpan="100%">
+        <Box sx={{ display: 'flex', justifyContent: 'center' }}>{children}</Box>
+      </TableCell>
+    </TableRow>
+  );
+}
+
 export default function DataList({
+  title,
   path,
   paginationSelector,
   getDataSelector,
@@ -140,7 +163,10 @@ export default function DataList({
   const numSelected = selectedList.length;
   const maxSelected = Math.min(idList.length, limit);
   return (
-    <>
+    <Container width="100%">
+      <Typography variant="h6" component="h1"  p={2} >
+        {title}
+      </Typography>
       <TableToolbar
         selectedList={selectedList}
         handleDelete={handleDelete}
@@ -169,6 +195,18 @@ export default function DataList({
                 </TableCell>
               ))}
             </TableRow>
+            {loading && (
+              <TableSubHeader>
+                <CircularProgress />
+              </TableSubHeader>
+            )}
+            {error && (
+              <TableSubHeader>
+                <Typography color="error">
+                  {error?.message || 'Error fetching table data'}
+                </Typography>
+              </TableSubHeader>
+            )}
           </TableHead>
           <TableBody>
             {idList.map((id) => (
@@ -208,6 +246,7 @@ export default function DataList({
             <DataCreate
               createAction={createAction}
               fetchPaginationAction={fetchPaginationAction}
+              getDataSelector={getDataSelector}
               formConfigs={formConfigs}
               title={createFormTitle}
               description={createFormDescription}
@@ -227,6 +266,6 @@ export default function DataList({
           }
         />
       </Routes>
-    </>
+    </Container>
   );
 }

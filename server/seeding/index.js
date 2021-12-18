@@ -20,8 +20,13 @@ const seed = async () => {
 
     const { u1, u2, u3, u4 } = await seedUsers();
     const { g1, g2 } = await seedGroups(u1, u2, u3, u4);
-    const { c1, c2, c3, c4 } = await seedClothes(u1, u2, u3, u4, g1, g2);
-    const { b1, b2 } = await seedBaskets(u1, u2, u3, u4, c1, c2, c3, c4);
+    await seedClothes(u1, u2, u3, u4, g1, g2);
+    await seedBaskets(
+      u1,
+      u2,
+      u3,
+      u4,
+    );
 
     console.log('Seeding Completed.');
     return {
