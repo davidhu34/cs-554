@@ -94,10 +94,12 @@ router.put("/:id", async (req, res, next) => {
       throw new HttpError(`Could not get user for user id: ${user._id}`, 404);
     }
 
-    for (let u in group.users) {
-      if (u.email === user.email) {
-        throw new ValidationError(`User already in current group`, 404);
-      }
+    const users = group.users;
+
+    const anyUser = users.some(element => element.email === user.email);
+
+    if (anyUser) {
+      throw new ValidationError(`User already in current group`, 404);
     }
 
     assertIsValuedString(user.uid, "User ID");
@@ -111,7 +113,6 @@ router.put("/:id", async (req, res, next) => {
     user.groupId = id;
     usersData.updateUser(user._id, user);
 
-    const users = group.users;
     users.push(user);
     group.users = users;
 
