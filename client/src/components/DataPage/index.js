@@ -19,6 +19,8 @@ import Container from '@mui/material/Container';
 import TableToolbar from './TableToolbar';
 import DataCreate from './DataCreate';
 import DataEdit from './DataEdit';
+import DataDelete from './DataDelete';
+import { createSearchParams } from 'react-router-dom';
 
 function DataRowItem({
   id,
@@ -83,10 +85,13 @@ export default function DataList({
   columns,
   formConfigs,
   createFormTitle,
-  editFormTitle,
   createFormDescription,
+  editFormTitle,
   editFormDescription,
-  getDisabledMessage,
+  validateEditCandidate,
+  deleteFormTitle,
+  deleteFormDescription,
+  validateDeleteCandidates,
   customActions = [],
   customRoutes = [],
 }) {
@@ -145,12 +150,14 @@ export default function DataList({
     []
   );
 
-  async function handleDelete() {
-    await Promise.all([
-      ...selectedList.map((id) => dispatch(deleteAction(id))),
-    ]);
-    setSelectedState({});
-    dispatch(fetchPaginationAction({ page: 0 }));
+
+  function handleDelete() {
+    navigate({
+      pathname: `${path}/delete`,
+      search: `?${createSearchParams({
+        selected: selectedList,
+      })}`,
+    });
   }
 
   function handleEdit() {
@@ -251,7 +258,18 @@ export default function DataList({
               formConfigs={formConfigs}
               title={createFormTitle}
               description={createFormDescription}
-              getDisabledMessage={getDisabledMessage}
+            />
+          }
+        />
+        <Route
+          path="/delete"
+          element={
+            <DataDelete
+              deleteAction={deleteAction}
+              fetchPaginationAction={fetchPaginationAction}
+              title={deleteFormTitle}
+              description={deleteFormDescription}
+              validateDeleteCandidates={validateDeleteCandidates}
             />
           }
         />
@@ -264,10 +282,11 @@ export default function DataList({
               formConfigs={formConfigs}
               title={editFormTitle}
               description={editFormDescription}
-              getDisabledMessage={getDisabledMessage}
+              validateEditCandidate={validateEditCandidate}
             />
           }
         />
+        
       </Routes>
     </Container>
   );

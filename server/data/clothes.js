@@ -1,7 +1,7 @@
 const { ObjectId } = require('mongodb');
 const { clothes: getClothesCollection } = require('../config/mongoCollections');
 
-const { QueryError } = require('../utils/errors');
+const { QueryError, ValidationError } = require('../utils/errors');
 const { idQuery, parseMongoData } = require('../utils/mongodb');
 const {
   assertObjectIdString,
@@ -131,6 +131,19 @@ const addCloth = async (data) => {
   return await getByObjectId(insertedId);
 };
 
+const getOwnedCloth = async (userId, clothId) => {
+  const cloth = await getCloth(userId, clothId);
+  if (cloth == null) {
+    throw new ValidationError(`Cloth not found for cloth ID(${clothId})`);
+  }
+
+  if (cloth.userId !== userId) {
+    throw new ValidationError(`Clothes does not belong to user`);
+  }
+
+  return cloth;
+}
+
 const updateCloth = async (clothId, data) => {
   assertRequiredObject(data);
   const { userId, groupId, name, type, size } = data;
@@ -141,23 +154,15 @@ const updateCloth = async (clothId, data) => {
   assertIsValuedString(type, 'Cloth type');
   assertRequiredNumber(size, 'Size');
 
-  const user = await usersData.getByObjectId(userId);
-  if (!user) {
-    throw new QueryError(`Could not get user for (${userId})`);
-  }
-
   const group = await getGroup(groupId);
   if (!group) {
     throw new QueryError(`Could not get group for (${groupId})`);
   }
 
-  const lastCloth = await getCloth(userId, clothId);
-
-  if (lastCloth == null) {
-    throw `Cloth not found for cloth ID(${clothId})`;
-  }
+  const ownedCloth = await getOwnedCloth(userId, clothId);
 
   const newUpdate = {
+    ...ownedCloth,
     userId: new ObjectId(userId),
     groupId: new ObjectId(groupId),
     name,
@@ -182,21 +187,10 @@ const deleteCloth = async (userId, id) => {
   assertObjectIdString(id, 'Cloth id');
   assertObjectIdString(userId, 'User Id');
 
-  const user = await usersData.getByObjectId(userId);
-  if (!user) {
-    throw new QueryError(`Could not get user for (${userId})`);
-  }
-  let deleteCloth = await getCloth(userId, id);
-
-  if (deleteCloth == null) {
-    throw `Cloth not found for cloth ID(${id})`;
-  }
+  const ownedCloth = await getOwnedCloth(userId, id);
 
   const collection = await getClothesCollection();
-  let { deletedCount } = await collection.deleteOne({
-    ...idQuery(id),
-    userId: new ObjectId(userId),
-  });
+  let { deletedCount } = await collection.deleteOne(idQuery(id));
 
   if (deletedCount === 0) {
     throw new QueryError(`Could not delete cloth for (${id})`);

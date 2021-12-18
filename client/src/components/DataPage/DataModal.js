@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -26,10 +27,16 @@ export default function DataModal({
   error,
   loading = false,
 }) {
+  const navigate = useNavigate();
+  async function handleClose() {
+    if (onClose) await onClose();
+    navigate(-1);
+  }
+
   return (
     <Modal
       open={open}
-      onClose={onClose}
+      onClose={handleClose}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
@@ -57,7 +64,8 @@ export default function DataModal({
             }}
           >
             <Typography color="error">
-              {error?.message || (typeof error === 'string' ? error : 'Error fetching data')}
+              {error?.message ||
+                (typeof error === 'string' ? error : 'Error fetching data')}
             </Typography>
           </Box>
         )}

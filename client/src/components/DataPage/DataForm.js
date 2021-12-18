@@ -41,17 +41,12 @@ export default function DataForm({
   }, [reset, defaultValues]);
 
   function handleCancel() {
-    if (onCancel) {
-      onCancel();
-    } else {
-      navigate(-1);
-    }
+    navigate(-1);
   }
 
   return (
     <DataModal
       open
-      onClose={handleCancel}
       title={title}
       error={error || disabled || ''}
       loading={loading}
@@ -139,7 +134,7 @@ export default function DataForm({
           }
         )}
         <Box sx={{ margin: 2, display: 'flex', gap: 2, justifyContent: 'end' }}>
-          <Button onClick={() => handleCancel()} variant="outlined">
+          <Button onClick={handleCancel} variant="outlined">
             Cancel
           </Button>
           <Button

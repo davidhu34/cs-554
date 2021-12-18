@@ -18,6 +18,8 @@ import TimeProgressCell from '../TaskProgress/TimeProgressCell';
 
 import BasketOperation from './BasketOperation';
 import BasketClothesCell from './BasketClothesCell';
+import { useSelector } from 'react-redux';
+import { useClothesLocation } from '../../application/hooks/data';
 
 const basketColumns = [
   {
@@ -74,18 +76,28 @@ const basketFormConfigs = [
 
 export default function BasketPage() {
   const navigate = useNavigate();
+  const { data: clothesLocation = {}, loading: clothesLocationLoading, error: clothesLocationError } = useClothesLocation();
 
   function handleClearBasket(selectedList) {
     navigate(`/baskets/${selectedList[0]}/operate`);
   }
 
-  function getDisabledMessage(basketData) {
+  function validateEditCandidate(basketData) {
     return !basketData
       ? 'No basket data'
       : basketData?.clothes?.length > 0
       ? 'Cannot edit when basket is not empty.'
       : '';
   }
+
+
+  function validateDeleteCandidates(basketIdList) {
+    const workingBasketIdSet = new Set(Object.values(clothesLocation));
+    return basketIdList.some((basketId) => workingBasketIdSet.has(basketId))
+      ? 'Cannot delete when basket is not empty'
+      : '';
+  }
+
 
   return (
     <DataPage
@@ -101,7 +113,8 @@ export default function BasketPage() {
       formConfigs={basketFormConfigs}
       createTitle="Add New Basket"
       editTitle="Edit Basket Info"
-      getDisabledMessage={getDisabledMessage}
+      validateEditCandidate={validateEditCandidate}
+      validateDeleteCandidates={validateDeleteCandidates}
       customActions={[
         {
           icon: <LocalLaundryServiceIcon />,

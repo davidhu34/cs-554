@@ -47,7 +47,7 @@ export default function BasketOperation() {
     setTaskTime(e.target.value);
   }
 
-  function handleClose() {
+  function goBack() {
     navigate(-1);
   }
 
@@ -74,7 +74,7 @@ export default function BasketOperation() {
           await dispatch(updateBasketClothes(id, basket.clothes, true));
         }
         await dispatch(fetchClothesLocations());
-        handleClose();
+        goBack();
       } catch (error) {
         console.log('error operating basket', error);
       }
@@ -86,7 +86,7 @@ export default function BasketOperation() {
       try {
         await dispatch(updateBasketClothes(id, basket.clothes, true));
         await dispatch(fetchClothesLocations());
-        handleClose();
+        goBack();
       } catch (error) {
         console.log('error clearing basket', error);
       }
@@ -97,7 +97,6 @@ export default function BasketOperation() {
     <DataModal
       open
       title={`${name} (${status})`}
-      onClose={handleClose}
       loading={loading}
       error={error?.message}
     >
