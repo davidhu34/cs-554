@@ -99,6 +99,7 @@ export default function ClothesPage() {
   }
   return (
     <DataPage
+      title="Clothes"
       path="/clothes"
       columns={clothesColumns}
       paginationSelector={clothesPaginationSelector}

@@ -13,7 +13,7 @@ const {
 const usersData = require('./user');
 const { getGroup } = require('./group');
 
-const { getAllClothesBasketLocations, setClothesBasketLocation } = require('../utils/redis');
+const { getAllClothesBasketLocations, setClothesBasketLocation, getClothesBasketLocation } = require('../utils/redis');
 
 const getByObjectId = async (objectId) => {
   const collection = await getClothesCollection();
@@ -51,6 +51,24 @@ const getClothByGroupId = async ({ userId, groupId, skip, limit }) => {
     throw new QueryError(`Could not get cloth for (${groupId})`);
   }
   return { data: parseMongoData(data), skip, limit, total };
+};
+
+const getClothesByUserId = async ({ userId }) => {
+  assertObjectIdString(userId, 'User Id');
+
+  const user = await usersData.getByObjectId(userId);
+  if (!user) {
+    throw new QueryError(`Could not get user for (${userId})`);
+  }
+
+  const collection = await getClothesCollection();
+  const data = await collection.find({ userId: new ObjectId(userId) }).toArray();
+
+  if (data == null) {
+    throw new QueryError(`Could not get cloth for (${userId})`);
+  }
+
+  return parseMongoData(data);
 };
 
 const getCloth = async (userId, id) => {
@@ -224,14 +242,29 @@ const clearClothesLocation = async (clothes) => {
   return await setClothesLocation(clothes, '');
 };
 
+const isClothesEditable = async (clothesId) => {
+  return !(await getClothesBasketLocation(clothesId));
+};
+
+const isUserOperating = async (userId) => {
+  assertObjectIdString(userId, 'User ID');
+  const clothes = await getClothesByUserId(userId);
+  return (await Promise.all(clothes.map(({ _id }) => isClothesEditable(_id)))).some(
+    (editable) => !editable
+  );
+};
+
 module.exports = {
   getClothByGroupId,
   addCloth,
   getCloth,
+  getClothesByUserId,
   updateCloth,
   deleteCloth,
   deleteClothByGroupId,
   getClothesLocations,
   setClothesLocation,
   clearClothesLocation,
+  isClothesEditable,
+  isUserOperating,
 };

@@ -14,6 +14,7 @@ import Checkbox from '@mui/material/Checkbox';
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import Container from '@mui/material/Container';
 
 import TableToolbar from './TableToolbar';
 import DataCreate from './DataCreate';
@@ -71,6 +72,7 @@ function TableSubHeader({ children }) {
 }
 
 export default function DataList({
+  title,
   path,
   paginationSelector,
   getDataSelector,
@@ -161,7 +163,10 @@ export default function DataList({
   const numSelected = selectedList.length;
   const maxSelected = Math.min(idList.length, limit);
   return (
-    <>
+    <Container width="100%">
+      <Typography variant="h6" component="h1"  p={2} >
+        {title}
+      </Typography>
       <TableToolbar
         selectedList={selectedList}
         handleDelete={handleDelete}
@@ -261,6 +266,6 @@ export default function DataList({
           }
         />
       </Routes>
-    </>
+    </Container>
   );
 }

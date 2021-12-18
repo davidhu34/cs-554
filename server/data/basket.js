@@ -396,6 +396,11 @@ const updateBasketClothes = async (id, { clothesIdList, userId }, isRemove = fal
   return parseMongoData(updatedBasket);
 };
 
+const isBasketEditable = async (basketId) => {
+  const basket = await getByObjectId(basketId);
+  return basket.clothes.length === 0;
+};
+
 module.exports = {
   addBasket,
   getBasket,
@@ -408,4 +413,5 @@ module.exports = {
   updateBasketClothes,
   getBasketByName,
   getClothFromBasketByUserId,
+  isBasketEditable,
 };
