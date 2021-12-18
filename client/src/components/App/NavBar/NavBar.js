@@ -97,6 +97,7 @@ export default function NavBar() {
                 <NotificationsIcon />
               </Badge> */}
             </IconButton>
+
             <IconButton
               size="large"
               edge="end"
@@ -107,6 +108,8 @@ export default function NavBar() {
               color="inherit"
             >
               <AccountCircle />
+
+              {currentUser.name}
             </IconButton>
           </Box>
         </Toolbar>

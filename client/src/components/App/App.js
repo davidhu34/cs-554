@@ -4,6 +4,7 @@ import { AuthContext } from '../../application/firebase/auth';
 import Box from '@mui/system/Box';
 import { useMediaQuery, useTheme } from '@mui/material';
 import NoPageFound from './NoPageFound';
+import HomePage from './HomePage';
 import ClothesPage from '../Clothes';
 import BasketPage from '../Basket';
 import { SignUp, SignOut } from '../Users';
@@ -50,6 +51,8 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+          <Route path="/" element={<HomePage />} />
+
           <Route path="/login" element={<SignUp />} />
           {/* <Route path="/logout" element={<SignOut />} /> */}
           <Route
