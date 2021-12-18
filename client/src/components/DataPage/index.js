@@ -19,6 +19,8 @@ import Container from '@mui/material/Container';
 import TableToolbar from './TableToolbar';
 import DataCreate from './DataCreate';
 import DataEdit from './DataEdit';
+import DataDelete from './DataDelete';
+import { createSearchParams } from 'react-router-dom';
 
 function DataRowItem({
   id,
@@ -83,9 +85,13 @@ export default function DataList({
   columns,
   formConfigs,
   createFormTitle,
-  editFormTitle,
   createFormDescription,
+  editFormTitle,
   editFormDescription,
+  validateEditCandidate,
+  deleteFormTitle,
+  deleteFormDescription,
+  validateDeleteCandidates,
   customActions = [],
   customRoutes = [],
 }) {
@@ -144,12 +150,14 @@ export default function DataList({
     []
   );
 
-  async function handleDelete() {
-    await Promise.all([
-      ...selectedList.map((id) => dispatch(deleteAction(id))),
-    ]);
-    setSelectedState({});
-    dispatch(fetchPaginationAction({ page: 0 }));
+
+  function handleDelete() {
+    navigate({
+      pathname: `${path}/delete`,
+      search: `?${createSearchParams({
+        selected: selectedList,
+      })}`,
+    });
   }
 
   function handleEdit() {
@@ -254,6 +262,18 @@ export default function DataList({
           }
         />
         <Route
+          path="/delete"
+          element={
+            <DataDelete
+              deleteAction={deleteAction}
+              fetchPaginationAction={fetchPaginationAction}
+              title={deleteFormTitle}
+              description={deleteFormDescription}
+              validateDeleteCandidates={validateDeleteCandidates}
+            />
+          }
+        />
+        <Route
           path="/:id/edit"
           element={
             <DataEdit
@@ -262,9 +282,11 @@ export default function DataList({
               formConfigs={formConfigs}
               title={editFormTitle}
               description={editFormDescription}
+              validateEditCandidate={validateEditCandidate}
             />
           }
         />
+        
       </Routes>
     </Container>
   );

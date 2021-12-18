@@ -47,7 +47,7 @@ export default function BasketOperation() {
     setTaskTime(e.target.value);
   }
 
-  function handleClose() {
+  function goBack() {
     navigate(-1);
   }
 
@@ -66,7 +66,7 @@ export default function BasketOperation() {
         await dispatch(
           updateBasketStatus(id, {
             status: nextStatus,
-            time: parseInt(taskTime),
+            time: parseInt(taskTime) * 1000,
             lastUpdateId: basket.history[basket.history.length - 1]._id,
           })
         );
@@ -74,7 +74,7 @@ export default function BasketOperation() {
           await dispatch(updateBasketClothes(id, basket.clothes, true));
         }
         await dispatch(fetchClothesLocations());
-        handleClose();
+        goBack();
       } catch (error) {
         console.log('error operating basket', error);
       }
@@ -86,7 +86,7 @@ export default function BasketOperation() {
       try {
         await dispatch(updateBasketClothes(id, basket.clothes, true));
         await dispatch(fetchClothesLocations());
-        handleClose();
+        goBack();
       } catch (error) {
         console.log('error clearing basket', error);
       }
@@ -97,7 +97,6 @@ export default function BasketOperation() {
     <DataModal
       open
       title={`${name} (${status})`}
-      onClose={handleClose}
       loading={loading}
       error={error?.message}
     >
@@ -129,7 +128,8 @@ export default function BasketOperation() {
                 m={4}
                 error={!!taskTimeError}
                 helperText={taskTimeError}
-                label="Duration"
+                label="Duration (s)"
+                placeholder="enter task duration"
                 id="basket-operation-duration-input"
                 name="task-time"
                 type="number"

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router';
+
 import DataForm from './DataForm';
 
 export default function DataEdit({
@@ -9,13 +10,18 @@ export default function DataEdit({
   updateAction,
   title,
   description,
+  validateEditCandidate = () => {},
 }) {
   const { id } = useParams();
   const { data, error, loading } = useSelector(getDataSelector(id));
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const disabledMessage = validateEditCandidate(data);
   async function handleFormSubmit(formData) {
+    if (disabledMessage) {
+      return;
+    }
     try {
       await dispatch(updateAction(id, formData));
       navigate(-1);
@@ -34,7 +40,7 @@ export default function DataEdit({
       description={description}
       error={error}
       loading={loading}
-      disabled={!!error}
+      disabled={disabledMessage}
     />
   );
 }

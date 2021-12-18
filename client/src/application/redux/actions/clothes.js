@@ -70,6 +70,7 @@ export const getClothesDetail = (id) => async (dispatch, getState) => {
   } catch (error) {
     dispatch({
       type: clothesActionTypes.fetchError,
+      id,
       error,
     });
     throw error;
@@ -115,6 +116,7 @@ export const deleteClothes = (id) => async (dispatch, getState) => {
   } catch (error) {
     dispatch({
       type: clothesActionTypes.deleteError,
+      id,
       error,
     });
     throw error;
@@ -140,6 +142,7 @@ export const updateClothes =
     } catch (error) {
       dispatch({
         type: clothesActionTypes.updateError,
+        id,
         error,
       });
       throw error;
