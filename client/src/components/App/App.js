@@ -68,7 +68,7 @@ export default function App() {
             }
           />
 
-          <Route>Unknown</Route>
+          <Route path="*" element={<>404: Path Not found.</>} />
         </Routes>
       </Box>
     </Box>

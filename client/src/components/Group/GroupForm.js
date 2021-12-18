@@ -38,8 +38,8 @@ const GroupForm = (props) => {
     <div>
       {console.log('Current User:', currentUser)}
       <form onSubmit={handleSubmit(handleFormSubmit)}>
-        <label>Enter Group Name: </label>
-        <input {...register('groupName', { required: true })} />
+        <label htmlFor="groupName">Enter Group Name: </label>
+        <input id="groupName" {...register('groupName', { required: true })} />
         <input type="submit" />
       </form>
       {errorDB && errorDB ? (

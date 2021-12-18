@@ -113,8 +113,10 @@ const Group = () => {
         currentUser
       );
       if (data) {
-        setCurrentUser(() => (currentUser.groupId = null));
-        dispatch(setUser(null));
+        // setCurrentUser(() => (currentUser.groupId = null));
+        setCurrentUser({ ...currentUser, groupId: null });
+
+        dispatch(setUser({ ...currentUser, groupId: null }));
         setLoading(false);
       }
       setLoading(false);
