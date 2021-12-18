@@ -1,7 +1,10 @@
-import React, { useContext, useEffect } from 'react';
+import { useEffect, useContext } from 'react';
+
 import { useNavigate } from 'react-router-dom';
+
 import { AuthContext } from '../../application/firebase/auth';
-const ProtectedRoute = ({ children, isGroup = false }) => {
+
+export function useLoginRedirect() {
   const { currentUser } = useContext(AuthContext);
   console.log('Protected Route:', currentUser);
 
@@ -12,12 +15,4 @@ const ProtectedRoute = ({ children, isGroup = false }) => {
       navigate('/login');
     }
   }, [navigate, currentUser]);
-
-  return currentUser && (currentUser.groupId || isGroup) ? (
-    children
-  ) : (
-    <>403 Forbiddon</>
-  );
-};
-
-export default ProtectedRoute;
+}

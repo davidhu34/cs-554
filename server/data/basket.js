@@ -20,6 +20,7 @@ const {
 const usersData = require('./user');
 const { getGroup } = require('./group');
 const { getNextBasketStatus } = require('../utils/data');
+const { getCloth } = require('./clothes');
 
 const assertStatus = (status) => {
   assertIsValuedString(status, 'Basket status');
@@ -344,6 +345,8 @@ const updateBasketClothes = async (id, { clothesIdList, userId }, isRemove = fal
   const basketToRemoveMap = {};
   for (let i = 0; i < clothesIdList.length; i++) {
     const clothesId = clothesIdList[i];
+    const clothesData = await getCloth(userId, clothesId);
+    const size = clothesData.size;
     assertObjectIdString(clothesId);
     const basketId = clothesLocations[i];
     if (!isRemove && basketId) {

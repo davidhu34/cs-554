@@ -22,6 +22,8 @@ import DataEdit from './DataEdit';
 import DataDelete from './DataDelete';
 import { createSearchParams } from 'react-router-dom';
 
+import { useLoginRedirect } from '../../application/hooks/utils';
+
 function DataRowItem({
   id,
   selected = false,
@@ -106,6 +108,8 @@ export default function DataList({
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [selectedState, setSelectedState] = useState({});
+
+  useLoginRedirect();
 
   useEffect(() => {
     dispatch(fetchPaginationAction({ page: 0 }));
@@ -272,7 +276,7 @@ export default function DataList({
             />
           }
         />
-        <Routes
+        <Route
           path="/:id/edit"
           element={
             <DataEdit

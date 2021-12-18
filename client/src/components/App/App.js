@@ -45,7 +45,7 @@ export default function App() {
           <Route
             path="/group"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute isGroup>
                 <Group />
               </ProtectedRoute>
             }
