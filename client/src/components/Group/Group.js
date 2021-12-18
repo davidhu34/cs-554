@@ -88,7 +88,9 @@ const Group = () => {
       .then((response) => {
         console.log('user added into group', response);
         let updated = response.data.users.filter((user) => {
-          return user._id === currentUser._id ? user : user;
+          if (user._id === currentUser._id) {
+            return user;
+          }
         });
         console.log('updated', updated[0]);
         setCurrentUser(updated[0]);
