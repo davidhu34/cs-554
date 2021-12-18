@@ -87,8 +87,9 @@ const clothesFormConfigs = [
 ];
 
 export default function ClothesPage() {
-  useClothesLocation({ refresh: true });
+  const {data: clothesLocation, loading: clothesLocationLoading,error:clothesLocationError} = useClothesLocation({ refresh: true });
   const navigate = useNavigate();
+  
   function handleAddToBasket(selectedList) {
     navigate({
       pathname: '/clothes/manage-basket',
@@ -97,6 +98,13 @@ export default function ClothesPage() {
       })}`,
     });
   }
+
+  function getDisabledMessage(clothesData) {
+    return clothesLocation[clothesData?._id]
+      ? 'Cannot edit clothes when in basket'
+      : '';
+  }
+
   return (
     <DataPage
       title="Clothes"
@@ -111,6 +119,7 @@ export default function ClothesPage() {
       formConfigs={clothesFormConfigs}
       createTitle="Add New Clothes"
       editTitle="Edit Clothes Info"
+      getDisabledMessage={getDisabledMessage}
       customActions={[
         {
           icon: <ShoppingBasketIcon />,

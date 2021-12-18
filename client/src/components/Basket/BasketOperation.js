@@ -66,7 +66,7 @@ export default function BasketOperation() {
         await dispatch(
           updateBasketStatus(id, {
             status: nextStatus,
-            time: parseInt(taskTime),
+            time: parseInt(taskTime) * 1000,
             lastUpdateId: basket.history[basket.history.length - 1]._id,
           })
         );
@@ -129,7 +129,8 @@ export default function BasketOperation() {
                 m={4}
                 error={!!taskTimeError}
                 helperText={taskTimeError}
-                label="Duration"
+                label="Duration (s)"
+                placeholder="enter task duration"
                 id="basket-operation-duration-input"
                 name="task-time"
                 type="number"

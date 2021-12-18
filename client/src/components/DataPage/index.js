@@ -86,6 +86,7 @@ export default function DataList({
   editFormTitle,
   createFormDescription,
   editFormDescription,
+  getDisabledMessage,
   customActions = [],
   customRoutes = [],
 }) {
@@ -250,6 +251,7 @@ export default function DataList({
               formConfigs={formConfigs}
               title={createFormTitle}
               description={createFormDescription}
+              getDisabledMessage={getDisabledMessage}
             />
           }
         />
@@ -262,6 +264,7 @@ export default function DataList({
               formConfigs={formConfigs}
               title={editFormTitle}
               description={editFormDescription}
+              getDisabledMessage={getDisabledMessage}
             />
           }
         />

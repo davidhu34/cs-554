@@ -53,7 +53,7 @@ export default function DataForm({
       open
       onClose={handleCancel}
       title={title}
-      error={error}
+      error={error || disabled || ''}
       loading={loading}
       description={description}
     >

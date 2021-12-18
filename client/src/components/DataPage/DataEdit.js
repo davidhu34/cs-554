@@ -9,13 +9,18 @@ export default function DataEdit({
   updateAction,
   title,
   description,
+  getDisabledMessage = () => {},
 }) {
   const { id } = useParams();
   const { data, error, loading } = useSelector(getDataSelector(id));
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const disabledMessage = getDisabledMessage(data);
   async function handleFormSubmit(formData) {
+    if (disabledMessage) {
+      return;
+    }
     try {
       await dispatch(updateAction(id, formData));
       navigate(-1);
@@ -34,7 +39,7 @@ export default function DataEdit({
       description={description}
       error={error}
       loading={loading}
-      disabled={!!error}
+      disabled={disabledMessage}
     />
   );
 }

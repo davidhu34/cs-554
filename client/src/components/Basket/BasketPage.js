@@ -14,6 +14,7 @@ import {
 } from '../../application/redux/selectors';
 
 import DataPage from '../DataPage';
+import TimeProgressCell from '../TaskProgress/TimeProgressCell';
 
 import BasketOperation from './BasketOperation';
 import BasketClothesCell from './BasketClothesCell';
@@ -37,6 +38,14 @@ const basketColumns = [
     render(clothes, data) {
       return <BasketClothesCell clothesIdList={clothes} />;
     },
+  },
+  {
+    field: 'time',
+    label: 'Task time',
+    render(_, data) {
+      const { createdAt, time } = data.history[data.history.length - 1];
+      return <TimeProgressCell start={createdAt} end={createdAt + (time || 0)} />;
+    }
   },
   {
     field: '_id',
@@ -70,6 +79,14 @@ export default function BasketPage() {
     navigate(`/baskets/${selectedList[0]}/operate`);
   }
 
+  function getDisabledMessage(basketData) {
+    return !basketData
+      ? 'No basket data'
+      : basketData?.clothes?.length > 0
+      ? 'Cannot edit when basket is not empty.'
+      : '';
+  }
+
   return (
     <DataPage
       title="Clothes"
@@ -84,6 +101,7 @@ export default function BasketPage() {
       formConfigs={basketFormConfigs}
       createTitle="Add New Basket"
       editTitle="Edit Basket Info"
+      getDisabledMessage={getDisabledMessage}
       customActions={[
         {
           icon: <LocalLaundryServiceIcon />,
