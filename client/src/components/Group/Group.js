@@ -51,7 +51,7 @@ const Group = () => {
     return () => {
       isUnmount = true;
     };
-  }, [currentUser]);
+  }, [currentUser.groupId !== null]);
 
   useEffect(() => {
     let isUnmount = false;
@@ -73,7 +73,7 @@ const Group = () => {
     return () => {
       isUnmount = true;
     };
-  }, [currentUser.groupId]);
+  }, [currentUser.groupId === null]);
 
   //Join Group Function
   function joinGroup({ grpId }) {
@@ -107,7 +107,6 @@ const Group = () => {
       if (data) {
         setCurrentUser(() => (currentUser.groupId = null));
         setLoading(false);
-        navigate('/');
       }
       setLoading(false);
       console.log('Data after user leave the group', data);
@@ -119,7 +118,7 @@ const Group = () => {
 
   if (loading) return <h2>Loading Group..............</h2>;
 
-  if (group && group && currentUser.groupId !== null) {
+  if (currentUser.groupId !== null && group) {
     console.log(group);
     return (
       <>
@@ -161,7 +160,7 @@ const Group = () => {
     );
   }
 
-  if (currentUser && currentUser && currentUser.groupId === null) {
+  if (currentUser && currentUser.groupId === null) {
     return (
       <>
         {/* {currentUser.groupId !== null ? <></> : <GroupForm />} */}
