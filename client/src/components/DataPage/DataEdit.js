@@ -16,8 +16,12 @@ export default function DataEdit({
   const navigate = useNavigate();
 
   async function handleFormSubmit(formData) {
-    await dispatch(updateAction(id, formData));
-    navigate(-1);
+    try {
+      await dispatch(updateAction(id, formData));
+      navigate(-1);
+    } catch(error) {
+      console.log('error editing data:', error);
+    }
   }
 
   return (
@@ -28,6 +32,9 @@ export default function DataEdit({
       submitText="Save"
       title={title}
       description={description}
+      error={error}
+      loading={loading}
+      disabled={!!error}
     />
   );
 }

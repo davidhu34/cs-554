@@ -43,11 +43,13 @@ export const getClothesList = (options) => async (dispatch, getState) => {
       page: Math.floor(skip / limit),
       total,
     });
+    return data;
   } catch (error) {
     dispatch({
       type: clothesActionTypes.fetchListError,
       error,
     });
+    throw error;
   }
 };
 
@@ -64,11 +66,13 @@ export const getClothesDetail = (id) => async (dispatch, getState) => {
       data,
       id,
     });
+    return data;
   } catch (error) {
     dispatch({
       type: clothesActionTypes.fetchError,
       error,
     });
+    throw error;
   }
 };
 
@@ -84,11 +88,13 @@ export const createClothes = (clothesData) => async (dispatch, getState) => {
       id: data._id,
       data,
     });
+    return data;
   } catch (error) {
     dispatch({
       type: clothesActionTypes.createError,
       error,
     });
+    throw error;
   }
 };
 
@@ -105,11 +111,13 @@ export const deleteClothes = (id) => async (dispatch, getState) => {
       id,
       data,
     });
+    return data;
   } catch (error) {
     dispatch({
       type: clothesActionTypes.deleteError,
       error,
     });
+    throw error;
   }
 };
 
@@ -128,10 +136,12 @@ export const updateClothes =
         id,
         data,
       });
+      return data;
     } catch (error) {
       dispatch({
         type: clothesActionTypes.updateError,
         error,
       });
+      throw error;
     }
   };

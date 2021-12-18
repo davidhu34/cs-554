@@ -1,32 +1,33 @@
-import { useEffect } from "react";
-import { useMessaging } from "../firebase/hooks";
-import { subscribeGroupTopic, unsubscribeGroupTopic } from "../api";
+import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 
-export function useGroupTopic({ groupId, onMessage}) {
+import { useMessaging } from '../firebase/hooks';
+import { userSelector } from '../redux/selectors';
+import { subscribeGroupTopic, unsubscribeGroupTopic } from '../api';
+
+export function useGroupTopic({ onMessage }) {
   const { token } = useMessaging({ onMessage });
-  
-  useEffect(
-    () => {
-      if (!token || !groupId) {
-        return;
-      }
-      async function subscribe() {
-        try {
-          return await subscribeGroupTopic({ groupId, token });
+  const { groupId } = useSelector(userSelector);
+
+  useEffect(() => {
+    if (!token || !groupId) {
+      return;
+    }
+    async function subscribe() {
+      try {
+        return await subscribeGroupTopic({ groupId, token });
       } catch (error) {
-          console.error('Cannot subscribe to group message:', groupId, error);
-        }
+        console.error('Cannot subscribe to group message:', groupId, error);
       }
-      async function unsubscribe() {
-        try {
-          return await unsubscribeGroupTopic({ groupId, token });
+    }
+    async function unsubscribe() {
+      try {
+        return await unsubscribeGroupTopic({ groupId, token });
       } catch (error) {
-          console.error('Cannot unsubscribe to group message:', groupId, error);
-        }
+        console.error('Cannot unsubscribe to group message:', groupId, error);
       }
-      subscribe();
-      return unsubscribe;
-    },
-    [token, groupId],
-  );
+    }
+    subscribe();
+    return unsubscribe;
+  }, [token, groupId]);
 }

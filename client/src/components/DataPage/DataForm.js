@@ -22,6 +22,9 @@ export default function DataForm({
   onCancel,
   defaultValues,
   submitText = 'Submit',
+  error,
+  loading,
+  disabled,
 }) {
   const navigate = useNavigate();
   const {
@@ -50,6 +53,8 @@ export default function DataForm({
       open
       onClose={handleCancel}
       title={title}
+      error={error}
+      loading={loading}
       description={description}
     >
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -137,7 +142,11 @@ export default function DataForm({
           <Button onClick={() => handleCancel()} variant="outlined">
             Cancel
           </Button>
-          <Button type="submit" variant="contained">
+          <Button
+            type="submit"
+            variant="contained"
+            disabled={loading || disabled}
+          >
             {submitText}
           </Button>
         </Box>

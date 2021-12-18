@@ -46,11 +46,13 @@ export const getBasketList = (options) => async (dispatch, getState) => {
       page: Math.floor(skip / limit),
       total,
     });
+    return data;
   } catch (error) {
     dispatch({
       type: basketActionTypes.fetchListError,
       error,
     });
+    throw error;
   }
 };
 
@@ -67,11 +69,13 @@ export const getBasketDetail = (id) => async (dispatch, getState) => {
       id: data._id,
       data,
     });
+    return data;
   } catch (error) {
     dispatch({
       type: basketActionTypes.fetchError,
       error,
     });
+    throw error;
   }
 };
 
@@ -87,11 +91,13 @@ export const createBasket = (basketData) => async (dispatch, getState) => {
       id: data._id,
       data,
     });
+    return data;
   } catch (error) {
     dispatch({
       type: basketActionTypes.createError,
       error,
     });
+    throw error;
   }
 };
 
@@ -108,11 +114,13 @@ export const deleteBasket = (id) => async (dispatch, getState) => {
       id,
       data,
     });
+    return data;
   } catch (error) {
     dispatch({
       type: basketActionTypes.deleteError,
       error,
     });
+    throw error;
   }
 };
 
@@ -130,11 +138,13 @@ export const updateBasket = (id, clothesData) => async (dispatch, getState) => {
       id,
       data,
     });
+    return data;
   } catch (error) {
     dispatch({
       type: basketActionTypes.updateError,
       error,
     });
+    throw error;
   }
 };
 
@@ -158,11 +168,13 @@ export const updateBasketStatus =
         data,
       });
       dispatch(fetchClothesLocations());
+      return data;
     } catch (error) {
       dispatch({
         type: basketActionTypes.updateError,
         error,
       });
+      throw error;
     }
   };
 
@@ -188,10 +200,12 @@ export const updateBasketClothes =
         id,
         data,
       });
+      return data;
     } catch (error) {
       dispatch({
         type: basketActionTypes.updateError,
         error,
       });
+      throw error;
     }
   };

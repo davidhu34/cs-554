@@ -8,6 +8,7 @@ const {
   assertRequiredObject,
   assertEmailString,
   assertNonEmptyArray,
+  assertRequiredNumber,
 } = require('../utils/assertion');
 const { QueryError, ValidationError, HttpError } = require('../utils/errors');
 
@@ -17,13 +18,14 @@ router.post('/', async (req, res, next) => {
     // const { name, type, size } = req.body;
     // const { _id: userId = '61b91631d36271f9dc9b9bc4', groupId = '61b91631d36271f9dc9b9bc7' } =
     //   req.session.user || {};
-    const { name, type, size, userId, groupId } = req.body;
+    const { name, type, userId, groupId } = req.body;
+    const size = parseInt(req.body.size);
 
     assertIsValuedString(userId, 'User Id');
     assertIsValuedString(groupId, 'Group Id');
     assertIsValuedString(name, 'Cloth name');
     assertIsValuedString(type, 'Type');
-    assertIsValuedString(size, 'Size');
+    assertRequiredNumber(size, 'Size');
 
     const result = await clothesData.addCloth({ name, type, size, userId, groupId });
     if (!result) {

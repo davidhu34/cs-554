@@ -29,33 +29,40 @@ export default function ClothesBasketManagement() {
   const [baskets, setBaskets] = useState([]);
 
   const {
-    data: clothesLocaiton,
-    loading: clothesLocaitonLoading,
-    error: clothesLocaitonError,
+    data: clothesLocation,
+    loading: clothesLocationLoading,
+    error: clothesLocationError,
   } = useClothesLocation();
 
   const pendingBasketIdSet = new Set(baskets.map((b) => b._id));
   const clearableIdList = [];
   const operableIdList = [];
   for (const clothesId of clothesIdList) {
-    if (!clothesLocaiton[clothesId]) {
+    if (!clothesLocation[clothesId]) {
       operableIdList.push(clothesId);
-    } else if (pendingBasketIdSet.has(clothesLocaiton[clothesId])) {
+    } else if (pendingBasketIdSet.has(clothesLocation[clothesId])) {
       clearableIdList.push(clothesId);
       operableIdList.push(clothesId);
     }
   }
-  const canClear = clearableIdList.length > 0;
-  const canOperate = operableIdList.length === clothesIdList.length;
+  const canClear = !clothesLocationError && clearableIdList.length > 0;
+  const canOperate =
+    !clothesLocationError &&
+    operableIdList.length === clothesIdList.length &&
+    baskets.length === 0;
 
   const { _id: userId, groupId } = useSelector(userSelector);
   useEffect(() => {
     async function getPendingBaskets() {
-      const baskets = await axiosGet('/baskets/pending', {
-        params: { userId, groupId },
-      });
-      setBaskets(baskets);
-      if (baskets.length > 0) setBasketId(baskets[0]._id);
+      try {
+        const baskets = await axiosGet('/baskets/pending', {
+          params: { userId, groupId },
+        });
+        setBaskets(baskets);
+        if (baskets.length > 0) setBasketId(baskets[0]._id);
+      } catch (error) {
+        console.log('error getting pending basket:', error);
+      }
     }
     if (userId && groupId) getPendingBaskets();
   }, [userId, groupId]);
@@ -70,26 +77,45 @@ export default function ClothesBasketManagement() {
 
   async function handlePutClothesToBasket() {
     if (canOperate) {
-      await dispatch(updateBasketClothes(basketId, operableIdList));
-      await dispatch(fetchClothesLocations());
+      try {
+        await dispatch(updateBasketClothes(basketId, operableIdList));
+        await dispatch(fetchClothesLocations());
+      } catch (error) {
+        console.log('error putting clothes to basket:', error);
+      }
     }
     handleClose();
   }
 
   async function handleRemoveClothesFromBaskets() {
     if (canClear) {
-      await Promise.all(
-        clearableIdList.map((id) =>
-          dispatch(updateBasketClothes(clothesLocaiton[id], [id], true))
-        )
-      );
-      await dispatch(fetchClothesLocations());
-      handleClose();
+      try {
+        await Promise.all(
+          clearableIdList.map((id) =>
+            dispatch(updateBasketClothes(clothesLocation[id], [id], true))
+          )
+        );
+        await dispatch(fetchClothesLocations());
+        handleClose();
+      } catch (error) {
+        console.log('error removing clothes from baskets:', error);
+      }
     }
   }
 
   return (
-    <DataModal open onClose={handleClose}>
+    <DataModal
+      open
+      onClose={handleClose}
+      title="Manage Selected Clothes(s)"
+      loading={clothesLocationLoading}
+      error={
+        clothesLocationError
+          ? clothesLocationError?.message ||
+            'Error getting clothes location cache'
+          : ''
+      }
+    >
       {canClear && (
         <Box sx={{ display: 'flex', flexDirection: 'row' }}>
           <Box>
@@ -115,7 +141,8 @@ export default function ClothesBasketManagement() {
         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
           <Box sx={{ flexGrow: 1 }}>
             <Typography>
-              move {operableIdList.length} piece of clothes into pending basket
+              move ${operableIdList.length} pieces of clothes into pending
+              basket
             </Typography>
           </Box>
           <Box
@@ -160,7 +187,11 @@ export default function ClothesBasketManagement() {
           </Box>
         </Box>
       ) : (
-        <Box>Some selected clothes are still in task(s)</Box>
+        <Box>
+          {baskets.length === 0
+            ? 'No pending baskets available'
+            : 'Some selected clothes are still in task(s)'}
+        </Box>
       )}
       <Box sx={{ display: 'flex', gap: 2, justifyContent: 'end' }}>
         <Button onClick={() => handleClose()} variant="outlined">

@@ -243,6 +243,7 @@ const updateBasket = async (id, data) => {
 
   const basketData = {
     ...previousBasket,
+    groupId: new ObjectId(groupId),
     name,
     size,
     updatedAt,
