@@ -73,6 +73,7 @@ export const getBasketDetail = (id) => async (dispatch, getState) => {
   } catch (error) {
     dispatch({
       type: basketActionTypes.fetchError,
+      id,
       error,
     });
     throw error;
@@ -118,6 +119,7 @@ export const deleteBasket = (id) => async (dispatch, getState) => {
   } catch (error) {
     dispatch({
       type: basketActionTypes.deleteError,
+      id,
       error,
     });
     throw error;
@@ -142,6 +144,7 @@ export const updateBasket = (id, clothesData) => async (dispatch, getState) => {
   } catch (error) {
     dispatch({
       type: basketActionTypes.updateError,
+      id,
       error,
     });
     throw error;
@@ -172,6 +175,7 @@ export const updateBasketStatus =
     } catch (error) {
       dispatch({
         type: basketActionTypes.updateError,
+        id,
         error,
       });
       throw error;
@@ -204,6 +208,7 @@ export const updateBasketClothes =
     } catch (error) {
       dispatch({
         type: basketActionTypes.updateError,
+        id,
         error,
       });
       throw error;

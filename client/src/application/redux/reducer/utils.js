@@ -88,14 +88,23 @@ export const getDataReducer = ({ actionTypes, key = '_id' }) => {
           },
         };
       }
-      case actionTypes.fetchError:
-      case actionTypes.updateError:
-      case actionTypes.deleteError: {
+      case actionTypes.fetchError:{
         return {
           ...state,
           [action.id]: {
             loading: false,
             data: null,
+            error: action.error,
+          },
+        };
+      }
+      case actionTypes.updateError:
+      case actionTypes.deleteError: {
+        return {
+          ...state,
+          [action.id]: {
+            ...state[action.id],
+            loading: false,
             error: action.error,
           },
         };
