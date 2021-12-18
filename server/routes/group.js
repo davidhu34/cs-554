@@ -94,6 +94,12 @@ router.put('/:id', async (req, res, next) => {
       throw new HttpError(`Could not get user for user id: ${user._id}`, 404);
     }
 
+    for (let u in group.users) {
+      if (u.email === user.email) {
+        throw new ValidationError(`User already in current group`, 404);
+      }
+    }
+
     assertIsValuedString(user.uid, 'User ID');
     assertIsValuedString(user.name, 'User name');
     assertEmailString(user.email, 'Email');
@@ -123,7 +129,7 @@ router.post('/user/:id', async (req, res, next) => {
     const reqBody = req.body;
     assertRequiredObject(reqBody);
 
-    let { user } = reqBody;
+    let user  = reqBody;
     assertObjectIdString(id);
 
     const group = await groupsData.getGroup(id);
