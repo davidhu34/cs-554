@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AppBar from '@mui/material/AppBar';
 import Axios from 'axios';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import Badge from '@mui/material/Badge';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
@@ -66,7 +67,6 @@ export default function NavBar() {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
       <MenuItem onClick={handleSignOut}>Sign Out</MenuItem>
     </Menu>
   );
@@ -83,20 +83,27 @@ export default function NavBar() {
           >
             <MenuIcon />
           </IconButton>
-          <Typography sx={{ display: { xs: 'block', sm: 'none' } }}>
+          <Typography
+            sx={{
+              display: { xs: 'block', sm: 'none' },
+              align: 'center',
+              justifyContent: 'center',
+              marginLeft: 5,
+            }}
+          >
             WashTastic
           </Typography>
           <Box sx={{ flexGrow: 1 }} />
           <Box>
-            <IconButton
+            {/* <IconButton
               size="large"
               aria-label="show 17 new notifications"
               color="inherit"
             >
-              {/* <Badge badgeContent={17} color="error">
+              <Badge badgeContent={17} color="error">
                 <NotificationsIcon />
-              </Badge> */}
-            </IconButton>
+              </Badge>
+            </IconButton> */}
 
             <IconButton
               size="large"
@@ -106,10 +113,12 @@ export default function NavBar() {
               aria-haspopup="true"
               onClick={handleProfileMenuOpen}
               color="inherit"
+              sx={{ align: 'left', gap: 1 }}
             >
-              <AccountCircle />
+              {/* <AccountCircle /> */}
 
               {currentUser.name}
+              <KeyboardArrowDownIcon />
             </IconButton>
           </Box>
         </Toolbar>

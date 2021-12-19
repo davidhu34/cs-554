@@ -27,7 +27,13 @@ const HomePage = () => {
         {!currentUser && (
           <Button variant="contained" onClick={() => navigate('/login')}>
             {' '}
-            Back
+            Login to Enter
+          </Button>
+        )}
+        {currentUser && currentUser && (
+          <Button variant="contained" onClick={() => navigate('/group')}>
+            {' '}
+            Groups
           </Button>
         )}
       </Container>
