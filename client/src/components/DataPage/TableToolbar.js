@@ -61,7 +61,12 @@ export default function TableToolbar({
             //     {icon}
             //   </IconButton>
             // </Tooltip>
-            <Button key={`custom_action-${title}-${i}`} startIcon={icon} onClick={(e) => onClick(e, selectedList)}>
+            <Button
+              key={`custom_action-${title}-${i}`}
+              startIcon={icon}
+              sx={{ color: '#006cc5' }}
+              onClick={(e) => onClick(e, selectedList)}
+            >
               {title}
             </Button>
           )
