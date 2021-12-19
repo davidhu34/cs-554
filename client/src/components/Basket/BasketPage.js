@@ -2,6 +2,8 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import LocalLaundryServiceIcon from '@mui/icons-material/LocalLaundryService';
 
+import { getStatusName } from '../../application/constants/data';
+import { useClothesLocation } from '../../application/hooks/data';
 import {
   createBasket,
   deleteBasket,
@@ -18,8 +20,6 @@ import TimeProgressCell from '../TaskProgress/TimeProgressCell';
 
 import BasketOperation from './BasketOperation';
 import BasketClothesCell from './BasketClothesCell';
-import { useSelector } from 'react-redux';
-import { useClothesLocation } from '../../application/hooks/data';
 
 const basketColumns = [
   {
@@ -29,21 +29,24 @@ const basketColumns = [
   {
     field: 'status',
     label: 'Status',
+    render: getStatusName,
   },
   {
     field: 'time',
     label: 'Task time',
     render(_, data) {
       const { createdAt, time } = data.history[data.history.length - 1];
-      return <TimeProgressCell start={createdAt} end={createdAt + (time || 0)} />;
-    }
+      return (
+        <TimeProgressCell start={createdAt} end={createdAt + (time || 0)} />
+      );
+    },
   },
   {
     field: 'weight',
     label: 'Weight',
     render(weight, data) {
       return `${data.currentWeight} / ${weight}`;
-    }, 
+    },
   },
   {
     field: 'clothes',
@@ -74,7 +77,11 @@ const basketFormConfigs = [
 
 export default function BasketPage() {
   const navigate = useNavigate();
-  const { data: clothesLocation = {}, loading: clothesLocationLoading, error: clothesLocationError } = useClothesLocation();
+  const {
+    data: clothesLocation = {},
+    loading: clothesLocationLoading,
+    error: clothesLocationError,
+  } = useClothesLocation();
 
   function handleClearBasket(selectedList) {
     navigate(`/baskets/${selectedList[0]}/operate`);
@@ -88,14 +95,12 @@ export default function BasketPage() {
       : '';
   }
 
-
   function validateDeleteCandidates(basketIdList) {
     const workingBasketIdSet = new Set(Object.values(clothesLocation));
     return basketIdList.some((basketId) => workingBasketIdSet.has(basketId))
       ? 'Cannot delete when basket is not empty'
       : '';
   }
-
 
   return (
     <DataPage

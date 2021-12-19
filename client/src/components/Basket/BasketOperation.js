@@ -7,20 +7,13 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
+import { getNextStatus } from '../../application/constants/data';
+import { updateBasketStatus } from '../../application/redux/actions';
 import { updateBasketClothes } from '../../application/redux/actions/basket';
 import { fetchClothesLocations } from '../../application/redux/actions/clothesLocation';
 import { getBasketDetailSelector } from '../../application/redux/selectors';
-import { updateBasketStatus } from '../../application/redux/actions';
 
 import DataModal from '../DataPage/DataModal';
-
-const validNextStatus = {
-  PENDING: 'WASHING',
-  WASHING: 'WASHING_DONE',
-  WASHING_DONE: 'DRYING',
-  DRYING: 'DRYING_DONE',
-  DRYING_DONE: 'PENDING',
-};
 
 export default function BasketOperation() {
   const { id } = useParams();
@@ -34,7 +27,7 @@ export default function BasketOperation() {
   } = useSelector(getBasketDetailSelector(id));
   const { name = '', status = '' } = basket || {};
   const isEmpty = basket && basket.clothes && basket.clothes.length === 0;
-  const nextStatus = validNextStatus[status];
+  const nextStatus = getNextStatus(status);
   const canOperate =
     !isEmpty && (status === 'PENDING' || status === 'WASHING_DONE');
   const canReset = status === 'DRYING_DONE';
