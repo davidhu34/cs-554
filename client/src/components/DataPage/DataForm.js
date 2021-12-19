@@ -15,41 +15,13 @@ import DataModal from './DataModal';
 
 import { Controller } from 'react-hook-form';
 
-const ReactHookFormSelect = ({
-  name,
-  label,
-  control,
-  defaultValue,
-  children,
-  ...props
-}) => {
-  const labelId = `${name}-label`;
-  return (
-    <Box sx={{ margin: 2 }}>
-      <FormControl {...props} fullWidth>
-        <InputLabel id={labelId}>{label}</InputLabel>
-        <Controller
-          render={() => (
-            <Select labelId={labelId} label={label} defaultValue={defaultValue}>
-              {children}
-            </Select>
-          )}
-          name={name}
-          control={control}
-          defaultValue={defaultValue}
-        />
-      </FormControl>
-    </Box>
-  );
-};
-
 export default function DataForm({
   title,
   description,
   formConfigs,
   onSubmit,
   onCancel,
-  defaultValues,
+  defaultValues = {},
   submitText = 'Submit',
   error,
   loading,
