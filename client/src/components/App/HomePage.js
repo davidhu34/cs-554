@@ -24,7 +24,12 @@ const HomePage = () => {
           <li>Smit Gor</li>
           <li>Dhruveel Doshi</li>
         </ul>
-        <Button onClick={navigate(-1)}> Back</Button>
+        {!currentUser && (
+          <Button variant="contained" onClick={() => navigate('/login')}>
+            {' '}
+            Back
+          </Button>
+        )}
       </Container>
     </Container>
   );

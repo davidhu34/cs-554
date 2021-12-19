@@ -19,9 +19,11 @@ router.post("/", async (req, res, next) => {
   try {
     const reqBody = req.body;
     console.log(req.body);
+
     assertRequiredObject(reqBody);
     console.log(req.session.user);
     let { name, users } = reqBody;
+    req.session.user = users[0];
     assertIsValuedString(name, "Group name");
     assertNonEmptyArray(users, "Users");
 
@@ -70,17 +72,14 @@ router.get("/:id", async (req, res, next) => {
 });
 
 router.put("/:id", async (req, res, next) => {
-  req.session.user = req.body;
-  let id = req.params.id;
-  let user = req.session.user;
-  console.log("session User in group's PUT req:", user);
-
   try {
-    const { id } = req.params;
-    const reqBody = req.body;
-    assertRequiredObject(reqBody);
+    req.session.user = req.body;
+    let id = req.params.id;
+    req.session.user = req.body;
+    let user = req.session.user;
+    console.log("session User in group's PUT req:", user);
 
-    let user = reqBody;
+    assertRequiredObject(user);
 
     const group = await groupsData.getGroup(id);
 
@@ -96,7 +95,7 @@ router.put("/:id", async (req, res, next) => {
 
     const users = group.users;
 
-    const anyUser = users.some(element => element.email === user.email);
+    const anyUser = users.some((element) => element.email === user.email);
 
     if (anyUser) {
       throw new ValidationError(`User already in current group`, 404);

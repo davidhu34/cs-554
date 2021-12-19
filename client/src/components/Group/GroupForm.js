@@ -28,8 +28,10 @@ const GroupForm = (props) => {
         });
         console.log('Res Data: \n', res.data.users[0]);
 
-        setCurrentUser(res.data.users[0]);
-        dispatch(setUser(res.data.users[0]));
+        // setCurrentUser(res.data.users[0]);
+        setCurrentUser({ ...currentUser, groupId: res.data._id });
+
+        dispatch(setUser({ ...currentUser, groupId: res.data._id }));
       }
       console.log('Counter:', i);
     } catch (e) {

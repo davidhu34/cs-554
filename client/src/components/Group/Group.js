@@ -56,7 +56,7 @@ const Group = () => {
     return () => {
       isUnmount = true;
     };
-  }, [currentUser.groupId !== null]);
+  }, [currentUser.groupId]);
 
   useEffect(() => {
     let isUnmount = false;
@@ -78,7 +78,7 @@ const Group = () => {
     return () => {
       isUnmount = true;
     };
-  }, [currentUser.groupId === null]);
+  }, [currentUser.groupId]);
 
   //Join Group Function
   function joinGroup({ grpId }) {
