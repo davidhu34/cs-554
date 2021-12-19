@@ -99,7 +99,7 @@ export default function BasketPage() {
 
   return (
     <DataPage
-      title="Clothes"
+      title="Baskets"
       path="/baskets"
       columns={basketColumns}
       paginationSelector={basketPaginationSelector}
@@ -111,6 +111,7 @@ export default function BasketPage() {
       formConfigs={basketFormConfigs}
       createTitle="Add New Basket"
       editTitle="Edit Basket Info"
+      deleteTitle="Delete Basket"
       validateEditCandidate={validateEditCandidate}
       validateDeleteCandidates={validateDeleteCandidates}
       customActions={[

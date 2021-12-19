@@ -124,6 +124,7 @@ export default function ClothesPage() {
       formConfigs={clothesFormConfigs}
       createTitle="Add New Clothes"
       editTitle="Edit Clothes Info"
+      deleteTitle="Delete Clothes"
       validateEditCandidate={validateEditCandidate}
       validateDeleteCandidates={validateDeleteCandidates}
       customActions={[
