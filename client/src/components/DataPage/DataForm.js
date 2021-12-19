@@ -7,12 +7,41 @@ import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import TextField from '@mui/material/TextField';
-import NativeSelect from '@mui/material/NativeSelect';
 import Select from '@mui/material/Select';
 import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
 
 import DataModal from './DataModal';
+
+import { Controller } from 'react-hook-form';
+
+const ReactHookFormSelect = ({
+  name,
+  label,
+  control,
+  defaultValue,
+  children,
+  ...props
+}) => {
+  const labelId = `${name}-label`;
+  return (
+    <Box sx={{ margin: 2 }}>
+      <FormControl {...props} fullWidth>
+        <InputLabel id={labelId}>{label}</InputLabel>
+        <Controller
+          render={() => (
+            <Select labelId={labelId} label={label} defaultValue={defaultValue}>
+              {children}
+            </Select>
+          )}
+          name={name}
+          control={control}
+          defaultValue={defaultValue}
+        />
+      </FormControl>
+    </Box>
+  );
+};
 
 export default function DataForm({
   title,
@@ -31,14 +60,9 @@ export default function DataForm({
     register,
     handleSubmit,
     reset,
+    control,
     formState: { errors },
-  } = useForm();
-
-  useEffect(() => {
-    if (defaultValues) {
-      reset(defaultValues);
-    }
-  }, [reset, defaultValues]);
+  } = useForm({ defaultValues });
 
   function handleCancel() {
     navigate(-1);
@@ -60,56 +84,49 @@ export default function DataForm({
             label = name,
             validation = {},
             options = [],
-            defaultValue,
           }) => {
             const error = errors[name];
             switch (type) {
               case 'select':
+                const labelId = `${name}-label`;
+                const defaultValue = defaultValues[name] || '';
                 return (
                   <Box sx={{ margin: 2 }}>
-                    <FormControl fullWidth error={!!error}>
-                      {/* <InputLabel id={`${name}-label`}>{label}</InputLabel> */}
-                      {/* <Select
-                        fullWidth
-                        labelId={`${name}-label`}
-                        label={label}
-                        defaultValue={defaultValue}
-                        inputProps={{ ...register(name, validation) }}
-                      > */}
-                      <TextField
-                        id={`${name}-id`}
+                    <FormControl fullWidth>
+                      <InputLabel id={labelId}>{label}</InputLabel>
+                      <Controller
+                        render={() => (
+                          <Select
+                            labelId={labelId}
+                            label={label}
+                            defaultValue={defaultValue}
+                          >
+                            {options.map((option) => {
+                              if (typeof option === 'string') {
+                                return (
+                                  <MenuItem key={option} value={option}>
+                                    {option}
+                                  </MenuItem>
+                                );
+                              }
+                              if (typeof option === 'object') {
+                                return (
+                                  <MenuItem
+                                    key={option.value}
+                                    value={option.value}
+                                  >
+                                    {option.label}
+                                  </MenuItem>
+                                );
+                              }
+                              return option;
+                            })}
+                          </Select>
+                        )}
                         name={name}
-                        select
-                        native="true"
-                        label={label}
-                        // inputRef={register(validation)}
-                        inputRef={register(name, validation)}
-                        inputProps={{ ...register(name, validation) }}
-                        error={!!error}
-                        helperText={error?.message}
-                      >
-                        {options.map((option) => {
-                          if (typeof option === 'string') {
-                            return (
-                              <MenuItem key={option} value={option}>
-                                {option}
-                              </MenuItem>
-                            );
-                          }
-                          if (typeof option === 'object') {
-                            return (
-                              <MenuItem key={option.value} value={option.value}>
-                                {option.label}
-                              </MenuItem>
-                            );
-                          }
-                          return option;
-                        })}
-                      </TextField>
-                      {/* </Select>
-                      {error?.message && (
-                        <FormHelperText>{error.message}</FormHelperText>
-                      )} */}
+                        control={control}
+                        defaultValue={defaultValue}
+                      />
                     </FormControl>
                   </Box>
                 );

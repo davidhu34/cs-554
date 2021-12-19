@@ -63,8 +63,8 @@ const clothesFormConfigs = [
     type: 'select',
     options: [
       {
-        label: 'Shirts',
-        value: 'shirts',
+        label: 'T-Shirts',
+        value: 'tshirt',
       },
       {
         label: 'Pants',

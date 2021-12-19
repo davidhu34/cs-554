@@ -119,7 +119,6 @@ export default function ClothesBasketManagement() {
   return (
     <DataModal
       open
-      onClose={handleClose}
       title="Manage Selected Clothes"
       loading={clothesLocationLoading || loading}
       error={
