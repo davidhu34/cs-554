@@ -1,7 +1,7 @@
 const { ObjectId } = require('mongodb');
 const { baskets: getBasketsCollection } = require('../config/mongoCollections');
 
-const { QueryError } = require('../utils/errors');
+const { QueryError, ValidationError } = require('../utils/errors');
 const { idQuery, parseMongoData } = require('../utils/mongodb');
 const {
   assertObjectIdString,
@@ -43,12 +43,12 @@ const getByObjectId = async (objectId) => {
 
 const addBasket = async (data) => {
   assertRequiredObject(data);
-  const { name, size, userId, groupId, clothes, status, time } = data;
+  const { name, weight, userId, groupId, status, time } = data;
   const createdAt = new Date().getTime();
 
   assertObjectIdString(userId, 'Basket added by user ID');
   assertIsValuedString(name, 'Basket name');
-  assertRequiredNumber(size, 'Basket size');
+  assertRequiredNumber(weight, 'Basket max weight');
   assertIsValuedString(groupId, 'Group Id');
   assertStatus(status);
 
@@ -64,9 +64,6 @@ const addBasket = async (data) => {
   if (!group) {
     throw new QueryError(`Group not exist for group id (${groupId})`);
   }
-  if (size < clothes.length) {
-    throw new QueryError(`No. of clothes must be less than size of basket.`);
-  }
 
   const collection = await getBasketsCollection();
 
@@ -74,15 +71,18 @@ const addBasket = async (data) => {
     _id: new ObjectId(data.basketId),
     groupId: new ObjectId(groupId),
     name,
-    size,
-    clothes,
+    weight,
+    currentWeight: 0,
+    clothes: [],
     status,
-    history: [{
-      createdAt,
-      userId: new ObjectId(userId),
-      status,
-      _id: new ObjectId(),
-    }],
+    history: [
+      {
+        createdAt,
+        userId: new ObjectId(userId),
+        status,
+        _id: new ObjectId(),
+      },
+    ],
     time,
     createdAt,
     updatedAt: createdAt,
@@ -216,7 +216,7 @@ const deleteBasketByGroupId = async (userId, groupId) => {
 
 const updateBasket = async (id, data) => {
   assertRequiredObject(data);
-  const { name, userId, groupId, clothes, size } = data;
+  const { name, userId, groupId, weight } = data;
   const updatedAt = new Date().getTime();
 
   assertObjectIdString(id, 'Basket ID');
@@ -236,9 +236,6 @@ const updateBasket = async (id, data) => {
   if (!group) {
     throw new QueryError(`Group not exist for group id (${groupId})`);
   }
-  if (size < clothes.length) {
-    throw new QueryError(`No. of clothes must be less than size of basket.`);
-  }
 
   const collection = await getBasketsCollection();
 
@@ -246,7 +243,7 @@ const updateBasket = async (id, data) => {
     ...previousBasket,
     groupId: new ObjectId(groupId),
     name,
-    size,
+    weight,
     updatedAt,
     updatedBy: new ObjectId(userId),
   };
@@ -254,7 +251,7 @@ const updateBasket = async (id, data) => {
 
   const { modifiedCount, matchedCount } = await collection.updateOne(
     { ...idQuery(id), groupId: new ObjectId(groupId) },
-    { $set: basketData },
+    { $set: basketData }
   );
 
   if (!modifiedCount && !matchedCount) {
@@ -276,7 +273,7 @@ const updateBasketStatus = async (id, data) => {
   const validNextStatus = getNextBasketStatus(basket.status);
   if (!validNextStatus || validNextStatus !== status) {
     throw new QueryError(
-      `Invalid basket status update: ${basket.status} can only update to ${validNextStatus}`,
+      `Invalid basket status update: ${basket.status} can only update to ${validNextStatus}`
     );
   }
 
@@ -336,44 +333,59 @@ const getClothFromBasketByUserId = async (userId) => {
 const updateBasketClothes = async (id, { clothesIdList, userId }, isRemove = false) => {
   assertNonEmptyArray(clothesIdList);
 
-  let basket = await getByObjectId(id);
+  const basket = await getByObjectId(id);
   if (!basket || !Array.isArray(basket.history) || basket.history.length === 0) {
     throw new QueryError(`Basket with ID\`${id}\` has invalid status history.`);
   }
 
   const clothesLocations = await getClothesBasketLocation(clothesIdList);
   const basketToRemoveMap = {};
+  let additionalWeight = 0;
   for (let i = 0; i < clothesIdList.length; i++) {
     const clothesId = clothesIdList[i];
     const clothesData = await getCloth(userId, clothesId);
-    const size = clothesData.size;
+    additionalWeight += clothesData.weight;
     assertObjectIdString(clothesId);
-    const basketId = clothesLocations[i];
-    if (!isRemove && basketId) {
-      if (!basketToRemoveMap[basketId]) {
-        basketToRemoveMap[basketId] = [];
+    const previousBasketId = clothesLocations[i];
+    if (previousBasketId) {
+      const previousBasket = await getByObjectId(previousBasketId);
+      if (previousBasket.history[previousBasket.history.length - 1].status !== 'PENDING') {
+        throw new ValidationError('Cannot add clothes to basket: Some clothes are still in task');
       }
-      basketToRemoveMap[basketId].push(clothesId);
+      if (!isRemove) {
+        if (!basketToRemoveMap[previousBasketId]) {
+          basketToRemoveMap[previousBasketId] = [];
+        }
+        basketToRemoveMap[previousBasketId].push(clothesId);
+      }
     }
   }
+
+  const newWeight = isRemove
+    ? Math.max(basket.currentWeight - additionalWeight, 0)
+    : basket.currentWeight + additionalWeight;
+  if (!isRemove && newWeight > basket.weight) {
+    throw new ValidationError('Cannot add clothes to basket: basket will be too heavy');
+  }
+
   await Promise.all(
-    Object.entries(basketToRemoveMap).map(([basketId, clothesIdList]) =>
-      updateBasketClothes(basketId, { clothesIdList, userId }, true)
+    Object.entries(basketToRemoveMap).map(([basketId, toRemoveClothesIdList]) =>
+      updateBasketClothes(basketId, { clothesIdList: toRemoveClothesIdList, userId }, true)
     )
   );
-
 
   const options = { returnOriginal: false };
   const collection = await getBasketsCollection();
   const currentTimestamp = new Date().getTime();
   const ops = {
     $set: {
+      currentWeight: newWeight,
       updatedAt: currentTimestamp,
       updatedBy: new ObjectId(userId),
     },
   };
 
-  const clothesObjectIdList = clothesIdList.map(id => new ObjectId(id));
+  const clothesObjectIdList = clothesIdList.map((id) => new ObjectId(id));
 
   if (isRemove) {
     ops.$pull = {

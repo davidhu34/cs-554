@@ -19,11 +19,11 @@ router.post('/', async (req, res, next) => {
     //   req.session.user || {};
     // const { name, users, clothes = [], status = 'PENDING', time = 0 } = req.body;
     const { name, users, clothes = [], status = 'PENDING', time = 0, userId, groupId } = req.body;
-    const size = parseInt(req.body.size);
+    const weight = parseInt(req.body.weight);
 
     assertIsValuedString(userId, 'User Id');
     assertIsValuedString(name, 'Basket name');
-    assertRequiredNumber(size, 'Basket size');
+    assertRequiredNumber(weight, 'Basket max weight');
     assertIsValuedString(groupId, 'Group Id');
     assertIsValuedString(status, 'Basket status');
     assertRequiredNumber(time, 'Time');
@@ -36,7 +36,7 @@ router.post('/', async (req, res, next) => {
 
     const result = await basketsData.addBasket({
       name,
-      size,
+      weight,
       userId,
       groupId,
       users,
@@ -153,14 +153,11 @@ router.delete('/:id', async (req, res, next) => {
 router.put('/:id', async (req, res, next) => {
   try {
     const { id: basketId } = req.params;
-    // const { _id: userId = '61b91631d36271f9dc9b9bc4', groupId = '61b91631d36271f9dc9b9bc7' } =
-    //   req.session.user || {};
-    // const { name, size, users, clothes, status, time } = req.body;
-    const { name, size, users, clothes, status, time, userId, groupId } = req.body;
+    const { name, weight, users, clothes, status, time, userId, groupId } = req.body;
     assertIsValuedString(userId, 'User Id');
     const result = await basketsData.updateBasket(basketId, {
       name,
-      size,
+      weight,
       userId,
       groupId,
       users,

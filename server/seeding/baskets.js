@@ -6,11 +6,12 @@ const seedBaskets = async (
   user2,
   user3,
   user4,
-  { timestamp1 = new Date().getTime(), timestamp2 = new Date().getTime() } = {},
+  { timestamp1 = new Date().getTime(), timestamp2 = new Date().getTime() } = {}
 ) => {
   const basket1 = {
     name: 'Basket 1',
-    size: 20,
+    weight: 20,
+    currentWeight: 0,
     userId: user1._id,
     groupId: user1.groupId,
     clothes: [],
@@ -29,7 +30,8 @@ const seedBaskets = async (
 
   const basket2 = {
     name: 'Basket 2',
-    size: 10,
+    weight: 10,
+    currentWeight: 0,
     userId: user1._id,
     groupId: user1.groupId,
     clothes: [],
@@ -48,7 +50,8 @@ const seedBaskets = async (
 
   const basketA = {
     name: 'Basket A',
-    size: 33,
+    weight: 33,
+    currentWeight: 0,
     userId: user3._id,
     groupId: user3.groupId,
     clothes: [],
@@ -67,7 +70,8 @@ const seedBaskets = async (
 
   const basketB = {
     name: 'Basket B',
-    size: 15,
+    weight: 15,
+    currentWeight: 0,
     userId: user3._id,
     groupId: user3.groupId,
     clothes: [],
@@ -86,8 +90,10 @@ const seedBaskets = async (
 
   const b1 = await addBasket(basket1);
   const b2 = await addBasket(basket2);
+  const ba = await addBasket(basketA);
+  const bb = await addBasket(basketB);
 
-  return { b1, b2 };
+  return { b1, b2, ba, bb };
 };
 
 module.exports = { seedBaskets };

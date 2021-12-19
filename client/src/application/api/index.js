@@ -110,13 +110,7 @@ export const getBasket = (id, { userId, groupId }) => {
 };
 
 export const postBasket = (data) => {
-  const newBasket = {
-    name: data.name,
-    size: data.size,
-    userId: data.userId,
-    groupId: data.groupId,
-  };
-  return axiosPost(POST_BASKET, newBasket);
+  return axiosPost(POST_BASKET, data);
 };
 
 export const putBasket = (id, data) => {

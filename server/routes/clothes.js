@@ -15,19 +15,16 @@ const { QueryError, ValidationError, HttpError } = require('../utils/errors');
 //add clothes
 router.post('/', async (req, res, next) => {
   try {
-    // const { name, type, size } = req.body;
-    // const { _id: userId = '61b91631d36271f9dc9b9bc4', groupId = '61b91631d36271f9dc9b9bc7' } =
-    //   req.session.user || {};
     const { name, type, userId, groupId } = req.body;
-    const size = parseInt(req.body.size);
+    const weight = parseInt(req.body.weight);
 
     assertIsValuedString(userId, 'User Id');
     assertIsValuedString(groupId, 'Group Id');
     assertIsValuedString(name, 'Cloth name');
     assertIsValuedString(type, 'Type');
-    assertRequiredNumber(size, 'Size');
+    assertRequiredNumber(weight, 'Weight');
 
-    const result = await clothesData.addCloth({ name, type, size, userId, groupId });
+    const result = await clothesData.addCloth({ name, type, weight, userId, groupId });
     if (!result) {
       throw new HttpError(`Could not add cloth for id`, 404);
     }
@@ -148,10 +145,7 @@ router.delete('/', async (req, res, next) => {
 router.put('/:id', async (req, res, next) => {
   try {
     const { id: clothId } = req.params;
-    // const { _id: userId = '61b91631d36271f9dc9b9bc4', groupId = '61b91631d36271f9dc9b9bc7' } =
-    //   req.session.user || {};
-    // const { name, type, size } = req.body;
-    const { name, type, size, userId, groupId } = req.body;
+    const { name, type, weight, userId, groupId } = req.body;
     assertIsValuedString(userId, 'User Id');
     assertIsValuedString(groupId, 'Group Id');
     const result = await clothesData.updateCloth(clothId, {
@@ -159,7 +153,7 @@ router.put('/:id', async (req, res, next) => {
       groupId,
       name,
       type,
-      size,
+      weight,
     });
     if (!result) {
       throw new HttpError(`Could not update cloth for cloth id:${clothId}`, 404);
