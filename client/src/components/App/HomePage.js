@@ -7,15 +7,12 @@ const HomePage = () => {
   const { currentUser } = useContext(AuthContext);
 
   return (
-    <Container
-      align="center"
-      sx={{ margin: 5, gap: 5, padding: 5, justifyContent: 'center' }}
-    >
+    <Container sx={{ margin: 5, gap: 5, padding: 5, justifyContent: 'center' }}>
       <Typography variant="h1" component="h1" gutterBottom>
         Welcome to <strong>WashTastic</strong>
       </Typography>
 
-      <Container align="left">
+      <Container>
         CS 554 Web Programing 2 - (Final Project Submission)
         <br /> Contributors <hr />
         <ul>

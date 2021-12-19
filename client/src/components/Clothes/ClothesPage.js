@@ -30,7 +30,6 @@ const clothesColumns = [
   {
     field: 'weight',
     label: 'Weight',
-    align: 'right',
   },
   {
     field: 'status',

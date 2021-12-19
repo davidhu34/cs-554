@@ -132,48 +132,41 @@ const Group = () => {
   if (currentUser.groupId !== null && group) {
     console.log(group);
     return (
-      <>
-        <Container align="center">
-          <Box sx={{ width: '100%', maxWidth: 500 }}>
-            {error && error ? (
-              <Alert variant="outlined" severity="error">
-                <AlertTitle>Error</AlertTitle>
-                {error}
-              </Alert>
-            ) : (
-              <></>
-            )}
-            <Typography
-              variant="h1"
-              component="h1"
-              color="primary"
-              gutterBottom
-            >
-              {group.name.toUpperCase()}
-            </Typography>
+      <Container>
+        <Box sx={{ width: '100%', maxWidth: 500 }}>
+          {error && error ? (
+            <Alert variant="outlined" severity="error">
+              <AlertTitle>Error</AlertTitle>
+              {error}
+            </Alert>
+          ) : (
+            <></>
+          )}
+          <Typography variant="h1" component="h1" color="primary" gutterBottom>
+            {group.name.toUpperCase()}
+          </Typography>
 
-            <Typography variant="h3" component="div">
-              Group Members
-            </Typography>
-            <hr />
-            {group.users.map((user) => (
-              <Container key={user._id}>
-                <Typography variant="h4" component="h2" align="left">
-                  {user.name}
-                </Typography>
-              </Container>
-            ))}
-            <hr />
-            <Button
-              variant="contained"
-              color="error"
-              onClick={() => leaveGroup(group._id)}
-            >
-              Leave Group - {group.name}
-            </Button>
-          </Box>
-        </Container>
-      </>
+          <Typography variant="h3" component="div">
+            Group Members
+          </Typography>
+          <hr />
+          {group.users.map((user) => (
+            <Container key={user._id}>
+              <Typography variant="h4" component="h2">
+                {user.name}
+              </Typography>
+            </Container>
+          ))}
+          <hr />
+          <Button
+            variant="contained"
+            color="error"
+            onClick={() => leaveGroup(group._id)}
+          >
+            Leave Group - {group.name}
+          </Button>
+        </Box>
+      </Container>
     );
   }
 
@@ -186,7 +179,6 @@ const Group = () => {
           <Typography
             variant="body1"
             component="h2"
-            align="center"
             sx={{ marginTop: 4, gap: 2, fontSize: 20, fontWeight: 'bold' }}
           >
             {' '}

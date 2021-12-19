@@ -1,15 +1,15 @@
-import { useContext, useState } from 'react';
-import { doSocialSignIn } from '../../application/firebase/firebaseFunctions';
-import { useNavigate, Navigate } from 'react-router-dom';
-import { AuthContext } from '../../application/firebase/auth';
-import { Container, Typography, Grid } from '@mui/material';
+import { useContext } from 'react';
+import { Navigate } from 'react-router-dom';
 
-import GoogleButton from 'react-google-button';
+import Button from '@mui/material/Button';
+import Container from '@mui/material/Container';
+import Typography from '@mui/material/Typography';
+
+import { AuthContext } from '../../application/firebase/auth';
+import { doSocialSignIn } from '../../application/firebase/firebaseFunctions';
 
 const SignUp = () => {
   const { currentUser } = useContext(AuthContext);
-  const navigate = useNavigate();
-
   if (currentUser) {
     return <Navigate to="/group" />;
   }
@@ -18,10 +18,6 @@ const SignUp = () => {
     try {
       await doSocialSignIn(provider);
       console.log('Signon current user:', currentUser);
-      // navigate('/');
-      if (currentUser) {
-        // navigate('/');
-      }
     } catch (error) {
       alert(JSON.stringify(error));
     }
@@ -29,22 +25,21 @@ const SignUp = () => {
 
   return (
     <Container>
-      <>
-        <Typography variant="h2" component="h1">
-          Welcome to WashTastic
-        </Typography>
-        <Typography variant="inherit">
-          To access the website, Please login to your google account.
-        </Typography>
-      </>
-      <>
-        <GoogleButton
-          onClick={() => {
-            socialSignOn('google');
-          }}
-          style={{ margin: 10 }}
-        />
-      </>
+      <Typography variant="h2" component="h1">
+        Welcome to WashTastic
+      </Typography>
+      <Typography variant="inherit">
+        To access the website, Please login to your google account.
+      </Typography>
+      <Button
+        variant="contained"
+        sx={{ margin: 10 }}
+        onClick={() => {
+          socialSignOn('google');
+        }}
+      >
+        Sign in with Google
+      </Button>
     </Container>
   );
 };

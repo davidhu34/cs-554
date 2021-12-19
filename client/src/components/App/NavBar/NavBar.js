@@ -85,9 +85,6 @@ export default function NavBar() {
           <Typography
             sx={{
               display: { xs: 'block', sm: 'none' },
-              align: 'center',
-              justifyContent: 'center',
-              marginLeft: 5,
             }}
           >
             WashTastic
@@ -102,7 +99,7 @@ export default function NavBar() {
               aria-haspopup="true"
               onClick={handleProfileMenuOpen}
               color="inherit"
-              sx={{ align: 'left', gap: 1 }}
+              sx={{ gap: 1 }}
             >
               {currentUser.name}
               <KeyboardArrowDownIcon />
