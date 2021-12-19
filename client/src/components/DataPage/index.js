@@ -22,6 +22,8 @@ import DataEdit from './DataEdit';
 import DataDelete from './DataDelete';
 import { createSearchParams } from 'react-router-dom';
 
+import { useLoginRedirect } from '../../application/hooks/utils';
+
 function DataRowItem({
   id,
   selected = false,
@@ -107,6 +109,8 @@ export default function DataList({
   const dispatch = useDispatch();
   const [selectedState, setSelectedState] = useState({});
 
+  useLoginRedirect();
+
   useEffect(() => {
     dispatch(fetchPaginationAction({ page: 0 }));
   }, [dispatch, fetchPaginationAction]);
@@ -150,7 +154,6 @@ export default function DataList({
     []
   );
 
-
   function handleDelete() {
     navigate({
       pathname: `${path}/delete`,
@@ -172,7 +175,7 @@ export default function DataList({
   const maxSelected = Math.min(idList.length, limit);
   return (
     <Container width="100%">
-      <Typography variant="h6" component="h1"  p={2} >
+      <Typography variant="h6" component="h1" p={2}>
         {title}
       </Typography>
       <TableToolbar
@@ -286,7 +289,6 @@ export default function DataList({
             />
           }
         />
-        
       </Routes>
     </Container>
   );

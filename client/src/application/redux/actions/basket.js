@@ -19,26 +19,30 @@ export const getBasketList = (options) => async (dispatch, getState) => {
     if (currentPagination.loading) {
       return;
     }
-    const newPagination = { ...currentPagination };
-    if (options.page !== undefined) {
-      newPagination.page = options.page;
-    }
-    if (options.limit !== undefined) {
-      newPagination.limit = options.limit;
-    }
-    options.groupId = groupId;
-    options.userId = userId;
+
+    const nextPage =
+      (options.page !== undefined ? options.page : currentPagination.page) || 0;
+    const nextLimit =
+      (options.limit !== undefined ? options.limit : currentPagination.limit) ||
+      DEFAULT_PAGINATION_LIMIT;
+    const apiOptions = {
+      groupId,
+      userId,
+      page: nextPage,
+      limit: nextLimit,
+    };
+
     dispatch({
       type: basketActionTypes.fetchListStart,
-      page: newPagination.page,
-      limit: newPagination.limit || DEFAULT_PAGINATION_LIMIT,
+      page: nextPage,
+      limit: nextLimit,
     });
     const {
       data,
-      limit = newPagination.limit,
-      skip = newPagination.page * limit,
+      limit = nextLimit,
+      skip = nextPage * nextLimit,
       total,
-    } = await getPaginatedBasket(options);
+    } = await getPaginatedBasket(apiOptions);
     dispatch({
       type: basketActionTypes.fetchListSuccess,
       data,

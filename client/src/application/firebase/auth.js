@@ -5,7 +5,6 @@ import { useDispatch } from 'react-redux';
 
 import { setUser as setUserAction } from '../../application/redux/actions/user';
 
-
 export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   let userExist;

@@ -86,7 +86,7 @@ const updateGroup = async (id, updates) => {
   let { name, users } = updates;
 
   assertRequiredString(name, "Group name");
-  assertNonEmptyArray(users, "Users");
+  // assertNonEmptyArray(users, "Users");
 
   const group = await getGroup(id);
 

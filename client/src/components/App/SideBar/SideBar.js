@@ -23,10 +23,10 @@ const navConfigs = [
     icon: 'shopping_basket',
   },
   {
-    key: 'tasks',
-    text: 'Tasks',
-    to: '/tasks',
-    icon: 'local_laundry_service',
+    key: 'group',
+    text: 'Group',
+    to: '/group',
+    icon: 'group',
   },
 ];
 
