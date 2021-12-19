@@ -15,9 +15,6 @@ const { HttpError, ValidationError } = require('../utils/errors');
 //add basket
 router.post('/', async (req, res, next) => {
   try {
-    // const { _id: userId = '61b91631d36271f9dc9b9bc4', groupId = '61b91631d36271f9dc9b9bc7' } =
-    //   req.session.user || {};
-    // const { name, users, clothes = [], status = 'PENDING', time = 0 } = req.body;
     const { name, users, clothes = [], status = 'PENDING', time = 0, userId, groupId } = req.body;
     const weight = parseInt(req.body.weight);
 
@@ -69,8 +66,6 @@ router.post('/', async (req, res, next) => {
 
 router.get('/', async (req, res, next) => {
   try {
-    // const { _id: userId = '61b91631d36271f9dc9b9bc4', groupId = '61b91631d36271f9dc9b9bc7' } =
-    //   req.session.user || {};
     const { userId, groupId } = req.query;
     assertIsValuedString(userId, 'User Id');
     assertIsValuedString(groupId, 'Group Id');
@@ -89,8 +84,6 @@ router.get('/', async (req, res, next) => {
 
 router.get('/pending', async (req, res, next) => {
   try {
-    // const { _id: userId = '61b91631d36271f9dc9b9bc4', groupId = '61b91631d36271f9dc9b9bc7' } =
-    //   req.session.user || {};
     const { userId, groupId } = req.query;
     assertIsValuedString(userId, 'User Id');
     assertIsValuedString(groupId, 'Group Id');
@@ -104,8 +97,6 @@ router.get('/pending', async (req, res, next) => {
 //get basket by basketId
 router.get('/:id', async (req, res, next) => {
   try {
-    // const { _id: userId = '61b91631d36271f9dc9b9bc4', groupId = '61b91631d36271f9dc9b9bc7' } =
-    //   req.session.user || {};
     const { userId, groupId } = req.query;
     const { id } = req.params;
     assertIsValuedString(id, 'basket Id');
@@ -123,8 +114,6 @@ router.get('/:id', async (req, res, next) => {
 router.delete('/:id', async (req, res, next) => {
   try {
     const { id } = req.params;
-    // const { _id: userId = '61b91631d36271f9dc9b9bc4', groupId = '61b91631d36271f9dc9b9bc7' } =
-    //   req.session.user || {};
     const { userId, groupId } = req.body;
     const result = await basketsData.deleteBasket(userId, groupId, id);
     if (!result) {
@@ -184,9 +173,6 @@ router.put('/:id', async (req, res, next) => {
 router.patch('/:id/status', async (req, res, next) => {
   try {
     const { id: basketId } = req.params;
-    // const { _id: userId = '61b91631d36271f9dc9b9bc4', groupId = '61b91631d36271f9dc9b9bc7' } =
-    //   req.session.user || {};
-    // const { lastUpdateId, status } = req.body;
     const { lastUpdateId, status, userId, groupId } = req.body;
 
     const time = parseInt(req.body.time || 0);
@@ -242,9 +228,6 @@ router.patch('/:id/status', async (req, res, next) => {
 router.patch('/:id/clothes', async (req, res, next) => {
   try {
     const { id: basketId } = req.params;
-    // const { _id: userId = '61b91631d36271f9dc9b9bc4', groupId = '61b91631d36271f9dc9b9bc7' } =
-    //   req.session.user || {};
-    // const { clothesIdList = [], remove = false } = req.body;
     const { clothesIdList = [], remove = false, userId, groupId } = req.body;
     assertNonEmptyArray(clothesIdList);
     assertObjectIdString(userId, 'User ID');
