@@ -7,20 +7,13 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
+import { getNextStatus, getStatusName } from '../../application/constants/data';
+import { updateBasketStatus } from '../../application/redux/actions';
 import { updateBasketClothes } from '../../application/redux/actions/basket';
 import { fetchClothesLocations } from '../../application/redux/actions/clothesLocation';
 import { getBasketDetailSelector } from '../../application/redux/selectors';
-import { updateBasketStatus } from '../../application/redux/actions';
 
 import DataModal from '../DataPage/DataModal';
-
-const validNextStatus = {
-  PENDING: 'WASHING',
-  WASHING: 'WASHING_DONE',
-  WASHING_DONE: 'DRYING',
-  DRYING: 'DRYING_DONE',
-  DRYING_DONE: 'PENDING',
-};
 
 export default function BasketOperation() {
   const { id } = useParams();
@@ -32,13 +25,14 @@ export default function BasketOperation() {
     loading,
     error,
   } = useSelector(getBasketDetailSelector(id));
-  const { name = '', status = '' } = basket || {};
+  const { name = '', status = '', clothes = [] } = basket || {};
   const isEmpty = basket && basket.clothes && basket.clothes.length === 0;
-  const nextStatus = validNextStatus[status];
+  const nextStatus = getNextStatus(status);
   const canOperate =
     !isEmpty && (status === 'PENDING' || status === 'WASHING_DONE');
   const canReset = status === 'DRYING_DONE';
   const canClear = status === 'PENDING' && !isEmpty;
+  const isWorking = status === 'WASHING' || status === 'DRYING';
 
   const [taskTime, setTaskTime] = useState();
   const [taskTimeError, setTaskTimeError] = useState();
@@ -76,7 +70,7 @@ export default function BasketOperation() {
         await dispatch(fetchClothesLocations());
         goBack();
       } catch (error) {
-        console.log('error operating basket', error);
+        console.error('error operating basket', error);
       }
     }
   }
@@ -88,7 +82,7 @@ export default function BasketOperation() {
         await dispatch(fetchClothesLocations());
         goBack();
       } catch (error) {
-        console.log('error clearing basket', error);
+        console.error('error clearing basket', error);
       }
     }
   }
@@ -96,13 +90,18 @@ export default function BasketOperation() {
   return (
     <DataModal
       open
-      title={`${name} (${status})`}
+      title={`${name} (${getStatusName(status)})`}
       loading={loading}
       error={error?.message}
     >
       {isEmpty && (
         <Box>
           <Typography>Basket is empty</Typography>
+        </Box>
+      )}
+      {isWorking && (
+        <Box>
+          <Typography>{`Still ${getStatusName(status)} ${clothes.length} laundry items`}</Typography>
         </Box>
       )}
       {canOperate && (
@@ -159,7 +158,7 @@ export default function BasketOperation() {
       {canReset && (
         <Box sx={{ display: 'flex', flexDirection: 'row' }}>
           <Box>
-            <Typography>Remove of all clothes and set to pending</Typography>
+            <Typography>Clear basket of all clothes and set to pending</Typography>
           </Box>
           <Box>
             <Button

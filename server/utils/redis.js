@@ -20,7 +20,7 @@ const getClothesBasketLocation = async (clothes) => {
     );
     return Array.isArray(clothes) ? basketIdList : basketIdList[0];
   } catch (error) {
-    console.log(error);
+    console.error(error);
     throw error;
   }
 };
@@ -36,7 +36,7 @@ const setClothesBasketLocation = async (clothes, basketId) => {
     );
     return basketId;
   } catch (error) {
-    console.log(error);
+    console.error(error);
     throw error;
   }
 };
@@ -46,7 +46,7 @@ const getAllClothesBasketLocations = async () => {
     await prepareClient();
     return await client.hGetAll(CLOTHES_BASKET_LOCATION_KEY);
   } catch (error) {
-    console.log(error);
+    console.error(error);
     throw error;
   }
 };

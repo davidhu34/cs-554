@@ -26,3 +26,14 @@ export function useTaskTime({ start, end }) {
 
   return { timeLeft, progress };
 }
+
+export const getTimeLeftDisplay = (timeLeft) =>
+  timeLeft > 3600000
+    ? `> ${Math.floor(timeLeft / 3600000)} hour${
+        Math.floor(timeLeft / 3600000) === 1 ? '' : 's'
+      }`
+    : `${Math.floor(timeLeft / 60000)
+        .toString()
+        .padStart(2, '0')} : ${Math.floor((timeLeft / 1000) % 60)
+        .toString()
+        .padStart(2, '0')}`;

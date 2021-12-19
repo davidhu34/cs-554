@@ -6,9 +6,10 @@ import Tooltip from '@mui/material/Tooltip';
 import CircularProgress from '@mui/material/CircularProgress';
 import ErrorIcon from '@mui/icons-material/Error';
 
+import { getStatusName } from '../../application/constants/data';
 import { getBasketDetailSelector } from '../../application/redux/selectors';
-import { useClothesLocation } from '../../application/hooks/data';
 import { getBasketDetail } from '../../application/redux/actions/basket';
+import { useClothesLocation } from '../../application/hooks/data';
 
 export default function ClothesStatusCell({ clothes }) {
   const dispatch = useDispatch();
@@ -21,17 +22,20 @@ export default function ClothesStatusCell({ clothes }) {
   const basketData = useSelector(getBasketDetailSelector(basketId));
 
   useEffect(() => {
-    if (
-      basketId &&
-      (!basketData ||
-        (!basketData.data && !basketData.loading && !basketData.error))
-    ) {
-      try {
-        dispatch(getBasketDetail(basketId));
-      } catch (error) {
-        console.error('error fetching basket detail:', error);
+    async function fetchBasket() {
+      if (
+        basketId &&
+        (!basketData ||
+          (!basketData.data && !basketData.loading && !basketData.error))
+      ) {
+        try {
+          await dispatch(getBasketDetail(basketId));
+        } catch (error) {
+          console.error('error fetching basket detail:', error);
+        }
       }
     }
+    fetchBasket();
   }, [dispatch, basketId, basketData]);
 
   const {
@@ -63,7 +67,7 @@ export default function ClothesStatusCell({ clothes }) {
         <CircularProgress size="1rem" />
       )}
       {!basketError && !clothesLocationError && (
-        <>{basket ? `${basket.status} (${basket.name})` : '-'}</>
+        <>{basket ? `${getStatusName(basket.status)} (${basket.name})` : '-'}</>
       )}
     </>
   );

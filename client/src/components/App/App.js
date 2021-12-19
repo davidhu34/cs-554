@@ -1,33 +1,29 @@
-import React, { useContext, useEffect } from 'react';
-import { Route, Routes, useNavigate } from 'react-router-dom';
-import { AuthContext } from '../../application/firebase/auth';
+import React, { useContext } from 'react';
+import { Route, Routes } from 'react-router-dom';
+
 import Box from '@mui/system/Box';
 import { useMediaQuery, useTheme } from '@mui/material';
+
+import { AuthContext } from '../../application/firebase/auth';
+import { useBasketMonitor } from '../../application/hooks/data';
+import Clothes from '../Clothes';
+import Basket from '../Basket';
+import { Group } from '../Group';
+import Task from '../Task';
+import { SignUp } from '../Users';
+
 import NoPageFound from './NoPageFound';
 import HomePage from './HomePage';
-import ClothesPage from '../Clothes';
-import BasketPage from '../Basket';
-import { SignUp, SignOut } from '../Users';
-import { Group } from '../Group';
 import NavBar from './NavBar';
 import SideBar from './SideBar';
-import { useBasketMonitor } from '../../application/hooks/data';
 import ProtectedRoute from './ProtectedRoute';
+
 export default function App() {
-  const navigate = useNavigate();
   const { currentUser } = useContext(AuthContext);
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up('sm'));
 
-  // TODO: get group ID as message topic
-  // useGroupTopic({ groupId: 'abc', onMessage });
   useBasketMonitor();
-
-  //   useEffect(() => {
-  //     if (!currentUser) {
-  //       navigate('/login');
-  //   }
-  // },[])
 
   return (
     <Box
@@ -54,12 +50,11 @@ export default function App() {
           <Route path="/" element={<HomePage />} />
 
           <Route path="/login" element={<SignUp />} />
-          {/* <Route path="/logout" element={<SignOut />} /> */}
           <Route
             path="/clothes/*"
             element={
               <ProtectedRoute>
-                <ClothesPage />
+                <Clothes />
               </ProtectedRoute>
             }
           />
@@ -67,7 +62,15 @@ export default function App() {
             path="/baskets/*"
             element={
               <ProtectedRoute>
-                <BasketPage />
+                <Basket />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/tasks/*"
+            element={
+              <ProtectedRoute>
+                <Task />
               </ProtectedRoute>
             }
           />

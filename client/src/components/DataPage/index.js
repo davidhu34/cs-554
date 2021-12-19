@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Route, Routes, useNavigate } from 'react-router';
 
@@ -21,8 +21,6 @@ import DataCreate from './DataCreate';
 import DataEdit from './DataEdit';
 import DataDelete from './DataDelete';
 import { createSearchParams } from 'react-router-dom';
-
-import { useLoginRedirect } from '../../application/hooks/utils';
 
 function DataRowItem({
   id,
@@ -109,20 +107,29 @@ export default function DataList({
   const dispatch = useDispatch();
   const [selectedState, setSelectedState] = useState({});
 
-  useLoginRedirect();
+  const fetchPaginate = useCallback(
+    async (options) => {
+      try {
+        await dispatch(fetchPaginationAction(options));
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    [dispatch, fetchPaginationAction]
+  );
 
   useEffect(() => {
-    dispatch(fetchPaginationAction({ page: 0 }));
-  }, [dispatch, fetchPaginationAction]);
+    fetchPaginate({ page: 0 });
+  }, [fetchPaginate]);
 
-  function handleChangePage(_, newPage) {
-    dispatch(fetchPaginationAction({ page: newPage }));
+  async function handleChangePage(_, newPage) {
+    await fetchPaginate({ page: newPage });
     setSelectedState({});
   }
 
-  function handleChangeLimit(e) {
+  async function handleChangeLimit(e) {
     const newLimit = parseInt(e.target.value, 10);
-    dispatch(fetchPaginationAction({ page: 0, limit: newLimit }));
+    await fetchPaginate({ page: 0, limit: newLimit });
   }
 
   function handleSelectItem(id) {

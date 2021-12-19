@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LocalLaundryServiceIcon from '@mui/icons-material/LocalLaundryService';
 
+import { getStatusName } from '../../application/constants/data';
+import { useClothesLocation } from '../../application/hooks/data';
 import {
   createBasket,
   deleteBasket,
+  getBasketDetail,
   getBasketList,
   updateBasket,
 } from '../../application/redux/actions';
@@ -18,43 +21,7 @@ import TimeProgressCell from '../TaskProgress/TimeProgressCell';
 
 import BasketOperation from './BasketOperation';
 import BasketClothesCell from './BasketClothesCell';
-import { useSelector } from 'react-redux';
-import { useClothesLocation } from '../../application/hooks/data';
-
-const basketColumns = [
-  {
-    field: 'name',
-    label: 'Name',
-  },
-  {
-    field: 'status',
-    label: 'Status',
-  },
-  {
-    field: 'time',
-    label: 'Task time',
-    render(_, data) {
-      const { createdAt, time } = data.history[data.history.length - 1];
-      return (
-        <TimeProgressCell start={createdAt} end={createdAt + (time || 0)} />
-      );
-    },
-  },
-  {
-    field: 'weight',
-    label: 'Weight',
-    render(weight, data) {
-      return `${data.currentWeight} / ${weight}`;
-    },
-  },
-  {
-    field: 'clothes',
-    label: 'Clothes',
-    render(clothes, data) {
-      return <BasketClothesCell clothesIdList={clothes} />;
-    },
-  },
-];
+import { useDispatch } from 'react-redux';
 
 const basketFormConfigs = [
   {
@@ -75,14 +42,16 @@ const basketFormConfigs = [
 ];
 
 export default function BasketPage() {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const {
     data: clothesLocation = {},
     loading: clothesLocationLoading,
     error: clothesLocationError,
   } = useClothesLocation();
 
-  function handleClearBasket(selectedList) {
+  function handleOperateBasket(selectedList) {
     navigate(`/baskets/${selectedList[0]}/operate`);
   }
 
@@ -101,9 +70,60 @@ export default function BasketPage() {
       : '';
   }
 
+  const refreshBasket = useCallback(
+    (id) => dispatch(getBasketDetail(id)),
+    [dispatch]
+  );
+
+  const basketColumns = useMemo(
+    () => [
+      {
+        field: 'name',
+        label: 'Name',
+      },
+      {
+        field: 'status',
+        label: 'Status',
+        render: getStatusName,
+      },
+      {
+        field: 'time',
+        label: 'Task time',
+        render(_, data) {
+          const { createdAt, time } = data.history[data.history.length - 1];
+          function handleFresh() {
+            refreshBasket(data._id);
+          }
+          return (
+            <TimeProgressCell
+              start={createdAt}
+              end={createdAt + (time || 0)}
+              refresh={handleFresh}
+            />
+          );
+        },
+      },
+      {
+        field: 'weight',
+        label: 'Weight',
+        render(weight, data) {
+          return `${data.currentWeight} / ${weight}`;
+        },
+      },
+      {
+        field: 'clothes',
+        label: 'Clothes',
+        render(clothes, data) {
+          return <BasketClothesCell clothesIdList={clothes} />;
+        },
+      },
+    ],
+    [refreshBasket]
+  );
+
   return (
     <DataPage
-      title="Baskets"
+      title="Laundry Baskets"
       path="/baskets"
       columns={basketColumns}
       paginationSelector={basketPaginationSelector}
@@ -127,7 +147,7 @@ export default function BasketPage() {
           },
           onClick(e, selectedList) {
             e.preventDefault();
-            handleClearBasket(selectedList);
+            handleOperateBasket(selectedList);
           },
         },
       ]}

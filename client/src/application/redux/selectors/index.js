@@ -8,8 +8,14 @@ const genPagingationSelector = (dataStateSelector) =>
     };
   });
 
+const genStateByIdSelector = (dataStateSelector) =>
+  createSelector(dataStateSelector, ({ stateById }) => stateById);
+
 const genGetDetailSelector = (dataStateSelector) => (id) =>
-  createSelector(dataStateSelector, ({ stateById }) => stateById[id] || {});
+  createSelector(
+    genStateByIdSelector(dataStateSelector),
+    (stateById) => stateById[id] || {}
+  );
 
 export const clothesStateSelector = (state) => state.clothes;
 
@@ -28,3 +34,11 @@ export const getBasketDetailSelector =
   genGetDetailSelector(basketStateSelector);
 
 export const userSelector = (state) => state.user;
+
+export const paginatedBasketsSelector = createSelector(
+  [basketPaginationSelector, genStateByIdSelector(basketStateSelector)],
+  (pagination, stateById) => ({
+    ...pagination,
+    data: pagination.idList.map((id) => stateById[id]), //.filter(data => data),
+  })
+);
