@@ -1,4 +1,6 @@
-import { useContext } from 'react';
+import React from 'react';
+import { useNavigate } from 'react-router';
+
 import Icon from '@mui/material/Icon';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -6,32 +8,40 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
-import { useNavigate } from 'react-router';
-import { AuthContext } from '../../../application/firebase/auth';
-import ProtectedRoute from '../ProtectedRoute';
+
+import CheckroomIcon from '@mui/icons-material/Checkroom';
+import GroupIcon from '@mui/icons-material/Group';
+import LocalLaundryService from '@mui/icons-material/LocalLaundryService';
+import ShoppingBasket from '@mui/icons-material/ShoppingBasket';
+
 const navConfigs = [
   {
     key: 'clothes',
     text: 'Clothes',
     to: '/clothes',
-    icon: 'horizontal_split',
+    icon: <CheckroomIcon />,
   },
   {
     key: 'baskets',
     text: 'Baskets',
     to: '/baskets',
-    icon: 'shopping_basket',
+    icon: <ShoppingBasket />,
   },
   {
     key: 'group',
     text: 'Group',
     to: '/group',
-    icon: 'group',
+    icon: <GroupIcon />,
+  },
+  {
+    key: 'tasks',
+    text: 'Tasks',
+    to: '/tasks',
+    icon: <LocalLaundryService />,
   },
 ];
 
 export default function SideBar() {
-  const { currentUser } = useContext(AuthContext);
   const navigate = useNavigate();
 
   return (
@@ -42,7 +52,6 @@ export default function SideBar() {
       <List>
         {navConfigs.map(({ key, icon, text, to }) => {
           return (
-            // <ProtectedRoute>
             <ListItemButton
               key={key}
               onClick={() => {
@@ -54,7 +63,6 @@ export default function SideBar() {
               </ListItemIcon>
               <ListItemText>{text}</ListItemText>
             </ListItemButton>
-            // </ProtectedRoute>
           );
         })}
       </List>
