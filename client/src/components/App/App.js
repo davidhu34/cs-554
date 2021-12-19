@@ -37,7 +37,6 @@ export default function App() {
       {matches && currentUser && currentUser.groupId && <SideBar />}
       <Box sx={{ flexGrow: 1 }}>
         {currentUser && <NavBar />}
-        {/* <NavBar /> */}
         <Routes>
           <Route
             path="/group"

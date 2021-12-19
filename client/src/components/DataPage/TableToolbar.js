@@ -56,11 +56,6 @@ export default function TableToolbar({
           : hidden);
         return (
           showAction && (
-            // <Tooltip key={`custom_action-${title}-${i}`} title={title}>
-            //   <IconButton onClick={(e) => onClick(e, selectedList)}>
-            //     {icon}
-            //   </IconButton>
-            // </Tooltip>
             <Button
               key={`custom_action-${title}-${i}`}
               startIcon={icon}
