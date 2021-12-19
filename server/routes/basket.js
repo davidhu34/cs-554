@@ -153,6 +153,12 @@ router.delete('/:id', async (req, res, next) => {
 router.put('/:id', async (req, res, next) => {
   try {
     const { id: basketId } = req.params;
+    const isBasketEditable = await basketsData.isBasketEditable(basketId);
+
+    if (!isBasketEditable) {
+      throw new ValidationError(`Could not edit basket for id:${basketId}`, 404);
+    }
+
     const { name, weight, users, clothes, status, time, userId, groupId } = req.body;
     assertIsValuedString(userId, 'User Id');
     const result = await basketsData.updateBasket(basketId, {

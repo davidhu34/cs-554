@@ -145,6 +145,13 @@ router.delete('/', async (req, res, next) => {
 router.put('/:id', async (req, res, next) => {
   try {
     const { id: clothId } = req.params;
+
+    const isClothesEditable = await clothesData.isClothesEditable(clothId);
+
+    if (!isClothesEditable) {
+      throw new ValidationError(`Could not edit cloth for id:${clothId}`, 404);
+    }
+
     const { name, type, weight, userId, groupId } = req.body;
     assertIsValuedString(userId, 'User Id');
     assertIsValuedString(groupId, 'Group Id');

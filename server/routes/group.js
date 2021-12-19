@@ -1,8 +1,8 @@
 const { Router } = require("express");
 const router = Router();
-const groupsData = require("../data/group");
-const usersData = require("../data/user");
-const basketsData = require("../data/basket");
+const groupsData = require('../data/group');
+const usersData = require('../data/user');
+const clothesData = require('../data/clothes');
 
 const {
   assertObjectIdString,
@@ -144,13 +144,12 @@ router.post("/user/:id", async (req, res, next) => {
       throw new HttpError(`Could not get user for user id: ${user._id}`, 404);
     }
 
-    const isClothPresent = await basketsData.getClothFromBasketByUserId(
-      user._id
-    );
+    const isClothPresent = await clothesData.isUserOperating(user._id);
+
     if (isClothPresent) {
       throw new HttpError(
         `Please remove all the clothes from basket to exit out from the group`
-      );
+        , 400);
     }
 
     user.groupId = null;
