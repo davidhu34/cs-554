@@ -148,6 +148,7 @@ const getBasketByGroupId = async ({ userId, groupId, skip, limit }) => {
 
   const data = await collection
     .find({ groupId: new ObjectId(groupId) })
+    .sort({ updatedAt: -1 })
     .limit(limit)
     .skip(skip)
     .toArray();
@@ -223,6 +224,7 @@ const updateBasket = async (id, data) => {
   assertObjectIdString(userId, 'Basket added by user ID');
   assertIsValuedString(name, 'Basket name');
   assertIsValuedString(groupId, 'Group Id');
+  assertRequiredNumber(weight, 'Basket max weight');
 
   let previousBasket = await getByObjectId(id);
 

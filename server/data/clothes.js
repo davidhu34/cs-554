@@ -13,7 +13,11 @@ const {
 const usersData = require('./user');
 const { getGroup } = require('./group');
 
-const { getAllClothesBasketLocations, setClothesBasketLocation, getClothesBasketLocation } = require('../utils/redis');
+const {
+  getAllClothesBasketLocations,
+  setClothesBasketLocation,
+  getClothesBasketLocation,
+} = require('../utils/redis');
 
 const getByObjectId = async (objectId) => {
   const collection = await getClothesCollection();
@@ -41,6 +45,7 @@ const getClothByGroupId = async ({ userId, groupId, skip, limit }) => {
   const collection = await getClothesCollection();
   const data = await collection
     .find({ groupId: new ObjectId(groupId) })
+    .sort({ updatedAt: -1 })
     .limit(limit)
     .skip(skip)
     .toArray();
@@ -142,7 +147,7 @@ const getOwnedCloth = async (userId, clothId) => {
   }
 
   return cloth;
-}
+};
 
 const updateCloth = async (clothId, data) => {
   assertRequiredObject(data);
@@ -171,6 +176,7 @@ const updateCloth = async (clothId, data) => {
     updatedAt: new Date().getTime(),
     updatedBy: new ObjectId(userId),
   };
+  delete newUpdate['_id'];
 
   const collection = await getClothesCollection();
   const { modifiedCount, matchedCount } = await collection.updateOne(idQuery(clothId), {
