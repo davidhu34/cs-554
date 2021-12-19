@@ -242,7 +242,7 @@ const isClothesEditable = async (clothesId) => {
 
 const isUserOperating = async (userId) => {
   assertObjectIdString(userId, 'User ID');
-  const clothes = await getClothesByUserId(userId);
+  const clothes = await getClothesByUserId({userId: userId});
   return (await Promise.all(clothes.map(({ _id }) => isClothesEditable(_id)))).some(
     (editable) => !editable
   );

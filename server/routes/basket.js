@@ -153,6 +153,11 @@ router.delete('/:id', async (req, res, next) => {
 router.put('/:id', async (req, res, next) => {
   try {
     const { id: basketId } = req.params;
+    const isBasketEditable = await basketsData.isBasketEditable(basketId);
+
+    if (!isBasketEditable) {
+      throw new ValidationError(`Could not edit basket for id:${basketId}`, 404);
+    }
     // const { _id: userId = '61b91631d36271f9dc9b9bc4', groupId = '61b91631d36271f9dc9b9bc7' } =
     //   req.session.user || {};
     // const { name, size, users, clothes, status, time } = req.body;

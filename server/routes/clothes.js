@@ -148,6 +148,12 @@ router.delete('/', async (req, res, next) => {
 router.put('/:id', async (req, res, next) => {
   try {
     const { id: clothId } = req.params;
+
+    const isClothesEditable = await clothesData.isClothesEditable(clothId);
+
+    if (!isClothesEditable) {
+      throw new ValidationError(`Could not edit cloth for id:${clothId}`, 404);
+    }
     // const { _id: userId = '61b91631d36271f9dc9b9bc4', groupId = '61b91631d36271f9dc9b9bc7' } =
     //   req.session.user || {};
     // const { name, type, size } = req.body;
