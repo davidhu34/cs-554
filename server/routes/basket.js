@@ -190,6 +190,17 @@ router.patch('/:id/status', async (req, res, next) => {
       throw new HttpError(`Could not update basket for basket id:${id}`, 400);
     }
 
+    const messageResponse = await messaging.send({
+      data: {
+        type: 'BASKET_STATUS',
+        basketId,
+        message: `Basket ${result.name} updated to ${result.status}`,
+        status: result.status,
+      },
+      topic: groupId,
+    });
+    console.log('basket status messaging response:', messageResponse);
+
     const nextAutoStatus = getNextBasketStatus(result.status);
 
     if (nextAutoStatus === 'WASHING_DONE' || nextAutoStatus === 'DRYING_DONE') {
@@ -242,6 +253,18 @@ router.patch('/:id/clothes', async (req, res, next) => {
     if (!result) {
       throw new HttpError(`Could not update basket for basket id:${id}`, 400);
     }
+  
+    const messageResponse = await messaging.send({
+      data: {
+        type: 'BASKET_STATUS',
+        basketId,
+        message: `Basket ${result.name} clothes updated`,
+        status: result.status,
+      },
+      topic: groupId,
+    });
+    console.log('basket clothes update messaging response:', messageResponse);
+  
     res.status(200).json(result);
   } catch (error) {
     next(error);
