@@ -40,8 +40,9 @@ const Group = () => {
           setLoading(false);
         }
       } catch (error) {
-        console.error(error);
-        setError('Error while FEtching Group List');
+        console.error('Error fetching Group List', error);
+        setError(error);
+        setLoading(false);
       }
     }
     fetchGroup();
@@ -62,7 +63,8 @@ const Group = () => {
           setLoading(false);
         }
       } catch (error) {
-        console.log('group Fetch Error', error);
+        console.error('Error fetching Group', error);
+        setError(error);
         setLoading(false);
       }
     }
@@ -85,7 +87,8 @@ const Group = () => {
       dispatch(setUser(updated[0]));
       setLoading(false);
     } catch (error) {
-      console.log('Join Group Error', error);
+      console.error('Error joining group', error);
+      setError(error);
       setLoading(false);
     }
     setLoading(false);
@@ -104,7 +107,8 @@ const Group = () => {
       setLoading(false);
       console.log('Data after user leave the group', data);
     } catch (error) {
-      setError('Error While Leaving Group');
+      console.error('Error leaving group', error);
+      setError(error);
       setLoading(false);
     }
   }
@@ -116,13 +120,11 @@ const Group = () => {
     return (
       <Container>
         <Box sx={{ width: '100%', maxWidth: 500 }}>
-          {error && error ? (
+          {error && (
             <Alert variant="outlined" severity="error">
               <AlertTitle>Error</AlertTitle>
-              {error}
+              {typeof error === 'string' ? error : (error?.message || 'Error getting group data')}
             </Alert>
-          ) : (
-            <></>
           )}
           <Typography variant="h1" component="h1" color="primary" gutterBottom>
             {group.name.toUpperCase()}
