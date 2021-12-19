@@ -69,7 +69,7 @@ export default function BasketOperation() {
         await dispatch(fetchClothesLocations());
         goBack();
       } catch (error) {
-        console.log('error operating basket', error);
+        console.error('error operating basket', error);
       }
     }
   }
@@ -81,7 +81,7 @@ export default function BasketOperation() {
         await dispatch(fetchClothesLocations());
         goBack();
       } catch (error) {
-        console.log('error clearing basket', error);
+        console.error('error clearing basket', error);
       }
     }
   }

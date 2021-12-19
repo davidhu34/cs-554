@@ -31,7 +31,7 @@ const GroupForm = (props) => {
       console.log('Counter:', i);
     } catch (e) {
       setErrorDB('Group Already Exist');
-      console.log(errorDB);
+      console.error(errorDB);
     }
   };
   return (

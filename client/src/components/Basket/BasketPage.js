@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LocalLaundryServiceIcon from '@mui/icons-material/LocalLaundryService';
 
@@ -7,6 +7,7 @@ import { useClothesLocation } from '../../application/hooks/data';
 import {
   createBasket,
   deleteBasket,
+  getBasketDetail,
   getBasketList,
   updateBasket,
 } from '../../application/redux/actions';
@@ -20,42 +21,7 @@ import TimeProgressCell from '../TaskProgress/TimeProgressCell';
 
 import BasketOperation from './BasketOperation';
 import BasketClothesCell from './BasketClothesCell';
-
-const basketColumns = [
-  {
-    field: 'name',
-    label: 'Name',
-  },
-  {
-    field: 'status',
-    label: 'Status',
-    render: getStatusName,
-  },
-  {
-    field: 'time',
-    label: 'Task time',
-    render(_, data) {
-      const { createdAt, time } = data.history[data.history.length - 1];
-      return (
-        <TimeProgressCell start={createdAt} end={createdAt + (time || 0)} />
-      );
-    },
-  },
-  {
-    field: 'weight',
-    label: 'Weight',
-    render(weight, data) {
-      return `${data.currentWeight} / ${weight}`;
-    },
-  },
-  {
-    field: 'clothes',
-    label: 'Clothes',
-    render(clothes, data) {
-      return <BasketClothesCell clothesIdList={clothes} />;
-    },
-  },
-];
+import { useDispatch } from 'react-redux';
 
 const basketFormConfigs = [
   {
@@ -76,7 +42,9 @@ const basketFormConfigs = [
 ];
 
 export default function BasketPage() {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const {
     data: clothesLocation = {},
     loading: clothesLocationLoading,
@@ -101,6 +69,57 @@ export default function BasketPage() {
       ? 'Cannot delete when basket is not empty'
       : '';
   }
+
+  const refreshBasket = useCallback(
+    (id) => dispatch(getBasketDetail(id)),
+    [dispatch]
+  );
+
+  const basketColumns = useMemo(
+    () => [
+      {
+        field: 'name',
+        label: 'Name',
+      },
+      {
+        field: 'status',
+        label: 'Status',
+        render: getStatusName,
+      },
+      {
+        field: 'time',
+        label: 'Task time',
+        render(_, data) {
+          const { createdAt, time } = data.history[data.history.length - 1];
+          function handleFresh() {
+            refreshBasket(data._id);
+          }
+          return (
+            <TimeProgressCell
+              start={createdAt}
+              end={createdAt + (time || 0)}
+              refresh={handleFresh}
+            />
+          );
+        },
+      },
+      {
+        field: 'weight',
+        label: 'Weight',
+        render(weight, data) {
+          return `${data.currentWeight} / ${weight}`;
+        },
+      },
+      {
+        field: 'clothes',
+        label: 'Clothes',
+        render(clothes, data) {
+          return <BasketClothesCell clothesIdList={clothes} />;
+        },
+      },
+    ],
+    [refreshBasket]
+  );
 
   return (
     <DataPage

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Route, Routes, useNavigate } from 'react-router';
 
@@ -107,18 +107,29 @@ export default function DataList({
   const dispatch = useDispatch();
   const [selectedState, setSelectedState] = useState({});
 
-  useEffect(() => {
-    dispatch(fetchPaginationAction({ page: 0 }));
-  }, [dispatch, fetchPaginationAction]);
+  const fetchPaginate = useCallback(
+    async (options) => {
+      try {
+        await dispatch(fetchPaginationAction(options));
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    [dispatch, fetchPaginationAction]
+  );
 
-  function handleChangePage(_, newPage) {
-    dispatch(fetchPaginationAction({ page: newPage }));
+  useEffect(() => {
+    fetchPaginate({ page: 0 });
+  }, [fetchPaginate]);
+
+  async function handleChangePage(_, newPage) {
+    await fetchPaginate({ page: newPage });
     setSelectedState({});
   }
 
-  function handleChangeLimit(e) {
+  async function handleChangeLimit(e) {
     const newLimit = parseInt(e.target.value, 10);
-    dispatch(fetchPaginationAction({ page: 0, limit: newLimit }));
+    await fetchPaginate({ page: 0, limit: newLimit });
   }
 
   function handleSelectItem(id) {
@@ -150,7 +161,6 @@ export default function DataList({
     []
   );
 
-
   function handleDelete() {
     navigate({
       pathname: `${path}/delete`,
@@ -172,7 +182,7 @@ export default function DataList({
   const maxSelected = Math.min(idList.length, limit);
   return (
     <Container width="100%">
-      <Typography variant="h6" component="h1"  p={2} >
+      <Typography variant="h6" component="h1" p={2}>
         {title}
       </Typography>
       <TableToolbar
@@ -286,7 +296,6 @@ export default function DataList({
             />
           }
         />
-        
       </Routes>
     </Container>
   );

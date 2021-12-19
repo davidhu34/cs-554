@@ -26,7 +26,7 @@ export default function DataEdit({
       await dispatch(updateAction(id, formData));
       navigate(-1);
     } catch(error) {
-      console.log('error editing data:', error);
+      console.error('error editing data:', error);
     }
   }
 

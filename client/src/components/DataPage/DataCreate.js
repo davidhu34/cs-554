@@ -22,7 +22,7 @@ export default function DataCreate({
       dispatch(fetchPaginationAction({ page: 0 }));
       navigate(-1);
     } catch (error) {
-      console.log('error creating data:', error);
+      console.error('error creating data:', error);
     }
   }
 

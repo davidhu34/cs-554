@@ -22,17 +22,20 @@ export default function ClothesStatusCell({ clothes }) {
   const basketData = useSelector(getBasketDetailSelector(basketId));
 
   useEffect(() => {
-    if (
-      basketId &&
-      (!basketData ||
-        (!basketData.data && !basketData.loading && !basketData.error))
-    ) {
-      try {
-        dispatch(getBasketDetail(basketId));
-      } catch (error) {
-        console.error('error fetching basket detail:', error);
+    async function fetchBasket() {
+      if (
+        basketId &&
+        (!basketData ||
+          (!basketData.data && !basketData.loading && !basketData.error))
+      ) {
+        try {
+          await dispatch(getBasketDetail(basketId));
+        } catch (error) {
+          console.error('error fetching basket detail:', error);
+        }
       }
     }
+    fetchBasket();
   }, [dispatch, basketId, basketData]);
 
   const {
