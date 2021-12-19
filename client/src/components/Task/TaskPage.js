@@ -1,7 +1,9 @@
 import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useNavigate } from 'react-router-dom';
 
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 
 import { paginatedBasketsSelector } from '../../application/redux/selectors';
@@ -13,6 +15,7 @@ import TaskSeries from './TaskSeries';
 
 export default function TaskPage() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const {
     data: recentBasketDataList,
@@ -51,9 +54,13 @@ export default function TaskPage() {
     };
   }, [recentBasketDataList]);
 
+  function handleSeeMore() {
+    navigate('/baskets');
+  }
+
   return (
-    <>
-      <Typography variant="h6" component="h1" p={2}>
+    <Box sx={{ padding: 2 }}>
+      <Typography variant="h6" component="h1">
         Laundry Tasks
       </Typography>
       {error && <>{error?.message || 'error'}</>}
@@ -64,9 +71,12 @@ export default function TaskPage() {
           <TaskSeries title="Actions Required" tasks={finishedBasketList} />
         </>
       )}
+      <Button variant="text" onClick={handleSeeMore}>
+        See all baskets
+      </Button>
       <Routes>
         <Route path="/:id/operate" element={<BasketOperation />} />
       </Routes>
-    </>
+    </Box>
   );
 }

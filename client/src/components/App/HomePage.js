@@ -30,10 +30,16 @@ const HomePage = () => {
             Login to Enter
           </Button>
         )}
-        {currentUser && currentUser && (
+        {currentUser && !currentUser.groupId && (
           <Button variant="contained" onClick={() => navigate('/group')}>
             {' '}
-            Groups
+            Join a Group
+          </Button>
+        )}
+        {currentUser && currentUser.groupId &&  (
+          <Button variant="contained" onClick={() => navigate('/tasks')}>
+            {' '}
+            Check out current laundry tasks
           </Button>
         )}
       </Container>
