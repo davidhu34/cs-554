@@ -179,7 +179,7 @@ const Group = () => {
 
   if (currentUser && currentUser.groupId === null) {
     return (
-      <Container align="Center" sx={{ margin: 2, gap: 2 }}>
+      <Container sx={{ margin: 2, gap: 2 }}>
         {/* {currentUser.groupId !== null ? <></> : <GroupForm />} */}
         <GroupForm />
         <Box sx={{ width: '100%', maxWidth: 360 }}>

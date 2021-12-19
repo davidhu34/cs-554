@@ -109,7 +109,6 @@ export default function DataForm({
                   <Box sx={{ margin: 2 }}>
                     <TextField
                       fullWidth
-                      m={4}
                       error={!!error}
                       helperText={error?.message}
                       label={label}
