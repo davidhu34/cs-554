@@ -143,7 +143,6 @@ export default function DataList({
   function handleSelectAll(e) {
     if (numSelected === limit) {
       setSelectedState({});
-      // setNumSelected(0);
     } else {
       setSelectedState(
         idList.reduce((result, id) => {

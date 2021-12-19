@@ -1,18 +1,17 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import AppBar from '@mui/material/AppBar';
 import Axios from 'axios';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import Badge from '@mui/material/Badge';
+
+import AppBar from '@mui/material/AppBar';
+import Box from '@mui/system/Box';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import MenuIcon from '@mui/icons-material/Menu';
-import AccountCircle from '@mui/icons-material/AccountCircle';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import Box from '@mui/system/Box';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+
 import { AuthContext } from '../../../application/firebase/auth';
 import { doSignOut } from '../../../application/firebase/firebaseFunctions';
 const accountMenuId = 'account-menu';
@@ -95,16 +94,6 @@ export default function NavBar() {
           </Typography>
           <Box sx={{ flexGrow: 1 }} />
           <Box>
-            {/* <IconButton
-              size="large"
-              aria-label="show 17 new notifications"
-              color="inherit"
-            >
-              <Badge badgeContent={17} color="error">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton> */}
-
             <IconButton
               size="large"
               edge="end"
@@ -115,8 +104,6 @@ export default function NavBar() {
               color="inherit"
               sx={{ align: 'left', gap: 1 }}
             >
-              {/* <AccountCircle /> */}
-
               {currentUser.name}
               <KeyboardArrowDownIcon />
             </IconButton>
