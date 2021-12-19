@@ -29,6 +29,10 @@ const basketFormConfigs = [
     label: 'Basket Name',
     validation: {
       required: 'Name is Required',
+      maxLength: {
+        value: 30,
+        message: 'Basket Name should not be longer than 30 characters',
+      },
     },
   },
   {
@@ -37,6 +41,14 @@ const basketFormConfigs = [
     type: 'number',
     validation: {
       required: 'Max weight is Required',
+      max: {
+        value: 20,
+        message: 'Maximum weight capacity of basket is 20',
+      },
+      min: {
+        value: 1,
+        message: 'Minumum weight capacity of basket is 1',
+      },
     },
   },
 ];

@@ -46,12 +46,22 @@ export default function BasketOperation() {
   }
 
   function validateTaskTime() {
-    if (taskTime && Number.isInteger(parseInt(taskTime))) {
-      return true;
-    } else {
+    if (!taskTime) {
       setTaskTimeError('Task duration is required for this operation');
       return false;
     }
+    const taskTimeNumber = parseInt(taskTime);
+    if (!Number.isInteger(taskTimeNumber) || taskTimeNumber <= 0) {
+      setTaskTimeError('Task duration should be a positive integer');
+      return false;
+    }
+
+    if (taskTimeNumber > 10800) {
+      setTaskTimeError('Task duration should be less than 3 hours');
+      return false;
+    }
+
+    return true;
   }
 
   async function handleBasketOperation() {

@@ -47,6 +47,10 @@ const clothesFormConfigs = [
     label: 'Clothes Name',
     validation: {
       required: 'Name is Required',
+      maxLength: {
+        value: 30,
+        message: 'Clothes Name should not be longer than 30 characters',
+      },
     },
   },
   {
@@ -55,6 +59,14 @@ const clothesFormConfigs = [
     type: 'number',
     validation: {
       required: 'Weight is Required',
+      max: {
+        value: 10,
+        message: 'Maximum weight of clothes is 10',
+      },
+      min: {
+        value: 1,
+        message: 'Minumum weight of clothes is 1',
+      },
     },
   },
   {
