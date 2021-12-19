@@ -144,12 +144,12 @@ router.post("/user/:id", async (req, res, next) => {
       throw new HttpError(`Could not get user for user id: ${user._id}`, 404);
     }
 
-    const isClothPresent = await clothesData.isUserOperating(id);
+    const isClothPresent = await clothesData.isUserOperating(user._id);
 
     if (isClothPresent) {
       throw new HttpError(
         `Please remove all the clothes from basket to exit out from the group`
-      );
+        , 400);
     }
 
     user.groupId = null;
