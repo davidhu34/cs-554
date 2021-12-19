@@ -51,7 +51,7 @@ export default function BasketPage() {
     error: clothesLocationError,
   } = useClothesLocation();
 
-  function handleClearBasket(selectedList) {
+  function handleOperateBasket(selectedList) {
     navigate(`/baskets/${selectedList[0]}/operate`);
   }
 
@@ -123,7 +123,7 @@ export default function BasketPage() {
 
   return (
     <DataPage
-      title="Baskets"
+      title="Laundry Baskets"
       path="/baskets"
       columns={basketColumns}
       paginationSelector={basketPaginationSelector}
@@ -147,7 +147,7 @@ export default function BasketPage() {
           },
           onClick(e, selectedList) {
             e.preventDefault();
-            handleClearBasket(selectedList);
+            handleOperateBasket(selectedList);
           },
         },
       ]}

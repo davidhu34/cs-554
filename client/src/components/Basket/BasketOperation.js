@@ -7,7 +7,7 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
-import { getNextStatus } from '../../application/constants/data';
+import { getNextStatus, getStatusName } from '../../application/constants/data';
 import { updateBasketStatus } from '../../application/redux/actions';
 import { updateBasketClothes } from '../../application/redux/actions/basket';
 import { fetchClothesLocations } from '../../application/redux/actions/clothesLocation';
@@ -89,7 +89,7 @@ export default function BasketOperation() {
   return (
     <DataModal
       open
-      title={`${name} (${status})`}
+      title={`${name} (${getStatusName(status)})`}
       loading={loading}
       error={error?.message}
     >
