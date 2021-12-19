@@ -25,13 +25,14 @@ export default function BasketOperation() {
     loading,
     error,
   } = useSelector(getBasketDetailSelector(id));
-  const { name = '', status = '' } = basket || {};
+  const { name = '', status = '', clothes = [] } = basket || {};
   const isEmpty = basket && basket.clothes && basket.clothes.length === 0;
   const nextStatus = getNextStatus(status);
   const canOperate =
     !isEmpty && (status === 'PENDING' || status === 'WASHING_DONE');
   const canReset = status === 'DRYING_DONE';
   const canClear = status === 'PENDING' && !isEmpty;
+  const isWorking = status === 'WASHING' || status === 'DRYING';
 
   const [taskTime, setTaskTime] = useState();
   const [taskTimeError, setTaskTimeError] = useState();
@@ -98,6 +99,11 @@ export default function BasketOperation() {
           <Typography>Basket is empty</Typography>
         </Box>
       )}
+      {isWorking && (
+        <Box>
+          <Typography>{`Still ${getStatusName(status)} ${clothes.length} laundry items`}</Typography>
+        </Box>
+      )}
       {canOperate && (
         <Box>
           <div>
@@ -152,7 +158,7 @@ export default function BasketOperation() {
       {canReset && (
         <Box sx={{ display: 'flex', flexDirection: 'row' }}>
           <Box>
-            <Typography>Remove of all clothes and set to pending</Typography>
+            <Typography>Clear basket of all clothes and set to pending</Typography>
           </Box>
           <Box>
             <Button

@@ -8,7 +8,7 @@ import Tooltip from '@mui/material/Tooltip';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import ErrorIcon from '@mui/icons-material/Error';
 
-import { useTaskTime } from './utils';
+import { getTimeLeftDisplay, useTaskTime } from './utils';
 
 export default function TimeProgressCell({ start, end, refresh }) {
   const { progress, timeLeft } = useTaskTime({ start, end });
@@ -64,10 +64,8 @@ export default function TimeProgressCell({ start, end, refresh }) {
             'Done'
           ) : (
             <>
-              {timeLeft < 60000
-                ? `${Math.ceil(timeLeft / 1000)}s`
-                : `${Math.ceil(timeLeft / 60000)}min`}{' '}
-              remaining
+              {getTimeLeftDisplay(timeLeft)}
+              {' remaining'}
             </>
           )}
         </Box>

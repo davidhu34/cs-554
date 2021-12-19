@@ -17,7 +17,7 @@ import LocalLaundryService from '@mui/icons-material/LocalLaundryService';
 import ShoppingBasketIcon from '@mui/icons-material/ShoppingBasket';
 
 import { getStatusName } from '../../application/constants/data';
-import { useTaskTime } from '../TaskProgress/utils';
+import { getTimeLeftDisplay, useTaskTime } from '../TaskProgress/utils';
 
 function TaskProgressBar({ icon, progress }) {
   return (
@@ -77,21 +77,7 @@ function TaskCard({ task: basket }) {
           <ShoppingBasketIcon size="small" /> {name}
         </Typography>
         <Typography variant="h5" component="div">
-          {status === 'WASHING' || status === 'DRYING' ? (
-            <>
-              {timeLeft > 3600000
-                ? `> ${Math.floor(timeLeft / 3600000)} hour${
-                    Math.floor(timeLeft / 3600000) === 1 ? '' : 's'
-                  }`
-                : `${Math.floor(timeLeft / 60000)
-                    .toString()
-                    .padStart(2, '0')} : ${Math.floor((timeLeft / 1000) % 60)
-                    .toString()
-                    .padStart(2, '0')}`}
-            </>
-          ) : (
-            '- - : - -'
-          )}
+          {status === 'WASHING' || status === 'DRYING' ? getTimeLeftDisplay(timeLeft) : '- - : - -'}
         </Typography>
         <Typography sx={{ mb: 1.5 }} color="text.secondary">
           {getStatusName(status)}
@@ -144,7 +130,7 @@ export default function TaskSeries({ title, tasks }) {
       </Box>
       {tasks.length === 0 && (
         <Typography variant="h6" component="h2" color="text.secondary">
-          No {title} at the Momement
+          No {title} at the Moment
         </Typography>
       )}
     </Container>
