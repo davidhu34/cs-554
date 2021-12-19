@@ -33,6 +33,7 @@ function DataRowItem({
   return data ? (
     <TableRow
       key={id}
+      id={id}
       hover
       role="checkbox"
       aria-checked={selected}
@@ -181,7 +182,7 @@ export default function DataList({
   const numSelected = selectedList.length;
   const maxSelected = Math.min(idList.length, limit);
   return (
-    <Container width="100%">
+    <Container>
       <Typography variant="h6" component="h1" p={2}>
         {title}
       </Typography>
@@ -193,7 +194,7 @@ export default function DataList({
         customActions={customActions}
       />
       <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+        <Table sx={{ minWidth: 650 }} aria-label="data-table" role="group">
           <TableHead>
             <TableRow>
               <TableCell padding="checkbox">
@@ -202,9 +203,6 @@ export default function DataList({
                   indeterminate={numSelected > 0 && numSelected < maxSelected}
                   checked={total > 0 && numSelected === maxSelected}
                   onChange={handleSelectAll}
-                  inputProps={{
-                    'aria-label': 'select all desserts',
-                  }}
                 />
               </TableCell>
               {columns.map(({ field, label = field, align }) => (

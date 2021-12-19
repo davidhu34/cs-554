@@ -57,7 +57,7 @@ export default function NavBar() {
         vertical: 'top',
         horizontal: 'right',
       }}
-      id="accountMenuId"
+      id={accountMenuId}
       keepMounted
       transformOrigin={{
         vertical: 'top',

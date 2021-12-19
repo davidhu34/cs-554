@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router';
 
 import Icon from '@mui/material/Icon';
 import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
@@ -52,17 +53,19 @@ export default function SideBar() {
       <List>
         {navConfigs.map(({ key, icon, text, to }) => {
           return (
-            <ListItemButton
-              key={key}
-              onClick={() => {
-                navigate(to);
-              }}
-            >
-              <ListItemIcon>
-                <Icon>{icon}</Icon>
-              </ListItemIcon>
-              <ListItemText>{text}</ListItemText>
-            </ListItemButton>
+            <ListItem>
+              <ListItemButton
+                key={key}
+                onClick={() => {
+                  navigate(to);
+                }}
+              >
+                <ListItemIcon>
+                  <Icon>{icon}</Icon>
+                </ListItemIcon>
+                <ListItemText>{text}</ListItemText>
+              </ListItemButton>
+            </ListItem>
           );
         })}
       </List>
