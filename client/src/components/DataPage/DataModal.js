@@ -33,12 +33,18 @@ export default function DataModal({
     navigate(-1);
   }
 
+  const labels = {};
+  if (title) {
+    labels['aria-labelledby'] = 'modal-modal-title';
+  }
+  if (description) {
+    labels['aria-describedby'] = 'modal-modal-description';
+  }
   return (
     <Modal
       open={open}
       onClose={handleClose}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
+      {...labels}
     >
       <Box sx={style}>
         {title && (
