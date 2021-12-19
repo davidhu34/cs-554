@@ -133,9 +133,9 @@ export default function BasketPage() {
       deleteAction={deleteBasket}
       createAction={createBasket}
       formConfigs={basketFormConfigs}
-      createTitle="Add New Basket"
-      editTitle="Edit Basket Info"
-      deleteTitle="Delete Basket"
+      createFormTitle="Add New Basket"
+      editFormTitle="Edit Basket Info"
+      deleteFormTitle="Delete Basket"
       validateEditCandidate={validateEditCandidate}
       validateDeleteCandidates={validateDeleteCandidates}
       customActions={[

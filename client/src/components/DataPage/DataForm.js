@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router';
 import { useForm } from 'react-hook-form';
 
@@ -13,14 +13,11 @@ import FormHelperText from '@mui/material/FormHelperText';
 
 import DataModal from './DataModal';
 
-import { Controller } from 'react-hook-form';
-
 export default function DataForm({
   title,
   description,
   formConfigs,
   onSubmit,
-  onCancel,
   defaultValues = {},
   submitText = 'Submit',
   error,
@@ -31,10 +28,10 @@ export default function DataForm({
   const {
     register,
     handleSubmit,
-    reset,
-    control,
     formState: { errors },
-  } = useForm({ defaultValues });
+  } = useForm({
+    defaultValues,
+  });
 
   function handleCancel() {
     navigate(-1);
@@ -64,41 +61,35 @@ export default function DataForm({
                 const defaultValue = defaultValues[name] || '';
                 return (
                   <Box sx={{ margin: 2 }}>
-                    <FormControl fullWidth>
+                    <FormControl fullWidth error={!!error}>
                       <InputLabel id={labelId}>{label}</InputLabel>
-                      <Controller
-                        render={() => (
-                          <Select
-                            labelId={labelId}
-                            label={label}
-                            defaultValue={defaultValue}
-                          >
-                            {options.map((option) => {
-                              if (typeof option === 'string') {
-                                return (
-                                  <MenuItem key={option} value={option}>
-                                    {option}
-                                  </MenuItem>
-                                );
-                              }
-                              if (typeof option === 'object') {
-                                return (
-                                  <MenuItem
-                                    key={option.value}
-                                    value={option.value}
-                                  >
-                                    {option.label}
-                                  </MenuItem>
-                                );
-                              }
-                              return option;
-                            })}
-                          </Select>
-                        )}
-                        name={name}
-                        control={control}
+                      <Select
+                        labelId={labelId}
+                        label={label}
                         defaultValue={defaultValue}
-                      />
+                        inputProps={{ ...register(name, validation) }}
+                      >
+                        {options.map((option) => {
+                          if (typeof option === 'string') {
+                            return (
+                              <MenuItem key={option} value={option}>
+                                {option}
+                              </MenuItem>
+                            );
+                          }
+                          if (typeof option === 'object') {
+                            return (
+                              <MenuItem key={option.value} value={option.value}>
+                                {option.label}
+                              </MenuItem>
+                            );
+                          }
+                          return option;
+                        })}
+                      </Select>
+                      {error?.message && (
+                        <FormHelperText>{error.message}</FormHelperText>
+                      )}
                     </FormControl>
                   </Box>
                 );
