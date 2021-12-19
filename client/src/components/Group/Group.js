@@ -56,7 +56,7 @@ const Group = () => {
     return () => {
       isUnmount = true;
     };
-  }, [currentUser.groupId !== null]);
+  }, [currentUser.groupId]);
 
   useEffect(() => {
     let isUnmount = false;
@@ -78,7 +78,7 @@ const Group = () => {
     return () => {
       isUnmount = true;
     };
-  }, [currentUser.groupId === null]);
+  }, [currentUser.groupId]);
 
   //Join Group Function
   function joinGroup({ grpId }) {
@@ -133,7 +133,7 @@ const Group = () => {
     console.log(group);
     return (
       <>
-        <Container fixed>
+        <Container align="center">
           <Box sx={{ width: '100%', maxWidth: 500 }}>
             {error && error ? (
               <Alert variant="outlined" severity="error">
@@ -143,16 +143,22 @@ const Group = () => {
             ) : (
               <></>
             )}
-            <Typography variant="h1" component="div" gutterBottom>
+            <Typography
+              variant="h1"
+              component="h1"
+              color="primary"
+              gutterBottom
+            >
               {group.name.toUpperCase()}
             </Typography>
-            <Typography variant="h2" component="div">
+
+            <Typography variant="h3" component="div">
               Group Members
             </Typography>
             <hr />
             {group.users.map((user) => (
               <Container key={user._id}>
-                <Typography variant="h4" component="h3">
+                <Typography variant="h4" component="h2" align="left">
                   {user.name}
                 </Typography>
               </Container>
@@ -173,34 +179,44 @@ const Group = () => {
 
   if (currentUser && currentUser.groupId === null) {
     return (
-      <>
+      <Container align="Center" sx={{ margin: 2, gap: 2 }}>
         {/* {currentUser.groupId !== null ? <></> : <GroupForm />} */}
         <GroupForm />
         <Box sx={{ width: '100%', maxWidth: 360 }}>
+          <Typography
+            variant="body1"
+            component="h2"
+            align="center"
+            sx={{ marginTop: 4, gap: 2, fontSize: 20, fontWeight: 'bold' }}
+          >
+            {' '}
+            Available Groups{' '}
+          </Typography>
+          <hr />
           <nav aria-label="main">
             {groupList &&
               currentUser.groupId === null &&
               groupList.map((group) => (
                 <List key={group._id}>
-                  <ListItem>
-                    <ListItemButton>
+                  <ListItem sx={{ border: 1 }}>
+                    <>
                       <ListItemText primary={group.name} />{' '}
                       {currentUser && currentUser.groupId === null && (
                         <Button
-                          varient="contained"
+                          variant="contained"
                           color="success"
                           onClick={() => joinGroup({ grpId: group._id })}
                         >
                           Join the Group
                         </Button>
                       )}
-                    </ListItemButton>
+                    </>
                   </ListItem>
                 </List>
               ))}
           </nav>
         </Box>
-      </>
+      </Container>
     );
   }
 

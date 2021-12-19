@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { Fragment } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import { BrowserRouter as Router } from 'react-router-dom';
 
@@ -11,7 +11,9 @@ export default function Root() {
     <ReduxProvider store={store}>
       <AuthProvider>
         <Router>
-          <App />
+          <Fragment>
+            <App />
+          </Fragment>
         </Router>
       </AuthProvider>
     </ReduxProvider>

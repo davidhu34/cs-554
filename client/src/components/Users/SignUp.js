@@ -12,7 +12,7 @@ const SignUp = () => {
   const navigate = useNavigate();
 
   if (currentUser) {
-    return <Navigate to="/" />;
+    return <Navigate to="/group" />;
   }
   console.log('CUrrent User in SignUp:', currentUser);
   const socialSignOn = async (provider) => {
