@@ -47,9 +47,14 @@ export default function SideBar() {
 
   return (
     <Paper Paper square variant="outlined">
-      <Typography variant="h6" component="h1" p={2} onClick={() => {
-        navigate('/');
-      }}>
+      <Typography
+        variant="h6"
+        component="h1"
+        sx={{ padding: 2, cursor: 'pointer' }}
+        onClick={() => {
+          navigate('/');
+        }}
+      >
         WashTastic
       </Typography>
       <List>
