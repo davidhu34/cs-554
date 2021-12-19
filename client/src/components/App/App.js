@@ -18,6 +18,38 @@ import NavBar from './NavBar';
 import SideBar from './SideBar';
 import ProtectedRoute from './ProtectedRoute';
 
+import CheckroomIcon from '@mui/icons-material/Checkroom';
+import GroupIcon from '@mui/icons-material/Group';
+import LocalLaundryService from '@mui/icons-material/LocalLaundryService';
+import ShoppingBasket from '@mui/icons-material/ShoppingBasket';
+
+const navConfigs = [
+  {
+    key: 'clothes',
+    text: 'Clothes',
+    to: '/clothes',
+    icon: <CheckroomIcon />,
+  },
+  {
+    key: 'baskets',
+    text: 'Baskets',
+    to: '/baskets',
+    icon: <ShoppingBasket />,
+  },
+  {
+    key: 'group',
+    text: 'Group',
+    to: '/group',
+    icon: <GroupIcon />,
+  },
+  {
+    key: 'tasks',
+    text: 'Tasks',
+    to: '/tasks',
+    icon: <LocalLaundryService />,
+  },
+];
+
 export default function App() {
   const { currentUser } = useContext(AuthContext);
   const theme = useTheme();
@@ -34,9 +66,11 @@ export default function App() {
         alignItems: 'stretch',
       }}
     >
-      {matches && currentUser && currentUser.groupId && <SideBar />}
+      {matches && currentUser && currentUser.groupId && (
+        <SideBar navConfigs={navConfigs} />
+      )}
       <Box sx={{ flexGrow: 1 }}>
-        {currentUser && <NavBar />}
+        {currentUser && <NavBar navConfigs={navConfigs} />}
         <Routes>
           <Route
             path="/group"

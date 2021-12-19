@@ -10,39 +10,7 @@ import ListItemText from '@mui/material/ListItemText';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 
-import CheckroomIcon from '@mui/icons-material/Checkroom';
-import GroupIcon from '@mui/icons-material/Group';
-import LocalLaundryService from '@mui/icons-material/LocalLaundryService';
-import ShoppingBasket from '@mui/icons-material/ShoppingBasket';
-
-const navConfigs = [
-  {
-    key: 'clothes',
-    text: 'Clothes',
-    to: '/clothes',
-    icon: <CheckroomIcon />,
-  },
-  {
-    key: 'baskets',
-    text: 'Baskets',
-    to: '/baskets',
-    icon: <ShoppingBasket />,
-  },
-  {
-    key: 'group',
-    text: 'Group',
-    to: '/group',
-    icon: <GroupIcon />,
-  },
-  {
-    key: 'tasks',
-    text: 'Tasks',
-    to: '/tasks',
-    icon: <LocalLaundryService />,
-  },
-];
-
-export default function SideBar() {
+export default function SideBar({ navConfigs }) {
   const navigate = useNavigate();
 
   return (

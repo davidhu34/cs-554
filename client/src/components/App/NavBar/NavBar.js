@@ -1,6 +1,5 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Axios from 'axios';
 
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/system/Box';
@@ -15,15 +14,68 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { AuthContext } from '../../../application/firebase/auth';
 import { doSignOut } from '../../../application/firebase/firebaseFunctions';
 import { axiosPost } from '../../../application/api/utils';
+
 const accountMenuId = 'account-menu';
-export default function NavBar() {
+
+function NavDropMenu({ navConfigs }) {
+  const navigate = useNavigate();
+
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  return (
+    <>
+      <IconButton
+        size="large"
+        edge="start"
+        color="inherit"
+        aria-label="open menu"
+        sx={{ display: { xs: 'block', sm: 'none' } }}
+        id="menu-button"
+        aria-controls="mobile-menu"
+        aria-haspopup="true"
+        aria-expanded={open ? 'true' : undefined}
+        onClick={handleClick}
+      >
+        <MenuIcon />
+      </IconButton>
+      <Menu
+        id="mobile-menu"
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+      >
+        {navConfigs.map(({ key, icon, text, to }) => {
+          return (
+            <MenuItem
+              key={key}
+              onClick={() => {
+                navigate(to);
+              }}
+            >
+              {icon}
+              {text}
+            </MenuItem>
+          );
+        })}
+      </Menu>
+    </>
+  );
+}
+
+export default function NavBar({ navConfigs }) {
   //Dhruveel's Changes
   const { currentUser, setCurrentUser } = useContext(AuthContext);
   const navigate = useNavigate();
   async function handleSignOut(e) {
     console.log('Before Prevent');
     e.preventDefault();
-    // currentUser.clear();
 
     const user = await axiosPost('/user/logout', currentUser);
     console.log(user);
@@ -71,17 +123,13 @@ export default function NavBar() {
     <>
       <AppBar position="static">
         <Toolbar>
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="open drawer"
-            sx={{ display: { xs: 'block', sm: 'none' } }}
-          >
-            <MenuIcon />
-          </IconButton>
+          <NavDropMenu navConfigs={navConfigs} />
           <Typography
+            onClick={() => {
+              navigate('/');
+            }}
             sx={{
+              cursor: 'pointer',
               display: { xs: 'block', sm: 'none' },
             }}
           >
