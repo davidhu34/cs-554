@@ -153,7 +153,8 @@ router.delete('/:id', async (req, res, next) => {
 router.put('/:id', async (req, res, next) => {
   try {
     const { id: basketId } = req.params;
-    const { name, weight, users, clothes, status, time, userId, groupId } = req.body;
+    const { name, users, clothes, status, time, userId, groupId } = req.body;
+    const weight = parseInt(req.body.weight);
     assertIsValuedString(userId, 'User Id');
     const result = await basketsData.updateBasket(basketId, {
       name,
@@ -217,7 +218,7 @@ router.patch('/:id/status', async (req, res, next) => {
               message: `Basket ${autoResult.name} updated to ${autoResult.status}`,
               status: autoResult.status,
             },
-            topic: groupId
+            topic: groupId,
           });
           console.log('basket auto status messaging response:', messageResponse);
         } catch (error) {

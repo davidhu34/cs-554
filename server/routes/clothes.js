@@ -145,9 +145,13 @@ router.delete('/', async (req, res, next) => {
 router.put('/:id', async (req, res, next) => {
   try {
     const { id: clothId } = req.params;
-    const { name, type, weight, userId, groupId } = req.body;
+    const { name, type, userId, groupId } = req.body;
+    const weight = parseInt(req.body.weight);
     assertIsValuedString(userId, 'User Id');
     assertIsValuedString(groupId, 'Group Id');
+    assertIsValuedString(name, 'Cloth name');
+    assertIsValuedString(type, 'Type');
+    assertRequiredNumber(weight, 'Weight');
     const result = await clothesData.updateCloth(clothId, {
       userId,
       groupId,
