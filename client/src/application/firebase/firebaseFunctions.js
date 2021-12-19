@@ -1,5 +1,4 @@
 import firebase from 'firebase/compat/app';
-import Axios from 'axios';
 
 async function doCreateUserWithEmailAndPassword(email, password, displayName) {
   await firebase.auth().createUserWithEmailAndPassword(email, password);
@@ -39,7 +38,6 @@ async function doPasswordUpdate(password) {
 }
 
 async function doSignOut() {
-  // await Axios.delete('http://localhost:3001/user/logout');
   await firebase.auth().signOut();
 }
 

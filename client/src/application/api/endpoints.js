@@ -1,4 +1,4 @@
-export const BASE_URL = 'http://localhost:3001';
+export const BASE_URL = 'http://localhost:3001/api';
 
 export const GET_PAGINATED_CLOTHES = '/clothes';
 export const POST_CLOTHES = '/clothes';

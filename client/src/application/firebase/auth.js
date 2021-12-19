@@ -1,29 +1,19 @@
 import { useState, useEffect, createContext } from 'react';
 import firebaseApp from './firebase';
-import Axios from 'axios';
 import { useDispatch } from 'react-redux';
 
 import { setUser as setUserAction } from '../../application/redux/actions/user';
+import { axiosPost } from '../api/utils';
 
 export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
-  let userExist;
-  let response;
 
   const dispatch = useDispatch();
   const [currentUser, setCurrentUser] = useState(null);
   const [user, setUser] = useState(null);
 
   const [loadingUser, setLoadingUser] = useState(false);
-  // const [userExist, setUserExist] = useState(false);
 
-  const obj = {
-    _id: '61b6b124fd135f4eb08dfefd',
-    uid: '104811364644330735224',
-    name: 'Dhruveel Doshi',
-    email: 'ddoshi4@stevens.edu',
-    createdAt: 1639362852591,
-  };
   useEffect(() => {
     if (user === null) {
       firebaseApp.auth().onAuthStateChanged((user) => {
@@ -42,10 +32,7 @@ export const AuthProvider = ({ children }) => {
         console.log('user before calling API: ', user);
         console.log('in AUth useEffect Before Calling Axios');
 
-        const { data } = await Axios.post(
-          'http://localhost:3001/user',
-          user.providerData[0]
-        );
+        const data = await axiosPost('/user',user.providerData[0]);
         console.log('user After calling API:', data);
         setCurrentUser(data);
         dispatch(setUserAction(data));

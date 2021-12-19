@@ -1,4 +1,3 @@
-import Axios from 'axios';
 import { useState, useContext } from 'react';
 import { useForm } from 'react-hook-form';
 import Alert from '@mui/material/Alert';
@@ -9,10 +8,11 @@ import { Container, Typography } from '@mui/material';
 import { AuthContext } from '../../application/firebase/auth';
 import { setUser } from '../../application/redux/actions/user';
 import { useDispatch } from 'react-redux';
+import { axiosPost } from '../../application/api/utils';
 const GroupForm = (props) => {
   const [errorDB, setErrorDB] = useState();
   const { currentUser, setCurrentUser } = useContext(AuthContext);
-  const { register, handleSubmit, error } = useForm();
+  const { register, handleSubmit } = useForm();
   const dispatch = useDispatch();
   let i = 0;
   const handleFormSubmit = async (data) => {
@@ -22,16 +22,15 @@ const GroupForm = (props) => {
       i++;
 
       if (currentUser.groupId === null) {
-        const res = await Axios.post('http://localhost:3001/group', {
+        const resData = await axiosPost('/group', {
           name: data.groupName,
           users: [currentUser],
         });
-        console.log('Res Data: \n', res.data.users[0]);
+        console.log('Res Data: \n', resData.users[0]);
 
-        // setCurrentUser(res.data.users[0]);
-        setCurrentUser({ ...currentUser, groupId: res.data._id });
+        setCurrentUser({ ...currentUser, groupId: resData._id });
 
-        dispatch(setUser({ ...currentUser, groupId: res.data._id }));
+        dispatch(setUser({ ...currentUser, groupId: resData._id }));
       }
       console.log('Counter:', i);
     } catch (e) {

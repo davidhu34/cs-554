@@ -24,12 +24,12 @@ import {
   axiosPatch,
 } from './utils';
 import { DEFAULT_PAGINATION_LIMIT } from '../constants';
-import testClothes from './test-data/clothes.json';
+// import testClothes from './test-data/clothes.json';
 
-let tempClothes = [...testClothes];
+// let tempClothes = [...testClothes];
 
-const delay = (data, time = 500) =>
-  new Promise((resolve) => setTimeout(() => resolve(data), time));
+// const delay = (data, time = 500) =>
+//   new Promise((resolve) => setTimeout(() => resolve(data), time));
 export const getPaginatedClothes = (options) => {
   const { page = 0, limit = DEFAULT_PAGINATION_LIMIT, groupId, userId } = options;
   const skip = page * limit;

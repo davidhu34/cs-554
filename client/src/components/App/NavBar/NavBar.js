@@ -14,21 +14,19 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
 import { AuthContext } from '../../../application/firebase/auth';
 import { doSignOut } from '../../../application/firebase/firebaseFunctions';
+import { axiosPost } from '../../../application/api/utils';
 const accountMenuId = 'account-menu';
 export default function NavBar() {
   //Dhruveel's Changes
   const { currentUser, setCurrentUser } = useContext(AuthContext);
   const navigate = useNavigate();
-  function handleSignOut(e) {
+  async function handleSignOut(e) {
     console.log('Before Prevent');
     e.preventDefault();
     // currentUser.clear();
 
-    Axios.post('http://localhost:3001/user/logout', currentUser).then(
-      (response) => {
-        console.log(response);
-      }
-    );
+    const user = await axiosPost('/user/logout', currentUser);
+    console.log(user);
     setCurrentUser(null);
     console.log('in SIgnout handleSIgnout', currentUser);
     doSignOut();

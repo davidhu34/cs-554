@@ -7,11 +7,11 @@ const messagingRouter = require('./messaging');
 
 const configRoutes = (app) =>
   app
-    .use('/user', userRouter)
-    .use('/clothes', clothesRouter)
-    .use('/baskets', basketRouter)
-    .use('/group', groupRouter)
-    .use('/messaging', messagingRouter)
+    .use('/api/user', userRouter)
+    .use('/api/clothes', clothesRouter)
+    .use('/api/baskets', basketRouter)
+    .use('/api/group', groupRouter)
+    .use('/api/messaging', messagingRouter)
     .use(defaultErrorHandling);
 
 module.exports = {
