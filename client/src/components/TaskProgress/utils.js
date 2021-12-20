@@ -22,7 +22,9 @@ export function useTaskTime({ start, end }) {
 
   const timeLeft = Math.max(end - currentTime, 0);
 
-  const progress = total ? Math.ceil(100 - (timeLeft * 100) / total) : 0;
+  const progress = total
+    ? Math.max(Math.ceil(100 - (timeLeft * 100) / total), 0)
+    : 0;
 
   return { timeLeft, progress };
 }

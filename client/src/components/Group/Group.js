@@ -123,7 +123,9 @@ const Group = () => {
           {error && (
             <Alert variant="outlined" severity="error">
               <AlertTitle>Error</AlertTitle>
-              {typeof error === 'string' ? error : (error?.message || 'Error getting group data')}
+              {typeof error === 'string'
+                ? error
+                : error?.message || 'Error getting group data'}
             </Alert>
           )}
           <Typography variant="h1" component="h1" color="primary" gutterBottom>
@@ -136,8 +138,9 @@ const Group = () => {
           <hr />
           {group.users.map((user) => (
             <Container key={user._id}>
-              <Typography variant="h4" component="h2">
+              <Typography variant="h6" component="h2">
                 {user.name}
+               ({user.email}) {currentUser._id === user._id ? '(me)' : ''} 
               </Typography>
             </Container>
           ))}

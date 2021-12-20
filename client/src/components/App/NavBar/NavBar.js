@@ -38,7 +38,6 @@ function NavDropMenu({ navConfigs }) {
         aria-label="open menu"
         sx={{ display: { xs: 'block', sm: 'none' } }}
         id="menu-button"
-        aria-controls="mobile-menu"
         aria-haspopup="true"
         aria-expanded={open ? 'true' : undefined}
         onClick={handleClick}
