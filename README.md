@@ -62,13 +62,13 @@ For `Heroku` deployment setup, please refer to:
 ### `Redis`
 
 
-- Redis connection has to be available for `localhost:6379`
+- Redis connection has to be available for `localhost:6379` 
 - Recommended version for demo: Redis v6.2
 - Used key for HSET: `clothes_basket_location`
 
 ### `MongoDB`
 
-- Database connection has to be available for `localhost:27017`
+- Database connection has to be available for `localhost:27017` or `mongodb+srv://demo1:<password>@cluster0.2nmo4.mongodb.net/myFirstDatabase`
 - Recommended edition for demo: MongoDB 4.4.3 Community
 
 A set of demo data available.
