@@ -54,6 +54,9 @@ Patrick Hill
 A demo version is deployed and available on Heroku
 [https://washtastic.herokuapp.com](https://washtastic.herokuapp.com)
 
+For `Heroku` deployment setup, please refer to:
+[https://github.com/Smit36/cs-554/tree/deploy](https://github.com/Smit36/cs-554/tree/deploy)
+
 ### Running a Local Build
 
 ### `Redis`
@@ -83,7 +86,8 @@ $ npm run seed
 
 ### Start the Application Server
 
-Run this `NodeJS` application locally on port `3001` via `npm`
+- Add provided private key settings file for Firebase Cloud Messaging: `server/config/serviceAccountKey.json` (not included in this repo)
+- Run this `NodeJS` application locally on port `3001` via `npm`
 
 from project root:
 ```
@@ -95,6 +99,7 @@ $ npm start
 ### `React`
 
 
+- Add the provided enviroment variable file: `client/.env` (not included in this repo)
 - Start `create-react-app` application on port `3000` via `yarn`
 
 from project root:
